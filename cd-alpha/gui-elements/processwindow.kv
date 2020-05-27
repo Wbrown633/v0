@@ -1,0 +1,27 @@
+#:kivy 1.11.0
+
+<ProcessWindow>:
+    orientation: 'vertical'
+    padding: 0
+    spacing: 10
+
+    
+    BoxLayout:
+        id: top_bar
+        orientation: "horizontal"
+        padding: 10
+        spacing: 20
+        size_hint_y: None
+        height: 70
+        # canvas.before:
+        #     Color:
+        #         rgba: (1,1,1,.1)
+        #     Rectangle:
+        #         pos: self.pos
+        #         size: self.size
+
+
+    BoxLayout:
+        id: main
+        orientation: "vertical"
+

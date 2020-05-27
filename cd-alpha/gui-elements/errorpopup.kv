@@ -1,0 +1,38 @@
+#:kivy 1.11.0
+
+<ErrorPopup>:
+    title_size: dp(42)
+    title_align: "center"
+    separator_color: self.primary_color
+    auto_dismiss: False
+    
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 10
+        padding: 0, 10, 0, 0
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            Label:
+                padding: 10, 10
+                size_hint_y: None
+                text: root.description_text
+                text_size: self.width, None
+                height: self.texture_size[1]
+                halign: "center"
+        
+        BoxLayout:
+            size_hint_y: None
+            padding: 100, 20
+            RoundedButton:
+                button_color: root.primary_color
+                padding: 60, 20
+                size_hint_y: None
+                height: self.texture_size[1]
+                on_release: root.confirm()
+                disabled: False
+                text: root.confirm_text
+                bold: True
+
+

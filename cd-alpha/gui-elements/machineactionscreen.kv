@@ -1,0 +1,65 @@
+#:kivy 1.11.0
+
+<MachineActionScreen>:
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 20, 0
+                spacing: 10
+
+                Label:
+                    size_hint_y: None
+                    text: root.header_text
+                    bold: True
+                    font_size: dp(42)
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    halign: "center"
+
+                Label:
+                    size_hint_y: None
+                    text: root.description_text
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    halign: "center"
+
+        BoxLayout:
+            id: progress_bar_layout
+            orientation: "horizontal"
+            size_hint_y: None
+            padding: 20
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+            Label:
+                text: "{:0.0f}%".format(root.progress)
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+                width: 300
+            
+            ProgressBar:
+                max: 100
+                value: root.progress
+            
+            Label:
+                text: "{:02d}:{:02d}".format(root.time_remaining_min, root.time_remaining_sec)
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+                

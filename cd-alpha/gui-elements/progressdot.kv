@@ -1,0 +1,13 @@
+#:kivy 1.11.1
+<ProgressDot>:
+    canvas:
+        Color:
+            rgba: (.3, .6, .9, 0.2) if root.status == 'future' else (.3, .6, .9, 1)
+        Ellipse:
+            pos: root.center_x - min(root.size)*.8/2, root.center_y - min(root.size)*.8/2
+            size: min(root.size)*.8, min(root.size)*.8
+        Color:
+            rgba: (1, 1, 1, 1) if root.status == 'present' else (1,1,1,0)
+        Line:
+            width:  2
+            ellipse: (root.center_x - min(root.size)*.8/2, root.center_y - min(root.size)*.8/2, min(root.size)*.8, min(root.size)*.8)

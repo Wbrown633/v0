@@ -1,0 +1,46 @@
+#:kivy 1.11.0
+
+<UserActionScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 20, 0
+                spacing: 10
+
+                Label:
+                    size_hint_y: None
+                    text: root.header_text
+                    bold: True
+                    font_size: dp(42)
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    halign: "center"
+
+                Label:
+                    size_hint_y: None
+                    text: root.description_text
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    halign: "center"
+
+        BoxLayout:
+            size_hint_y: None
+            padding: 80, 20
+            
+            RoundedButton:
+                on_release: app.root.next_step()
+                padding: 20, 20
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: root.next_text
+                bold: True
+

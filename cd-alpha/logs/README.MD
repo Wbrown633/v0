@@ -1,0 +1,1 @@
+# This is where the app logs live. Do not add any logs to GIT.

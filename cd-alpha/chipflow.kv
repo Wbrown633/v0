@@ -1,0 +1,30 @@
+#:kivy 1.11.0
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+
+
+
+
+
+
+
+
+
+
+<FinishedScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+
+        Label:
+            text: root.header_txt
+
+        Label:
+            text: root.description_txt
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            font_size: dp(32)
+            
+
+
