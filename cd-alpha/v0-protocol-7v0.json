@@ -99,17 +99,17 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 2,
+                "vol_ml": 1,
                 "rate_mh": 15,
                 "eq_time": 120
             }
         },
         "completion_msg": "Sample pull completed"
     },
-    "add_sample": {
+    "add_PBS_push": {
         "type": "UserActionScreen",
-        "header": "Add sample",
-        "description": "Add 1 mL sample to reservoir."
+        "header": "Add PBS push buffer",
+        "description": "Add 1 mL PBS to reservoir."
     },
     "flush_4": {
         "type": "MachineActionScreen",
