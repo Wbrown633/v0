@@ -98,7 +98,7 @@
         "description": "Pulling sample thru chip.",
         "action": {
             "PUMP": {
-                "target": "lysate",
+                "target": "waste",
                 "vol_ml": 1,
                 "rate_mh": 15,
                 "eq_time": 120
@@ -108,16 +108,16 @@
     },
     "add_PBS_push": {
         "type": "UserActionScreen",
-        "header": "Add PBS chase buffer",
+        "header": "Add PBS push buffer",
         "description": "Add 1 mL PBS to reservoir."
     },
     "flush_4": {
         "type": "MachineActionScreen",
         "header": "Extra pull",
-        "description": "Clearing chip with PBS chase",
+        "description": "Clearing chip",
         "action": {
             "PUMP": {
-                "target": "lysate",
+                "target": "waste",
                 "vol_ml": 1,
                 "rate_mh": 15,
                 "eq_time": 120
