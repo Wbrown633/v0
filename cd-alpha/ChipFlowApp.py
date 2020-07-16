@@ -58,7 +58,7 @@ DEBUG_MODE = False
 
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-PROTOCOL_FILE_NAME = "v0-protocol-1v0.json"
+PROTOCOL_FILE_NAME = "v0-testProtocol-1v0.json"
 # PROTOCOL_FILE_NAME = "cda-protocol-v02.json"
 # PROTOCOL_FILE_NAME = "cda-quick-run.json"
 # PROTOCOL_FILE_NAME = "cda-custom.json"

@@ -46,8 +46,8 @@
     },
     "flush_1": {
         "type": "MachineActionScreen",
-        "header": "Flushing chip",
-        "description": "Flushing the chip",
+        "header": "F127 pull",
+        "description": "Wetting the chip with F127",
         "action": {
             "PUMP": {
                 "target": "waste",
