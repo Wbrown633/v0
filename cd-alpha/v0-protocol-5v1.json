@@ -80,7 +80,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1,
+                "vol_ml": 1.05,
                 "rate_mh": 50,
                 "eq_time": 120
             }
@@ -183,7 +183,7 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 3.0,
-                "rate_mh": 30,
+                "rate_mh": 50,
                 "eq_time": 10
             }
         },
