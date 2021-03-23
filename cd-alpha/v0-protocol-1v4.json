@@ -87,7 +87,7 @@
         },
         "completion_msg": "PBS rinse complete"
     },
-    "flush_3": {
+    "flush_2b": {
         "type": "MachineActionScreen",
         "header": "PBS rinse 2",
         "description": "Rinsing the chip more (lysate syr).",
@@ -100,7 +100,7 @@
             }
         },
         "completion_msg": "PBS rinse 2 complete"
-
+    },        
 
     "add_sample": {
         "type": "UserActionScreen",
