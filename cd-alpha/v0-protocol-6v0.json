@@ -100,7 +100,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.5,
-                "rate_mh": 1.5,
+                "rate_mh": 2,
                 "eq_time": 120
             }
         },
