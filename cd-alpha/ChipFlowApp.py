@@ -66,7 +66,7 @@ PROTOCOL_FILE_NAME = "v0-protocol-9v0.json"
 
 if not DEBUG_MODE:
     # Make sure the 'real' protocol is used
-    PROTOCOL_FILE_NAME = "v0-protocol-6v1.json"
+    PROTOCOL_FILE_NAME = "v0-protocol-9v0.json"
 else:
     logging.warning("CDA: *** DEBUG MODE ***")
 
