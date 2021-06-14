@@ -76,8 +76,8 @@ ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
 pumps = PumpNetwork(ser)
 WASTE_ADDR = 1
 LYSATE_ADDR = 2
-WASTE_DIAMETER_mm = 12.4
-LYSATE_DIAMETER_mm = 12.4
+WASTE_DIAMETER_mm = 12.55
+LYSATE_DIAMETER_mm = 12.55
 
 scheduled_events = []
 
