@@ -109,7 +109,7 @@
     
     "flush_4": {
         "type": "MachineActionScreen",
-        "header": "Sample pul to lysate",
+        "header": "Sample pull to lysate",
         "description": "Pulling sample thru chip",
         "action": {
             "PUMP": {
