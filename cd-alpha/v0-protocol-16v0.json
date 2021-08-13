@@ -170,6 +170,7 @@
         "header": "RIPA",
         "description": "Add 700 µL RIPA to reservoir. Press 'Next' to start."
     },
+
     "extract_1": {
         "type": "MachineActionScreen",
         "header": "RIPA 1",
@@ -204,7 +205,8 @@
         "header": "PBS Chase",
         "description": "Add 1 mL PBS to reservoir. Press 'Next' to start."
     },
-    "extract_1": {
+
+    "chase_1": {
         "type": "MachineActionScreen",
         "header": "PBS Chase",
         "description": "Extracting lysate from chip.",
