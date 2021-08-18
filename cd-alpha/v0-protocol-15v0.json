@@ -1,0 +1,204 @@
+{
+    "home": {
+        "type": "UserActionScreen",
+        "header": "Chip Diagnostics",
+        "description": "Ready for a new test with protocol 15v0. Press 'start' to begin.",
+        "next_text": "Start"
+    },
+    "reset_start": {
+        "type": "MachineActionScreen",
+        "header": "Initialization",
+        "description": "Initializing device. Resetting syringe positions and checking connections.",
+        "action": {
+            "RESET": {}
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "Machine has been homed"
+    },
+    "insert_syringes": {
+        "type": "UserActionScreen",
+        "header": "Insert syringes",
+        "description": "Insert the waste and lysate syringe. Press start to initialize when ready.",
+        "next_text": "Start initialization"
+    },
+    "grab_syringes": {
+        "type": "MachineActionScreen",
+        "header": "Grabbing syringes",
+        "description": "The device is now grabbing hold of the syringes to secure a precise operation.",
+        "action": {
+            "GRAB": {
+                "post_run_rate_mm": 5,
+                "post_run_vol_ml": 0.3
+            }
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "Syringes ready"
+    },
+    "insert_chip": {
+        "type": "UserActionScreen",
+        "header": "Insert Kit",
+        "description": "Insert the chip and inlet reservoir. Press next to proceed."
+    },
+    "f127": {
+        "type": "UserActionScreen",
+        "header": "Add F-127",
+        "description": "Add 1.4 mL 1% F-127 in 1xPBS to reservoir. Press next to start suction."
+    },
+    "flush_1": {
+        "type": "MachineActionScreen",
+        "header": "Pulling F127",
+        "description": "Pulling F127",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1,
+                "rate_mh": 50,
+                "eq_time": 1
+            }
+        }
+    },
+    "incubate_1": {
+        "type": "MachineActionScreen",
+        "header": "Incubation",
+        "description": "Incubating F127",
+        "action": {
+            "INCUBATE": {
+                "time": 3600
+            }
+        },
+        "completion_msg": "F127 pull and incubation finished."
+    },
+    "pbs_1": {
+        "type": "UserActionScreen",
+        "header": "PBS 1",
+        "description": "Add 1 mL 1xPBS to reservoir. Press next to start suction."
+    },
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "PBS rinse",
+        "description": "Rinsing the chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1.05,
+                "rate_mh": 50,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "PBS rinse complete"
+    },
+    "add_sample": {
+        "type": "UserActionScreen",
+        "header": "Add sample",
+        "description": "Add 0.2 mL sample to reservoir, mix gently."
+    },
+    "flush_3": {
+        "type": "MachineActionScreen",
+        "header": "Sample pull",
+        "description": "Pulling sample thru chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.4,
+                "rate_mh": 1,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "Sample pull to waste completed"
+    },
+
+    "chase_1": {
+        "type": "UserActionScreen",
+        "header": "Add chase #1",
+        "description": "Add 0.4 mL PBS to reservoir."
+    },
+
+    "flush_4": {
+        "type": "MachineActionScreen",
+        "header": "PBS Chase 1",
+        "description": "PBS Chase 1",
+        "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 0.2,
+                "rate_mh": 1,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "First chase complete"
+    },
+
+    "chase_2": {
+        "type": "UserActionScreen",
+        "header": "Add chase #2",
+        "description": "Add 0.8 mL PBS to reservoir."
+    },
+
+    "flush_5": {
+        "type": "MachineActionScreen",
+        "header": "PBS Chase 2, part 1",
+        "description": "PBS Chase 2, Part 1",
+        "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 0.4,
+                "rate_mh": 1,
+                "eq_time": 1
+            }
+        },  
+        "completion_msg": "Second chase part 1 complete"
+    },
+
+    "flush_5pt2": {
+        "type": "MachineActionScreen",
+        "header": "PBS Chase 2, Part 2",
+        "description": "PBS Chase 2, Part 2",
+        "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 0.4,
+                "rate_mh": 10,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "Second chase complete"
+    },
+
+    "chase_3": {
+        "type": "UserActionScreen",
+        "header": "Add chase #3",
+        "description": "Add 1.0 mL PBS to reservoir."
+    },
+
+    "flush_6": {
+        "type": "MachineActionScreen",
+        "header": "PBS Chase 3",
+        "description": "PBS Chase 3",
+        "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 1.0,
+                "rate_mh": 10,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "Third chase complete"
+    },
+
+
+    "remove_kit": {
+        "type": "UserActionScreen",
+        "header": "Remove kit",
+        "description": "Remove used kit from machine."
+    },
+    "reset_end": {
+        "type": "MachineActionScreen",
+        "header": "Homing device",
+        "description": "Resetting syringe pump positions.",
+        "action": {
+            "RESET": {}
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "App will restart, so a new test may begin."
+    }
+}
