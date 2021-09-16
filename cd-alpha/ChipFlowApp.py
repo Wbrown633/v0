@@ -58,7 +58,7 @@ DEBUG_MODE = False
 
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
+PROTOCOL_FILE_NAME = "v0-protocol-15v0.json"
 # PROTOCOL_FILE_NAME = "cda-protocol-v02.json"
 # PROTOCOL_FILE_NAME = "cda-quick-run.json"
 # PROTOCOL_FILE_NAME = "cda-custom.json"
@@ -66,7 +66,7 @@ PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
 
 if not DEBUG_MODE:
     # Make sure the 'real' protocol is used
-    PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
+    PROTOCOL_FILE_NAME = "v0-protocol-15v0.json"
 else:
     logging.warning("CDA: *** DEBUG MODE ***")
 
