@@ -72,15 +72,18 @@ if DEBUG_MODE:
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
+# Establish serial connection to the pump controllers
 ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
 pumps = PumpNetwork(ser)
+
+# Set constants
 WASTE_ADDR = 1
 LYSATE_ADDR = 2
 WASTE_DIAMETER_mm = 12.55
 LYSATE_DIAMETER_mm = 12.55
-
 scheduled_events = []
 
+### UTIL FUNCTIONS ###
 def stop_all_pumps():
     logging.debug("CDA: Stopping all pumps.")
     for addr in [WASTE_ADDR, LYSATE_ADDR]:
@@ -125,6 +128,9 @@ def reboot():
         os.system('sudo reboot --poweroff now')
         # call("sudo reboot --poweroff now", shell=True)
 
+# TODO: Should above functions be defined in a helper file? 
+
+### MAIN ###
 
 logging.info("CDA: Starting main script.")
 
@@ -611,6 +617,7 @@ if __name__ == '__main__':
         ChipFlowApp().run()
     except:
         stop_all_pumps()
+        # close the serial connection
         ser.close()
         if not DEBUG_MODE:
             reboot()
