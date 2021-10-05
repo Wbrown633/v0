@@ -1,0 +1,3 @@
+# Ignore the virtual environment
+v0/**
+logs/**
