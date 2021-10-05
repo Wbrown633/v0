@@ -58,7 +58,6 @@ DEBUG_MODE = False
 
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-# TODO: make a "/protocols" folder to organize things more
 # Change the value here and below to edit which protocol is in use
 PROTOCOL_FILE_NAME = "/protocols/v0-protocol-14v0.json"
 
@@ -67,13 +66,9 @@ PROTOCOL_FILE_NAME = "/protocols/v0-protocol-14v0.json"
 # PROTOCOL_FILE_NAME = "cda-quick-run.json"
 # PROTOCOL_FILE_NAME = "cda-custom.json"
 
-
-if not DEBUG_MODE:
-    # Make sure the 'real' protocol is used
-    # Also change protocol name here when adjusting which protocol is in use
-    PROTOCOL_FILE_NAME = "/protocols/v0-protocol-14v0.json" # TODO: address double setting file name
-else:
+if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
+    logging.warning("CDA: System will not reboot after exiting program.")
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
