@@ -1,11 +1,9 @@
-#!/usr/bin/python3
-
-import serial
-import re
 import logging
 
 class PumpNetwork:
-    
+    '''TESTING STUB FOR LOCAL GUI DEVELOPMENT. DOES NOT COMMUNICATE WITH PUMP NETWORK'''
+
+    logging.warning('*** USING TEST STUB WILL NOT COMMUNICATE WITH PUMPS ***')
     FLOW_RATE_UNITS = ['MM', 'MH', 'UM', 'UH', '']  # MM=ml/min, MH=ml/hr, UH=μl/hr, UM=μl/min
 
 
@@ -126,44 +124,4 @@ class PumpNetwork:
 
     def buzz(self, addr='', repetitions=1):
         return self._send_command("BUZ 1 {:}".format(int(repetitions)), addr)
-
-
-if __name__ == '__main__':
-    import time
-    ser =  serial.Serial ("/dev/ttyUSB0", 19200, timeout=2)
-    pumps = PumpNetwork(ser)
-    WASTE_ADDR = 1
-    LYSATE_ADDR = 2
-
-    #TO SET ADDR UNCOMMENT NEXT LINE
-    # print("SETTING ADR! ", pumps._set_addr(LYSATE_ADDR))
-
-
-    WASTE_DIAMETER_mm = 12.07
-    LYSATE_DIAMETER_mm = 12.07
-    pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
-    # pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
-    addr =LYSATE_ADDR#, LYSATE_ADDR]
-    
-    #print("STOP:", pumps.stop(addr))
-    print("Rate:", pumps.set_rate(5, 'MM', addr))
-    print("Volume:", pumps.set_volume(0.3, 'ML',  addr))
-    print("Run:", pumps.run(addr))
-    # for addr in addrs:
-    #     # print("Diameter:", pumps.set_diameter(diameter_mm=12.07, addr=addr))
-    #     # print("Rate:", pumps.set_rate(-5, 'MM', addr))
-    #     # print("Volume:", pumps.set_volume(0, 'ML',  addr))
-    #     # print("Run:", pumps.run(addr))
-
-    #     print("Purge:", pumps.purge(1, addr))
-    #     time.sleep(1)
-    #     print("Stop:", pumps.stop(addr))
-    #     print("Rate:", pumps.set_rate(1, 'MM', addr))
-    #     print("Volume:", pumps.set_volume(.03, 'ML',  addr))
-    #     print("Run:", pumps.run(addr))
-    
-    # for addr in addrs:
-    #     while pumps.status(addr) != 'S':
-    #         print("Still going for {}".format(addr))
-    #         time.sleep(.5)
 

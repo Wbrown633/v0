@@ -5,25 +5,13 @@
 
 from collections import OrderedDict
 import json
-import sys
 import os
-
-from NanoController import Nano
-from NewEraPumps import PumpNetwork
+import sys
 from functools import partial
 import serial
 import time
 from datetime import datetime
 import logging
-time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-logging.basicConfig(
-    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-    filemode='w',
-    datefmt="%Y-%m-%d_%H:%M:%S",
-    level=logging.DEBUG)
-
-logging.info("Logging started")
-
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -36,6 +24,23 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
+
+# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+if sys.platform.startswith('win32'):
+    LOCAL_TESTING = True
+    from software_testing.NanoControllerTestStub import Nano
+    from software_testing.NewEraPumpsTestStub import PumpNetwork
+    from software_testing.SerialStub import SerialStub
+else:
+    from NanoController import Nano
+    from NewEraPumps import PumpNetwork
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    logging.basicConfig(
+    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+    filemode='w',
+    datefmt="%Y-%m-%d_%H:%M:%S",
+    level=logging.DEBUG)
+    logging.info("Logging started")
 
 
 kivy.require('1.11.0')
@@ -69,7 +74,10 @@ if DEBUG_MODE:
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
 # Establish serial connection to the pump controllers
-ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+if not LOCAL_TESTING:
+    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+else:
+    ser = SerialStub()
 pumps = PumpNetwork(ser)
 
 # Set constants
