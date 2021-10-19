@@ -31,12 +31,23 @@ from kivy.config import Config
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 if sys.platform.startswith('win32'):
     LOCAL_TESTING = True
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
+    logging.basicConfig(
+    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+    filemode='w',
+    datefmt="%Y-%m-%d_%H:%M:%S",
+    level=logging.DEBUG)
+    logging.info("Logging started")
     from software_testing.NanoControllerTestStub import Nano
     from software_testing.NewEraPumpsTestStub import PumpNetwork
     from software_testing.SerialStub import SerialStub
+    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
+    DEBUG_MODE = True
 else:
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
+    PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
+    DEBUG_MODE = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     logging.basicConfig(
     filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
