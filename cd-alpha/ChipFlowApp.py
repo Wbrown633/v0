@@ -28,6 +28,23 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.config import Config
 
+# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+if sys.platform.startswith('win32'):
+    LOCAL_TESTING = True
+    from software_testing.NanoControllerTestStub import Nano
+    from software_testing.NewEraPumpsTestStub import PumpNetwork
+    from software_testing.SerialStub import SerialStub
+else:
+    from NanoController import Nano
+    from NewEraPumps import PumpNetwork
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    logging.basicConfig(
+    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+    filemode='w',
+    datefmt="%Y-%m-%d_%H:%M:%S",
+    level=logging.DEBUG)
+    logging.info("Logging started")
+
 
 kivy.require('2.0.0')
 
@@ -95,6 +112,13 @@ if DEBUG_MODE:
     logging.warning("CDA: System will not reboot after exiting program.")
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+
+# Establish serial connection to the pump controllers
+if not LOCAL_TESTING:
+    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+else:
+    ser = SerialStub()
+pumps = PumpNetwork(ser)
 
 # Set constants
 if device.DEVICE_TYPE == "R0":
