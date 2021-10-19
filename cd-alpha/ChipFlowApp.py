@@ -59,12 +59,8 @@ DEBUG_MODE = False
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
 # Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = "/protocols/v0-protocol-14v0.json"
+PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
 
-# TODO: why are these here?
-# PROTOCOL_FILE_NAME = "cda-protocol-v02.json"
-# PROTOCOL_FILE_NAME = "cda-quick-run.json"
-# PROTOCOL_FILE_NAME = "cda-custom.json"
 
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
@@ -474,7 +470,7 @@ class ProcessWindow(BoxLayout):
         self.progress_screen_names = []
 
         # Load protocol and add screens accordingly
-        with open("/home/pi/cd-alpha/" + protocol_file_name, 'r') as f:
+        with open("/home/pi/cd-alpha/protocols/" + protocol_file_name, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         for name, step in protocol.items():
