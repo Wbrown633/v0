@@ -47,10 +47,10 @@ else:
     DEBUG_MODE = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     logging.basicConfig(
-    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-    filemode='w',
-    datefmt="%Y-%m-%d_%H:%M:%S",
-    level=logging.DEBUG)
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
     logging.info("Logging started")
 
 
