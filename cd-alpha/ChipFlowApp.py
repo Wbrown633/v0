@@ -474,7 +474,7 @@ class RoundedButton(Widget):
 class AbortButton(Button):
     pass
 
-
+# TODO : Add ability to skip when in DEBUG mode
 class ProcessWindow(BoxLayout):
 
     def __init__(self, *args, **kwargs):
@@ -506,6 +506,7 @@ class ProcessWindow(BoxLayout):
                 )
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(this_screen.ids.progress_bar_layout)
+                    this_screen.children[0].remove_widget(this_screen.ids.skip_button_layout)
             else:
                 if screen_type is None:
                     raise TypeError(

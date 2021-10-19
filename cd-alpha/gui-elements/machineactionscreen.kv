@@ -32,6 +32,18 @@
                     text_size: self.width, None
                     height: self.texture_size[1]
                     halign: "center"
+        BoxLayout:
+            id: skip_button_layout
+            orientation: "horizontal"
+            size_hint_y: None
+            
+            RoundedButton:
+                on_release: app.root.next_step()
+                padding: 20, 20
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: "Skip"
+                bold: True
 
         BoxLayout:
             id: progress_bar_layout
