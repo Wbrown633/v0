@@ -36,10 +36,12 @@
             id: skip_button_layout
             orientation: "horizontal"
             size_hint_y: None
+            padding: 20
+            spacing: 20
             
             RoundedButton:
                 on_release: app.root.next_step()
-                padding: 20, 20
+                padding: 80, 20
                 size_hint_y: None
                 height: self.texture_size[1]
                 text: "Skip"
