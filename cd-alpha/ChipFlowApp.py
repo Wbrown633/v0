@@ -44,10 +44,12 @@ if sys.platform.startswith('win32'):
     PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
     DEBUG_MODE = True
 else:
+    # Normal production mode
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
     PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
     DEBUG_MODE = False
+    LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     logging.basicConfig(
         filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
