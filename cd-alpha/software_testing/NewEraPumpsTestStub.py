@@ -16,14 +16,14 @@ class PumpNetwork:
     def _get_response(self):
         output = []
         first_char = self.ser.readline(1)
-        if first_char != b'\x02':
-            raise IOError('Not correctly formated response. First character was {:}, expected 0x02'.format(first_char))
-        while True:
-            c = self.ser.readline(1)
-            if c == b'\x03': break  # ETX (End of text). Stop looking for response characters.
-            elif c == '':
-                raise IOError('Response read timed out')
-            output.append(c.decode('utf8'))
+        #if first_char != b'\x02':
+        #    raise IOError('Not correctly formated response. First character was {:}, expected 0x02'.format(first_char))
+        #while True:
+        #    c = self.ser.readline(1)
+        #    if c == b'\x03': break  # ETX (End of text). Stop looking for response characters.
+        #    elif c == '':
+        #        raise IOError('Response read timed out')
+        #    output.append(c.decode('utf8'))
         response = "".join(output)
         logging.debug(f"NEP: Got response: {response}")
         return response

@@ -2,6 +2,9 @@
 
 __version__ = '0.1.1'
 
+import logging
+
+
 IOCTL_I2C_SLAVE = 0x0703
 
 
@@ -16,8 +19,8 @@ class Nano(object):
 
     def __init__(self, device, bus, address=IOCTL_I2C_SLAVE):
         # I/O streams 
-        self._fr = io.open("/dev/i2c-" + str(bus), "rb", buffering=0)
-        self._fw = io.open("/dev/i2c-" + str(bus), "wb", buffering=0)
+        self._fr = "" # io.open("/dev/i2c-" + str(bus), "rb", buffering=0)
+        self._fw = "" # io.open("/dev/i2c-" + str(bus), "wb", buffering=0)
         self.d2 = False
         self.d3 = False
         self.d4 = False
@@ -25,26 +28,30 @@ class Nano(object):
 
         # Set device address
         # WHILE TESTING THIS IS ONLY A LOG WRITE
-        fcntl.ioctl(self._fr, address, device)
-        fcntl.ioctl(self._fw, address, device)
+        #fcntl.ioctl(self._fr, address, device)
+        #fcntl.ioctl(self._fw, address, device)
 
         self.update()
 
     def update(self):
         '''Ask Nano for status and update variables'''
-        payload = self._read(1)
-        self.d2 = bool((payload[0] >> 7) & 0x01)
-        self.d3 = bool((payload[0] >> 6) & 0x01)
-        self.d4 = bool((payload[0] >> 5) & 0x01)
-        self.d5 = bool((payload[0] >> 4) & 0x01)
+        #payload = self._read(1)
+        #self.d2 = bool((payload[0] >> 7) & 0x01)
+        #self.d3 = bool((payload[0] >> 6) & 0x01)
+        #self.d4 = bool((payload[0] >> 5) & 0x01)
+        #self.d5 = bool((payload[0] >> 4) & 0x01)
+        pass
 
 
     def _write(self, data: bytes):
-        self._fw.write(data)
+        logging.warning("DATA NOT WRITTEN WHEN USING STUB")
+        #self._fw.write(data)
 
     def _read(self, noof_bytes):
-        return self._fr.read(noof_bytes)
+        logging.warning("RETURNED CANNED ANSWER FOR NANO")
+        return b'/0x01' #self._fr.read(noof_bytes)
 
     def close(self):
-        self._fw.close()
-        self._fr.close()
+        #self._fw.close()
+        #self._fr.close()
+        logging.warning("DO NOT HAVE TO CLOSE NANO STUB")
