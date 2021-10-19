@@ -33,10 +33,10 @@ if sys.platform.startswith('win32'):
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
     logging.basicConfig(
-    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-    filemode='w',
-    datefmt="%Y-%m-%d_%H:%M:%S",
-    level=logging.DEBUG)
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
     logging.info("Logging started")
     from software_testing.NanoControllerTestStub import Nano
     from software_testing.NewEraPumpsTestStub import PumpNetwork
