@@ -233,7 +233,7 @@ class ChipFlowScreen(Screen):
     def __init__(self, *args, **kwargs):
         self.header_text = kwargs.pop("header", "Header")
         self.description_text = kwargs.pop("description", "Description.")
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
     def next_step(self, *args, **kwargs):
         self.parent.next_step()
