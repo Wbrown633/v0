@@ -72,6 +72,7 @@ Builder.load_file('gui-elements/progressdot.kv')
 Builder.load_file('gui-elements/circlebutton.kv')
 Builder.load_file('gui-elements/errorpopup.kv')
 Builder.load_file('gui-elements/abortpopup.kv')
+Builder.load_file('gui-elements/homescreen.kv')
 
 device = Device("device_config.json")
 # Change the value in the config file to change which protocol is in use
@@ -232,7 +233,7 @@ class ChipFlowScreen(Screen):
     def __init__(self, *args, **kwargs):
         self.header_text = kwargs.pop("header", "Header")
         self.description_text = kwargs.pop("description", "Description.")
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def next_step(self, *args, **kwargs):
         self.parent.next_step()
@@ -251,6 +252,11 @@ class UserActionScreen(ChipFlowScreen):
 
     def __init__(self, *args, **kwargs):
         self.next_text = kwargs.pop('next_text', 'Next')
+        super().__init__(*args, **kwargs)
+
+class HomeScreen(ChipFlowScreen):
+
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
@@ -582,6 +588,9 @@ class RoundedButton(Widget):
 class AbortButton(Button):
     pass
 
+class LoadButton(Button):
+    pass
+
 # TODO : Add ability to skip when in DEBUG mode
 class ProcessWindow(BoxLayout):
 
@@ -613,7 +622,17 @@ class ProcessWindow(BoxLayout):
         for name, step in protocol.items():
             screen_type = step.get("type", None)
             if screen_type == "UserActionScreen":
-                this_screen = UserActionScreen(
+                if name == "home":
+                    logging.info("Adding Home screen")
+                    this_screen = HomeScreen(
+                    name,
+                    header=step.get('header', 'NO HEADER'),
+                    description=step.get('description', 'NO DESCRIPTION'),
+                    next_text=step.get('next_text', 'Next')
+                    
+                )
+                else:
+                    this_screen = UserActionScreen(
                     name=name,
                     header=step.get('header', 'NO HEADER'),
                     description=step.get('description', 'NO DESCRIPTION'),
