@@ -566,6 +566,10 @@ class AbortPopup(Popup):
         self.confirm_action()
         self.dismiss()
 
+class ProtocolChooser(FloatLayout):
+    def load(self, path, filename):
+        logging.info("Filename: {}  was chosen. Path: {}", filename, path)
+
 
 class CircleButton(Widget):
     pass
