@@ -73,6 +73,7 @@ Builder.load_file('gui-elements/circlebutton.kv')
 Builder.load_file('gui-elements/errorpopup.kv')
 Builder.load_file('gui-elements/abortpopup.kv')
 Builder.load_file('gui-elements/homescreen.kv')
+Builder.load_file('gui-elements/protocolchooser.kv')
 
 device = Device("device_config.json")
 # Change the value in the config file to change which protocol is in use
@@ -259,6 +260,10 @@ class HomeScreen(ChipFlowScreen):
     def __init__(self, *args, **kwargs):
         self.next_text = kwargs.pop('next_text', 'Next')
         super().__init__(*args, **kwargs)
+
+    def load_protocol(self, *args, **kwargs):
+        logging.info("Load button pressed!")
+        self.manager.current = "protocol_chooser"
 
 
 class MachineActionScreen(ChipFlowScreen):
@@ -573,9 +578,13 @@ class AbortPopup(Popup):
         self.confirm_action()
         self.dismiss()
 
-class ProtocolChooser(FloatLayout):
+class ProtocolChooser(Screen):
+    
     def load(self, path, filename):
         logging.info("Filename: {}  was chosen. Path: {}", filename, path)
+    
+    def cancel(self):
+        logging.info("Cancel")
 
 
 class CircleButton(Widget):
@@ -681,6 +690,8 @@ class ProcessWindow(BoxLayout):
             size_hint_x=None,
             on_release=self.show_abort_popup
         )
+        protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
+        self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
@@ -751,7 +762,7 @@ class ProcessWindow(BoxLayout):
         if self.process_sm.current in self.progress_screen_names:
             pos = self.progress_screen_names.index(self.process_sm.current)
             self.overall_progress_bar.set_position(pos)
-
+  
     def cleanup(self):
         # Global cleanup
         cleanup()

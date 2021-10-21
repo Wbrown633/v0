@@ -1,6 +1,9 @@
 #:kivy 1.11.0
 
 <HomeScreen>:
+    name: "home"
+    id: home
+
     BoxLayout:
         orientation: 'vertical'
         padding: 0
@@ -39,7 +42,7 @@
             spacing: 10
             
             RoundedButton:
-                on_release: pass
+                on_release: root.load_protocol()
                 size_hint_y: None
                 height: self.texture_size[1]
                 text: "Load Protocol"
