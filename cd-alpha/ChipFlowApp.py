@@ -233,7 +233,7 @@ class ChipFlowScreen(Screen):
     def __init__(self, *args, **kwargs):
         self.header_text = kwargs.pop("header", "Header")
         self.description_text = kwargs.pop("description", "Description.")
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def next_step(self, *args, **kwargs):
         self.parent.next_step()
@@ -257,6 +257,7 @@ class UserActionScreen(ChipFlowScreen):
 class HomeScreen(ChipFlowScreen):
 
     def __init__(self, *args, **kwargs):
+        self.next_text = kwargs.pop('next_text', 'Next')
         super().__init__(*args, **kwargs)
 
 
@@ -623,7 +624,6 @@ class ProcessWindow(BoxLayout):
             screen_type = step.get("type", None)
             if screen_type == "UserActionScreen":
                 if name == "home":
-                    logging.info("Adding Home screen")
                     this_screen = HomeScreen(
                     name,
                     header=step.get('header', 'NO HEADER'),
