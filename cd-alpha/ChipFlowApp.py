@@ -582,6 +582,8 @@ class ProtocolChooser(Screen):
     
     def load(self, path, filename):
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
+        PATH_TO_PROTOCOLS = path
+        self.manager.current = "home"
     
     def cancel(self):
         logging.info("Cancel")

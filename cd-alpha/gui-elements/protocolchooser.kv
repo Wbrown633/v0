@@ -3,17 +3,28 @@
         size: root.size
         pos: root.pos
         orientation: "vertical"
+        padding: 10, 10
+        spacing: 10
+
         FileChooserIconView:
             id: filechooser
             path: "./protocols"
+            filters: "*.json"
+            padding: 10, 50
 
         BoxLayout:
             size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.cancel()
+            padding: 20, 20
+            spacing: 10 
 
-            Button:
+            RoundedButton:
+                text: "Cancel"
+                bold: True
+                on_release: root.cancel()
+                size: self.texture_size
+
+            RoundedButton:
                 text: "Load"
+                bold: True
                 on_release: root.load(filechooser.path, filechooser.selection)
+                size: self.texture_size
