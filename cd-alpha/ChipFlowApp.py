@@ -581,10 +581,11 @@ class AbortPopup(Popup):
 class ProtocolChooser(Screen):
     
     def load(self, path, filename):
-        logging.info("Filename: {}  was chosen. Path: {}", filename, path)
+        logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
     
     def cancel(self):
         logging.info("Cancel")
+        self.manager.current = "home"
 
 
 class CircleButton(Widget):
