@@ -469,6 +469,10 @@ class MachineActionScreen(ChipFlowScreen):
     def on_enter(self):
         self.start()
 
+    def skip(self):
+        logging.warning("Skip button pressed, stopping motor and moving to next step! If the motor is currently moving this will leave the test in an unknown state.")
+        self.next_step()
+
 
 class ActionDoneScreen(ChipFlowScreen):
 

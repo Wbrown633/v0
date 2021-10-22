@@ -8,7 +8,7 @@ class SerialStub:
         return b'\x02' 
 
     def write(self, write_string):
-        logging.warning('String: {} was written'.format(write_string))
+        logging.info('String: {} was written'.format(write_string))
 
     def close(self):
         logging.info('CLOSING SERIAL STUB')
