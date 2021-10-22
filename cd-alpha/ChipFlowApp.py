@@ -586,7 +586,7 @@ class ProtocolChooser(Screen):
     
     def load(self, path, filename):
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        PATH_TO_PROTOCOLS = path
+        App.path = path
         self.manager.current = "home"
     
     def cancel(self):
@@ -612,14 +612,15 @@ class LoadButton(Button):
 class ProcessWindow(BoxLayout):
 
     def __init__(self, *args, **kwargs):
-        protocol_file_name = kwargs.pop("protocol_file_name")
+        self.protocol_file_name = kwargs.pop("protocol_file_name")
         super().__init__(*args, **kwargs)
 
         self.process_sm = ProcessScreenManager(main_window=self)
         self.progress_screen_names = []
 
+        # TODO: break protocol loading into its own method
         # Load protocol and add screens accordingly
-        with open(PATH_TO_PROTOCOLS + protocol_file_name, 'r') as f:
+        with open(PATH_TO_PROTOCOLS + self.protocol_file_name, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         if START_STEP not in protocol.keys():
@@ -774,6 +775,9 @@ class ProcessWindow(BoxLayout):
         # Global cleanup
         cleanup()
         #TODO: Any local cleanup?
+    
+    def load_protocol(self, path_to_protocol):
+        pass 
 
 
 class ChipFlowApp(App):
