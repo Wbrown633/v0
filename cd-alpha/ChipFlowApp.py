@@ -586,7 +586,7 @@ class ProtocolChooser(Screen):
     
     def load(self, path, filename):
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        self.manager.main_window.load_protocol(path)
+        self.manager.main_window.load_protocol(filename)
         self.manager.current = "home"
     
     def cancel(self):
@@ -703,6 +703,7 @@ class ProcessWindow(BoxLayout):
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
+        logging.info("Widgets in process screen manager: {}".format(self.process_sm.screen_names))
 
     def show_abort_popup(self, btn):
         popup_outside_padding = 60
@@ -778,10 +779,19 @@ class ProcessWindow(BoxLayout):
     
     def load_protocol(self, path_to_protocol):
         # Load protocol and add screens accordingly
+
+        logging.info("Screens in the screen manager {}".format(self.process_sm.screen_names))
+        screens_to_remove = self.process_sm.screens
+        for screen in screens_to_remove:
+            if screen.name != "protocol_chooser":
+                self.process_sm.remove_widget(screen)  # Remove all the screens except the protocol chooser (screen we're in)
+
+        logging.info("Screens in screen manager: {}".format(len(self.process_sm.screen_names)))
         with open(path_to_protocol, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         for name, step in protocol.items():
+
             screen_type = step.get("type", None)
             if screen_type == "UserActionScreen":
                 if name == "home":
@@ -833,6 +843,10 @@ class ProcessWindow(BoxLayout):
                         header = completion_msg
                     )
                 )
+        
+        logging.info("Screens in manager after load: {} ".format(self.process_sm.screen_names))
+        logging.info("Number of screens after load: {}".format(len(self.process_sm.screen_names)))
+        
 
 
 class ChipFlowApp(App):
