@@ -586,7 +586,7 @@ class ProtocolChooser(Screen):
     
     def load(self, path, filename):
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        App.path = path
+        self.manager.main_window.load_protocol(path)
         self.manager.current = "home"
     
     def cancel(self):
@@ -777,7 +777,62 @@ class ProcessWindow(BoxLayout):
         #TODO: Any local cleanup?
     
     def load_protocol(self, path_to_protocol):
-        pass 
+        # Load protocol and add screens accordingly
+        with open(path_to_protocol, 'r') as f:
+            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+
+        for name, step in protocol.items():
+            screen_type = step.get("type", None)
+            if screen_type == "UserActionScreen":
+                if name == "home":
+                    this_screen = HomeScreen(
+                    name,
+                    header=step.get('header', 'NO HEADER'),
+                    description=step.get('description', 'NO DESCRIPTION'),
+                    next_text=step.get('next_text', 'Next')
+                    
+                )
+                else:
+                    this_screen = UserActionScreen(
+                    name=name,
+                    header=step.get('header', 'NO HEADER'),
+                    description=step.get('description', 'NO DESCRIPTION'),
+                    next_text=step.get('next_text', 'Next')
+                )
+            elif screen_type == "MachineActionScreen":
+                this_screen = MachineActionScreen(
+                    name=name,
+                    header=step["header"],
+                    description=step.get("description", ""),
+                    action=step["action"]
+                )
+
+                # TODO: clean up how this works
+                if step.get("remove_progress_bar", False):
+                    this_screen.children[0].remove_widget(this_screen.ids.progress_bar_layout)
+                    this_screen.children[0].remove_widget(this_screen.ids.skip_button_layout)
+                
+                # Don't offer skip button in production
+                if not DEBUG_MODE:
+                    this_screen.children[0].remove_widget(this_screen.ids.skip_button_layout)
+            else:
+                if screen_type is None:
+                    raise TypeError(
+                        "Corrupt protocol. Every protocol step must contain a 'type' key.")
+                else:
+                    raise TypeError(
+                        "Corrupt protocol. Unrecognized 'type' key: {}".format(screen_type))
+            self.progress_screen_names.append(this_screen.name)
+            self.process_sm.add_widget(this_screen)
+            
+            completion_msg = step.get("completion_msg", None)
+            if completion_msg:
+                self.process_sm.add_widget(
+                    ActionDoneScreen(
+                        name = this_screen.name + "_done",
+                        header = completion_msg
+                    )
+                )
 
 
 class ChipFlowApp(App):
