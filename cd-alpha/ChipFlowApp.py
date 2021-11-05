@@ -608,7 +608,6 @@ class AbortButton(Button):
 class LoadButton(Button):
     pass
 
-# TODO : Add ability to skip when in DEBUG mode
 class ProcessWindow(BoxLayout):
 
     def __init__(self, *args, **kwargs):
@@ -780,13 +779,14 @@ class ProcessWindow(BoxLayout):
     def load_protocol(self, path_to_protocol):
         # Load protocol and add screens accordingly
 
-        logging.info("Screens in the screen manager {}".format(self.process_sm.screen_names))
+        logging.info("Screens in the screen manager {}, # {}".format(self.process_sm.screen_names, len(self.process_sm.screen_names)))
         screens_to_remove = self.process_sm.screens
+        logging.info("Screens to be removed from screen manager {}, # {}".format(screens_to_remove, len(screens_to_remove)))
         for screen in screens_to_remove:
             if screen.name != "protocol_chooser":
                 self.process_sm.remove_widget(screen)  # Remove all the screens except the protocol chooser (screen we're in)
 
-        logging.info("Screens in screen manager: {}".format(len(self.process_sm.screen_names)))
+        logging.info("Number of screens in screen manager: {}".format(len(self.process_sm.screen_names)))
         with open(path_to_protocol, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
@@ -846,6 +846,17 @@ class ProcessWindow(BoxLayout):
         
         logging.info("Screens in manager after load: {} ".format(self.process_sm.screen_names))
         logging.info("Number of screens after load: {}".format(len(self.process_sm.screen_names)))
+        logging.info("Number of duplicates after load: {}".format(self.screenduplicates(self.process_sm.screen_names)))
+
+    def screenduplicates(self, screen_names):
+        list_of_screen_names = {}
+        for name in screen_names:
+            if name not in list_of_screen_names:
+                list_of_screen_names[name] = 1
+            else:
+                list_of_screen_names[name] += 1
+        return list_of_screen_names
+
         
 
 
