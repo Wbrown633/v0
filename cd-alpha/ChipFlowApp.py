@@ -778,15 +778,18 @@ class ProcessWindow(BoxLayout):
     
     def load_protocol(self, path_to_protocol):
         # Load protocol and add screens accordingly
-
-        logging.info("Screens in the screen manager {}, # {}".format(self.process_sm.screen_names, len(self.process_sm.screen_names)))
+        # TODO: this block has some voodoo in it and seems overly complicated but makes the protocol chooser work
         screens_to_remove = self.process_sm.screens
-        logging.info("Screens to be removed from screen manager {}, # {}".format(screens_to_remove, len(screens_to_remove)))
-        for screen in screens_to_remove:
-            if screen.name != "protocol_chooser":
-                self.process_sm.remove_widget(screen)  # Remove all the screens except the protocol chooser (screen we're in)
+        if self.process_sm.has_screen("protocol_chooser"):
+            protocol_chooser = self.process_sm.get_screen("protocol_chooser")
+            screens_to_remove.remove(protocol_chooser)
+            self.process_sm.clear_widgets()
+            protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
+            self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
 
-        logging.info("Number of screens in screen manager: {}".format(len(self.process_sm.screen_names)))
+        logging.info("Number of screens in screen manager after Removal: {}".format(len(self.process_sm.screens)))
+        logging.info("Screens in screen manager after Removal: {}".format(self.process_sm.screen_names))
+
         with open(path_to_protocol, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
