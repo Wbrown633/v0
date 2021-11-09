@@ -41,7 +41,7 @@ if sys.platform.startswith('win32'):
     from software_testing.NanoControllerTestStub import Nano
     from software_testing.NewEraPumpsTestStub import PumpNetwork
     from software_testing.SerialStub import SerialStub
-    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
+    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd_alpha\\protocols\\" # TODO fix this ugliness 
     DEBUG_MODE = True
 else:
     # Normal production mode
@@ -592,6 +592,7 @@ class ProtocolChooser(Screen):
     def cancel(self):
         logging.info("Cancel")
         self.manager.current = "home"
+
 
 
 class CircleButton(Widget):

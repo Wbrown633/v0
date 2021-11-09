@@ -1,4 +1,5 @@
 <ProtocolChooser>:
+    
     BoxLayout:
         size: root.size
         pos: root.pos
@@ -8,13 +9,13 @@
         FileChooserListView:
             id: filechooser
             path: "./protocols"
-            filters: "*.json"
-
-
+            filters: ["*.json"]
+            size_hint_y: 80
+            
         BoxLayout:
             size_hint_y: None
             padding: 20, 20
-            spacing: 10 
+            spacing: 10
 
             RoundedButton:
                 text: "Cancel"
