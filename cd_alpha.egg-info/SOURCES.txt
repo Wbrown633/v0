@@ -1,0 +1,6 @@
+README.md
+setup.py
+cd_alpha.egg-info/PKG-INFO
+cd_alpha.egg-info/SOURCES.txt
+cd_alpha.egg-info/dependency_links.txt
+cd_alpha.egg-info/top_level.txt
