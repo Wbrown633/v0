@@ -585,8 +585,16 @@ class AbortPopup(Popup):
 class ProtocolChooser(Screen):
     
     def load(self, path, filename):
+        try:
+            filename = filename[0]
+        except:
+            return
+        
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        self.manager.main_window.load_protocol(filename)
+        try:
+            self.manager.main_window.load_protocol(filename)
+        except:
+            logging.error("Invalid Protocol: {}".format(filename))
         self.manager.current = "home"
     
     def cancel(self):
@@ -779,6 +787,9 @@ class ProcessWindow(BoxLayout):
     
     def load_protocol(self, path_to_protocol):
         # Load protocol and add screens accordingly
+        with open(path_to_protocol, 'r') as f:
+            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+
         # TODO: this block has some voodoo in it and seems overly complicated but makes the protocol chooser work
         screens_to_remove = self.process_sm.screens
         if self.process_sm.has_screen("protocol_chooser"):
@@ -790,12 +801,8 @@ class ProcessWindow(BoxLayout):
             protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
 
-
         logging.info("Number of screens in screen manager after Removal: {}".format(len(self.process_sm.screens)))
         logging.info("Screens in screen manager after Removal: {}".format(self.process_sm.screen_names))
-
-        with open(path_to_protocol, 'r') as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         for name, step in protocol.items():
 
