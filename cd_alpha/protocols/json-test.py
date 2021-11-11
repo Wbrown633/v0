@@ -1,23 +1,26 @@
 import json
 import sys
 from collections import OrderedDict
-from dataclasses import dataclass
-from kivy.clock import mainthread
-from dacite import from_dict
+from dataclasses import dataclass, field
+from dacite import data, from_dict
 
 PROTOCOL_FILE_NAME = "cda-protocol-v01.json"
 
 
 @dataclass
-class Step:
+class Step_Content:
     """Class to represent a step in the procedure."""
-    type: str
-    header: str
-    description: str
+    type: str = ""
+    header: str = ""
+    description: str = ""
     next_text: str = ""
-    action: dict = {}
+    action: dict[str] = field(default_factory=dict)
     remove_progress_bar: bool = False
     completion_msg: str = ""
+
+@dataclass
+class Step:
+    step: Step_Content
 
 def print_json(filepath: str):
     list_of_steps = []
@@ -31,7 +34,8 @@ def print_json(filepath: str):
         for keys, values in v.items():
             print("Key: {}, Value: {}".format(keys,values))
 
-    print("Step: " + step)
+    print(len(step))
+
             
 
 
