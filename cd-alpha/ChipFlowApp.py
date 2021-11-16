@@ -60,7 +60,7 @@ DEBUG_MODE = False
 
 # TODO: make a "/protocols" folder to organize things more
 # Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
+PROTOCOL_FILE_NAME = "v0-protocol-16v2.json"
 
 # TODO: why are these here?
 # PROTOCOL_FILE_NAME = "cda-protocol-v02.json"
