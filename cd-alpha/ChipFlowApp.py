@@ -71,7 +71,7 @@ PROTOCOL_FILE_NAME = "v0-protocol-16v2.json"
 if not DEBUG_MODE:
     # Make sure the 'real' protocol is used
     # Also change protocol name here when adjusting which protocol is in use
-    PROTOCOL_FILE_NAME = "v0-protocol-13v0.json" # TODO: address double setting file name
+    PROTOCOL_FILE_NAME = "v0-protocol-16v2.json" # TODO: address double setting file name
 else:
     logging.warning("CDA: *** DEBUG MODE ***")
 
