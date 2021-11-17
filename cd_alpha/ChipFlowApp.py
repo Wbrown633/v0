@@ -800,12 +800,15 @@ class ProcessWindow(BoxLayout):
         screens_to_remove = self.process_sm.screens
         if self.process_sm.has_screen("protocol_chooser"):
             # Start voodoo, I don't think this does anything but if you remove it the process_sm freaks out
-            protocol_chooser = self.process_sm.get_screen("protocol_chooser")
-            screens_to_remove.remove(protocol_chooser)
+            
+            #protocol_chooser = self.process_sm.get_screen("protocol_chooser")
+            #screens_to_remove.remove(protocol_chooser)
             # End voodoo
-            self.process_sm.clear_widgets()
+            self.process_sm = ProcessScreenManager(main_window=self)
             protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
+            
+            
 
         if len(self.process_sm.screens) > 1:
             logging.warning("Screen Removal was not sucessful, remaining screens should be 1")
