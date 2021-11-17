@@ -33,7 +33,7 @@ if sys.platform.startswith('win32'):
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
     logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
         filemode='w',
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
@@ -47,12 +47,12 @@ else:
     # Normal production mode
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
-    PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
+    PATH_TO_PROTOCOLS = "/home/pi/cd_alpha/protocols/"
     DEBUG_MODE = False
     LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
         filemode='w',
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
