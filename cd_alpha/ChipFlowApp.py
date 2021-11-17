@@ -587,6 +587,7 @@ class ProtocolChooser(Screen):
     def load(self, path, filename):
         try:
             filename = filename[0]
+            logging.info("Filename List: {}".format(filename))
         except:
             return
         
