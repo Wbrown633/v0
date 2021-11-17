@@ -47,7 +47,7 @@ else:
     # Normal production mode
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
-    PATH_TO_PROTOCOLS = "/home/pi/cd_alpha/protocols/"
+    PATH_TO_PROTOCOLS = "/home/pi/cd_alpha/"
     DEBUG_MODE = False
     LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
