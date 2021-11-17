@@ -43,6 +43,7 @@ if sys.platform.startswith('win32'):
     from software_testing.SerialStub import SerialStub
     PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd_alpha\\protocols\\" # TODO fix this ugliness 
     DEBUG_MODE = True
+    SPLIT_CHAR = "\\"
 else:
     # Normal production mode
     from NanoController import Nano
@@ -57,6 +58,7 @@ else:
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
     logging.info("Logging started")
+    SPLIT_CHAR = "/"
 
 
 kivy.require('2.0.0')
@@ -592,6 +594,9 @@ class ProtocolChooser(Screen):
             return
         
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
+        filename_split_by_delimiter = filename.split(SPLIT_CHAR)
+        filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
+
         try:
             self.manager.main_window.load_protocol(filename)
         except:
