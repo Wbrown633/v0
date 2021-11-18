@@ -595,13 +595,15 @@ class ProtocolChooser(Screen):
         
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
         filename_split_by_delimiter = filename.split(SPLIT_CHAR)
-        filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
+        #filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
 
-        try:
-            self.manager.main_window.load_protocol(filename)
-        except:
-            logging.error("Invalid Protocol: {}".format(filename))
-        self.manager.current = "home"
+        filename = filename_split_by_delimiter[-1]
+        ChipFlowApp(filename).run()
+        #try:
+            #self.manager.main_window.load_protocol(filename)
+        #except:
+            #logging.error("Invalid Protocol: {}".format(filename))
+        #self.manager.current = "home"
     
     def cancel(self):
         logging.info("Cancel")
@@ -887,9 +889,14 @@ class ProcessWindow(BoxLayout):
 
 
 class ChipFlowApp(App):
+
+    def __init__(self, protocol_file_name, **kwargs):
+        self.protocol_file_name = protocol_file_name
+        super().__init__(**kwargs)
+
     def build(self):
         logging.debug("CDA: Creating main window")
-        return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
+        return ProcessWindow(protocol_file_name=self.protocol_file_name)
 
     def on_close(self):
         cleanup()
@@ -901,7 +908,7 @@ class ChipFlowApp(App):
 
 if __name__ == '__main__':
     try:
-        ChipFlowApp().run()
+        ChipFlowApp(PROTOCOL_FILE_NAME).run()
     except:
         pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection
