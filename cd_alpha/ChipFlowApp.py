@@ -595,15 +595,13 @@ class ProtocolChooser(Screen):
         
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
         filename_split_by_delimiter = filename.split(SPLIT_CHAR)
-        #filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
+        filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
+        #filename = filename_split_by_delimiter[-1]
+        try:
+            self.manager.main_window.load_protocol(filename)
+        except:
+            logging.error("Invalid Protocol: {}".format(filename))
 
-        filename = filename_split_by_delimiter[-1]
-        App.root = ProcessWindow(protocol_file_name = filename)
-        #try:
-            #self.manager.main_window.load_protocol(filename)
-        #except:
-            #logging.error("Invalid Protocol: {}".format(filename))
-        #self.manager.current = "home"
     
     def cancel(self):
         logging.info("Cancel")
