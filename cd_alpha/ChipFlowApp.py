@@ -601,7 +601,6 @@ class ProtocolChooser(Screen):
         except BaseException as err:
             logging.error("Invalid Protocol: {}".format(filename))
             logging.error("Unexpected Error: {}, {}".format(err, type(err)))
-            logging.info(err.with_traceback())
 
     
     def cancel(self):
@@ -806,7 +805,7 @@ class ProcessWindow(BoxLayout):
             #screens_to_remove.remove(protocol_chooser)
             self.process_sm.clear_widgets()
             # End voodoo
-            self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
+            #self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
             
             
 
