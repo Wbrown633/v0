@@ -601,6 +601,7 @@ class ProtocolChooser(Screen):
         except BaseException as err:
             logging.error("Invalid Protocol: {}".format(filename))
             logging.error("Unexpected Error: {}, {}".format(err, type(err)))
+            logging.info(err.with_traceback())
 
     
     def cancel(self):
