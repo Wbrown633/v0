@@ -797,16 +797,14 @@ class ProcessWindow(BoxLayout):
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         # TODO: this block has some voodoo in it and seems overly complicated but makes the protocol chooser work
-        #screens_to_remove = self.process_sm.screens
+        screens_to_remove = self.process_sm.screens
         if self.process_sm.has_screen("protocol_chooser"):
             # Start voodoo, I don't think this does anything but if you remove it the process_sm freaks out
             
-            #protocol_chooser = self.process_sm.get_screen("protocol_chooser")
+            protocol_chooser = self.process_sm.get_screen("protocol_chooser")
             #screens_to_remove.remove(protocol_chooser)
             self.process_sm.clear_widgets()
             # End voodoo
-            self.process_sm = ProcessScreenManager(main_window=self)
-            protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
             
             
@@ -873,6 +871,7 @@ class ProcessWindow(BoxLayout):
         logging.info("Screens in manager after load: {} ".format(self.process_sm.screen_names))
         logging.info("Number of screens after load: {}".format(len(self.process_sm.screen_names)))
         logging.info("Number of duplicates after load: {}".format(self.screenduplicates(self.process_sm.screen_names)))
+        self.process_sm.current = "home"
 
     def screenduplicates(self, screen_names):
         list_of_screen_names = {}
