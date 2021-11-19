@@ -598,8 +598,9 @@ class ProtocolChooser(Screen):
         filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
         try:
             self.manager.main_window.load_protocol(filename)
-        except:
+        except BaseException as err:
             logging.error("Invalid Protocol: {}".format(filename))
+            logging.error(f"Unexpected {err=}, {type(err)=}")
 
     
     def cancel(self):
