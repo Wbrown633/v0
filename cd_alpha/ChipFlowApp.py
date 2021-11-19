@@ -803,7 +803,7 @@ class ProcessWindow(BoxLayout):
             
             protocol_chooser = self.process_sm.get_screen("protocol_chooser")
             #screens_to_remove.remove(protocol_chooser)
-            self.process_sm.clear_widgets()
+            self.process_sm.clear_widgets() #this line just isn't working on device for some reason
             # End voodoo
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
             
