@@ -53,7 +53,7 @@
                 "target": "waste",
                 "vol_ml": 1,
                 "rate_mh": 50,
-                "eq_time": 1
+                "eq_time": 0
             }
         }
     },
@@ -195,7 +195,7 @@
                 "target": "waste",
                 "vol_ml": 0.6,
                 "rate_mh": 50,
-                "eq_time": 1
+                "eq_time": 0
             }
         },
         "completion_msg": "QIAzol waste complete"
