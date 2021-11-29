@@ -126,6 +126,8 @@ class PumpNetwork:
     def buzz(self, addr='', repetitions=1):
         return self._send_command("BUZ 1 {:}".format(int(repetitions)), addr)
 
+    def reset(self, addr):
+        return self._send_command("*RESET", addr)
 
 if __name__ == '__main__':
     import time
