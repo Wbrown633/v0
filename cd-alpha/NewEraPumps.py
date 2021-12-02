@@ -140,15 +140,15 @@ if __name__ == '__main__':
     # print("SETTING ADR! ", pumps._set_addr(LYSATE_ADDR))
 
 
-    WASTE_DIAMETER_mm = 12.07
-    LYSATE_DIAMETER_mm = 12.07
+    WASTE_DIAMETER_mm = 12.55
+    LYSATE_DIAMETER_mm = 12.55
     pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
     # pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
     addr =LYSATE_ADDR#, LYSATE_ADDR]
     
     #print("STOP:", pumps.stop(addr))
-    print("Rate:", pumps.set_rate(5, 'MM', addr))
-    print("Volume:", pumps.set_volume(0.3, 'ML',  addr))
+    print("Rate:", pumps.set_rate(1.0, 'MM', addr))
+    print("Volume:", pumps.set_volume(99.0, 'ML',  addr)) # can't be larger than 100
     print("Run:", pumps.run(addr))
     # for addr in addrs:
     #     # print("Diameter:", pumps.set_diameter(diameter_mm=12.07, addr=addr))
