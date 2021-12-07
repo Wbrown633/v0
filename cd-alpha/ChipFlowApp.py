@@ -73,7 +73,8 @@ Builder.load_file('gui-elements/abortpopup.kv')
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
 # Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = "v0-protocol-13v0.json"
+PROTOCOL_FILE_NAME = "v0-protocol-17v0.json"
+
 
 
 if DEBUG_MODE:
