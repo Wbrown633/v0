@@ -5,25 +5,13 @@
 
 from collections import OrderedDict
 import json
-import sys
 import os
-
-from NanoController import Nano
-from NewEraPumps import PumpNetwork
+import sys
 from functools import partial
 import serial
 import time
 from datetime import datetime
 import logging
-time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-logging.basicConfig(
-    filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-    filemode='w',
-    datefmt="%Y-%m-%d_%H:%M:%S",
-    level=logging.DEBUG)
-
-logging.info("Logging started")
-
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -36,6 +24,36 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
+
+# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+if sys.platform.startswith('win32'):
+    LOCAL_TESTING = True
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
+    from software_testing.NanoControllerTestStub import Nano
+    from software_testing.NewEraPumpsTestStub import PumpNetwork
+    from software_testing.SerialStub import SerialStub
+    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
+    DEBUG_MODE = True
+else:
+    # Normal production mode
+    from NanoController import Nano
+    from NewEraPumps import PumpNetwork
+    PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
+    DEBUG_MODE = False
+    LOCAL_TESTING = False
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
 
 
 kivy.require('1.11.0')
@@ -52,40 +70,34 @@ Builder.load_file('gui-elements/circlebutton.kv')
 Builder.load_file('gui-elements/errorpopup.kv')
 Builder.load_file('gui-elements/abortpopup.kv')
 
-
-
-DEBUG_MODE = False
-
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-# TODO: make a "/protocols" folder to organize things more
 # Change the value here and below to edit which protocol is in use
 PROTOCOL_FILE_NAME = "v0-protocol-17v0.json"
 
-# TODO: why are these here?
-# PROTOCOL_FILE_NAME = "cda-protocol-v02.json"
-# PROTOCOL_FILE_NAME = "cda-quick-run.json"
-# PROTOCOL_FILE_NAME = "cda-custom.json"
 
 
-if not DEBUG_MODE:
-    # Make sure the 'real' protocol is used
-    # Also change protocol name here when adjusting which protocol is in use
-    PROTOCOL_FILE_NAME = "v0-protocol-17v0.json" # TODO: address double setting file name
-else:
+if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
+    logging.warning("CDA: System will not reboot after exiting program.")
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
-ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+# Establish serial connection to the pump controllers
+if not LOCAL_TESTING:
+    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+else:
+    ser = SerialStub()
 pumps = PumpNetwork(ser)
+
+# Set constants
 WASTE_ADDR = 1
 LYSATE_ADDR = 2
 WASTE_DIAMETER_mm = 12.55
 LYSATE_DIAMETER_mm = 12.55
-
 scheduled_events = []
 
+### UTIL FUNCTIONS ###
 def stop_all_pumps():
     logging.debug("CDA: Stopping all pumps.")
     for addr in [WASTE_ADDR, LYSATE_ADDR]:
@@ -130,6 +142,9 @@ def reboot():
         os.system('sudo reboot --poweroff now')
         # call("sudo reboot --poweroff now", shell=True)
 
+# TODO: Should above functions be defined in a helper file? 
+
+### MAIN ###
 
 logging.info("CDA: Starting main script.")
 
@@ -462,7 +477,7 @@ class RoundedButton(Widget):
 class AbortButton(Button):
     pass
 
-
+# TODO : Add ability to skip when in DEBUG mode
 class ProcessWindow(BoxLayout):
 
     def __init__(self, *args, **kwargs):
@@ -473,7 +488,7 @@ class ProcessWindow(BoxLayout):
         self.progress_screen_names = []
 
         # Load protocol and add screens accordingly
-        with open("/home/pi/cd-alpha/" + protocol_file_name, 'r') as f:
+        with open(PATH_TO_PROTOCOLS + protocol_file_name, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         for name, step in protocol.items():
@@ -492,8 +507,15 @@ class ProcessWindow(BoxLayout):
                     description=step.get("description", ""),
                     action=step["action"]
                 )
+
+                # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(this_screen.ids.progress_bar_layout)
+                    this_screen.children[0].remove_widget(this_screen.ids.skip_button_layout)
+                
+                # Don't offer skip button in production
+                if not DEBUG_MODE:
+                    this_screen.children[0].remove_widget(this_screen.ids.skip_button_layout)
             else:
                 if screen_type is None:
                     raise TypeError(
@@ -616,6 +638,7 @@ if __name__ == '__main__':
         ChipFlowApp().run()
     except:
         stop_all_pumps()
+        # close the serial connection
         ser.close()
         if not DEBUG_MODE:
             reboot()
