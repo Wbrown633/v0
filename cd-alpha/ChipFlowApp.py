@@ -74,11 +74,6 @@ Builder.load_file('gui-elements/abortpopup.kv')
 
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-# Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = "v0-protocol-16v2.json"
-
-
-
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
     logging.warning("CDA: System will not reboot after exiting program.")
@@ -93,6 +88,9 @@ else:
 pumps = PumpNetwork(ser)
 
 device = Device("device_config.json")
+# Change the value here and below to edit which protocol is in use
+PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
 
 # TODO: import all constants from config file 
 # Set constants
