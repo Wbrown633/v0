@@ -139,7 +139,7 @@ def reboot():
 
 logging.info("CDA: Starting main script.")
 
-stop_all_pumps()
+pumps.stop_all_pumps(list_of_pumps)
 
 pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
 pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
@@ -320,7 +320,7 @@ class MachineActionScreen(ChipFlowScreen):
             overruns.append("2 (lysate)")
             swgs[1].cancel()
         if len(overruns) > 0:
-            stop_all_pumps()
+            pumps.stop_all_pumps(list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
