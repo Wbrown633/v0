@@ -153,7 +153,8 @@ logging.info("CDA: Starting main script.")
 
 pumps.stop_all_pumps(list_of_pumps)
 
-for diam, addr in device.PUMP_DIAMETER, device.PUMP_ADDR:
+# diam and addr must be same length
+for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
     pumps.set_diameter(diameter_mm=diam, addr=addr)
 
 nano = Nano(8, 7)
