@@ -47,10 +47,10 @@ class Device:
     """    
     def __init__(self, config_file_json):
         try:
-            
-            config_file_dict = json.load(config_file_json)
-            for key in config_file_dict.keys():
-                print(key) 
+            with open(config_file_json) as f:
+                config_file_dict = json.loads(f.read())
+                for key in config_file_dict.keys():
+                    print(key) 
         
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
