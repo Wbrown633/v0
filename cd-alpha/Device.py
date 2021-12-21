@@ -78,6 +78,9 @@ class Device:
                     self.PUMP_DIAMETER = [12.4, 12.4]
             else:
                 raise ValueError("Device type was not either V0 or R0 (Case sensitive)")
+
+
+            print(vars(self))
         
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
