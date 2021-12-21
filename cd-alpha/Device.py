@@ -73,7 +73,7 @@ class Device:
                 self.DEBUG_MODE = False
 
             if not hasattr(self, "PATH_TO_PROTOCOLS"):
-                self.PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
+                self.PATH_TO_PROTOCOLS = "/home/pi/v0/cd-alpha/protocols/"
             
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
