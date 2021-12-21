@@ -92,6 +92,7 @@ else:
     ser = SerialStub()
 pumps = PumpNetwork(ser)
 
+device = Device("device_config.json")
 # TODO: import all constants from config file 
 # Set constants
 WASTE_ADDR = 1
