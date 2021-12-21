@@ -52,6 +52,7 @@ class Device:
                 config_file_dict = json.loads(f.read())
                 for req in required_values:
                     if req not in config_file_dict.keys():
+                        print(config_file_dict.keys())
                         raise KeyError("Required value {} was not found in config file".format(req))
                 for key in config_file_dict.keys():
                     print(key, config_file_dict[key])
