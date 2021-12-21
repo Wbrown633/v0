@@ -106,7 +106,7 @@ else:
     LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
 
 scheduled_events = []
-list_of_pumps = device.LIST_OF_PUMPS
+list_of_pumps = device.PUMP_ADDR
 
 
 

@@ -26,12 +26,6 @@ class Device:
         - Serial address for the pump/pump network. Defaults to "/dev/ttyUSB0" on linux 
         which shouldn't need to be changed
 
-    LIST_OF_PUMPS: list[str]
-        - for r0 default is ["WASTE"]
-        - for v0 default is ["WASTE", "LYSATE"]
-        - Should only be changed if more pumps have been added to the network, length must 
-        match the len(PUMP_ADDR) AND len(PUMP_DIAMETER)
-
     PUMP_ADDR: int or list[int]
         - Default for r0: PUMP_ADDR = 0
         - Default for v0: PUMP_ADDR = [1,2]
@@ -77,15 +71,11 @@ class Device:
             
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
-                if not hasattr(self, "LIST_OF_PUMPS"):
-                    self.LIST_OF_PUMPS = ["WASTE"]
                 if not hasattr(self, "PUMP_ADDR"):
                     self.PUMP_SERIAL_ADDR = 0
                 if not hasattr(self, "PUMP_DIAMETER"):
                     self.PUMP_DIAMETER = 12.4
             elif self.DEVICE_TYPE == "V0":
-                if not hasattr(self, "LIST_OF_PUMPS"):
-                    self.LIST_OF_PUMPS = ["WASTE", "LYSATE"]
                 if not hasattr(self, "PUMP_ADDR"):
                     self.PUMP_SERIAL_ADDR = [1,2]
                 if not hasattr(self, "PUMP_DIAMETER"):
