@@ -40,13 +40,11 @@ if sys.platform.startswith('win32'):
     from software_testing.NanoControllerTestStub import Nano
     from software_testing.NewEraPumpsTestStub import PumpNetwork
     from software_testing.SerialStub import SerialStub
-    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
-    DEBUG_MODE = True
+    
 else:
     # Normal production mode
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
-    PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
     DEBUG_MODE = False
     LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -74,11 +72,6 @@ Builder.load_file('gui-elements/abortpopup.kv')
 
 # logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
 
-if DEBUG_MODE:
-    logging.warning("CDA: *** DEBUG MODE ***")
-    logging.warning("CDA: System will not reboot after exiting program.")
-
-logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
 # Establish serial connection to the pump controllers
 if not LOCAL_TESTING:
@@ -91,6 +84,13 @@ device = Device("device_config.json")
 # Change the value here and below to edit which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
 PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+
+if DEBUG_MODE:
+    logging.warning("CDA: *** DEBUG MODE ***")
+    logging.warning("CDA: System will not reboot after exiting program.")
+
+logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+
 
 # TODO: import all constants from config file 
 # Set constants
