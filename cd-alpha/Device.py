@@ -46,6 +46,7 @@ class Device:
     
     """    
     def __init__(self, config_file_json):
+
         try:
             with open(config_file_json) as f:
                 required_values = ["DEVICE_TYPE", "DEFAULT_PROTOCOL", "PATH_TO_PROTOCOL"]
@@ -55,7 +56,28 @@ class Device:
                         print(config_file_dict.keys())
                         raise KeyError("Required value {} was not found in config file".format(req))
                 for key in config_file_dict.keys():
-                    print(key, config_file_dict[key])
+                    self.__setattr__(key, config_file_dict[key])
+            
+            # Set univeral defaults
+            if not hasattr(self, "PUMP_SERIAL_ADDR"):
+                self.PUMP_SERIAL_ADDR = "/dev/ttyUSB0"
+
+            if not hasattr(self, "DEBUG_MODE"):
+                self.DEBUG_MODE = False
+            
+            # Set defaults based on device type
+            if self.DEVICE_TYPE == "R0":
+                if not hasattr(self, "PUMP_ADDR"):
+                    self.PUMP_SERIAL_ADDR = 0
+                if not hasattr(self, "PUMP_DIAMETER"):
+                    self.PUMP_DIAMETER = 12.4
+            elif self.DEVICE_TYPE == "V0":
+                if not hasattr(self, "PUMP_ADDR"):
+                    self.PUMP_SERIAL_ADDR = [1,2]
+                if not hasattr(self, "PUMP_DIAMETER"):
+                    self.PUMP_DIAMETER = [12.4, 12.4]
+            else:
+                raise ValueError("Device type was not either V0 or R0 (Case sensitive)")
         
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
