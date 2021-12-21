@@ -96,18 +96,9 @@ LYSATE_ADDR = 2
 WASTE_DIAMETER_mm = 12.55
 LYSATE_DIAMETER_mm = 12.55
 scheduled_events = []
+list_of_pumps = [WASTE_ADDR, LYSATE_ADDR]
 
 ### UTIL FUNCTIONS ###
-def stop_all_pumps():
-    logging.debug("CDA: Stopping all pumps.")
-    for addr in [WASTE_ADDR, LYSATE_ADDR]:
-        try:
-            pumps.stop(addr)
-        except IOError as err:
-            if str(err)[-3:] == "?NA":
-                logging.debug(f"CDA: Pump {addr:02} already stopped.")
-            else:
-                raise
 
 
 def cleanup():
@@ -119,7 +110,7 @@ def cleanup():
             se.cancel()
         except AttributeError: pass
     scheduled_events = []
-    stop_all_pumps()
+    pumps.stop_all_pumps(list_of_pumps)
 
 
 def shutdown():
@@ -637,7 +628,7 @@ if __name__ == '__main__':
     try:
         ChipFlowApp().run()
     except:
-        stop_all_pumps()
+        pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection
         ser.close()
         if not DEBUG_MODE:
