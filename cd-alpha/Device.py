@@ -50,7 +50,7 @@ class Device:
             with open(config_file_json) as f:
                 config_file_dict = json.loads(f.read())
                 for key in config_file_dict.keys():
-                    print(key) 
+                    print(key, config_file_dict[key]) 
         
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
