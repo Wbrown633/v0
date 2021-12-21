@@ -26,8 +26,8 @@ class Device:
         - Serial address for the pump/pump network. Defaults to "/dev/ttyUSB0" on linux 
         which shouldn't need to be changed
 
-    PUMP_ADDR: int or list[int]
-        - Default for r0: PUMP_ADDR = 0
+    PUMP_ADDR: list[int]
+        - Default for r0: PUMP_ADDR = [0]
         - Default for v0: PUMP_ADDR = [1,2]
         - See NE-500 / NE-501 user manual for instructions on changing
 
@@ -72,7 +72,7 @@ class Device:
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
                 if not hasattr(self, "PUMP_ADDR"):
-                    self.PUMP_SERIAL_ADDR = 0
+                    self.PUMP_SERIAL_ADDR = [0]
                 if not hasattr(self, "PUMP_DIAMETER"):
                     self.PUMP_DIAMETER = 12.4
             elif self.DEVICE_TYPE == "V0":
