@@ -93,14 +93,20 @@ else:
 pumps = PumpNetwork(ser)
 
 device = Device("device_config.json")
+
 # TODO: import all constants from config file 
 # Set constants
-WASTE_ADDR = 1
-LYSATE_ADDR = 2
-WASTE_DIAMETER_mm = 12.55
-LYSATE_DIAMETER_mm = 12.55
+if device.DEVICE_TYPE == "R0":
+    WASTE_ADDR = device.PUMP_ADDR
+    WASTE_DIAMETER_mm = device.PUMP_DIAMETER
+else:
+    WASTE_ADDR = device.PUMP_ADDR[0]
+    LYSATE_ADDR = device.PUMP_ADDR[1]
+    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+    LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
+
 scheduled_events = []
-list_of_pumps = [WASTE_ADDR, LYSATE_ADDR]
+list_of_pumps = device.LIST_OF_PUMPS
 
 
 
