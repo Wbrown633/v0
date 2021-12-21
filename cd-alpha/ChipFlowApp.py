@@ -157,7 +157,10 @@ pumps.stop_all_pumps(list_of_pumps)
 for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
     pumps.set_diameter(diameter_mm=diam, addr=addr)
 
-nano = Nano(8, 7)
+if device.DEVICE_TYPE == "V0":
+    nano = Nano(8, 7)
+else:
+    nano = None
 
 progressbar_update_interval = .5
 switch_update_interval = .1
@@ -297,6 +300,8 @@ class MachineActionScreen(ChipFlowScreen):
                 
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):
+        if nano is None:
+            raise IOError("No switches on the R0 should not be calling a switch reset!")
         nano.update()
         if not getattr(nano, switch):
             logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
@@ -308,6 +313,8 @@ class MachineActionScreen(ChipFlowScreen):
             return False
 
     def switched_grab(self, switch, addr, max_count, final_action, post_run_rate_mm, post_run_vol_ml, dt):
+        if nano is None:
+            raise IOError("No switches on the R0 should not be calling switch grab!")
         nano.update()
         if not getattr(nano, switch):
             logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
@@ -324,6 +331,8 @@ class MachineActionScreen(ChipFlowScreen):
             return False
 
     def grab_overrun_check(self, swgs, dt):
+        if nano is None:
+            raise IOError("No switches on the R0, should not be calling grab_overrrun_check!")
         nano.update()
         overruns = []
         if getattr(nano, 'd4'):
