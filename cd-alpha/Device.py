@@ -48,9 +48,13 @@ class Device:
     def __init__(self, config_file_json):
         try:
             with open(config_file_json) as f:
+                required_values = ["DEVICE_TYPE", "DEFAULT_PROTOCOL", "PATH_TO_PROTOCOL"]
                 config_file_dict = json.loads(f.read())
+                for req in required_values:
+                    if req not in config_file_dict.keys():
+                        raise KeyError("Required value {} was not found in config file".format(req))
                 for key in config_file_dict.keys():
-                    print(key, config_file_dict[key]) 
+                    print(key, config_file_dict[key])
         
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
