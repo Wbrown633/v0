@@ -68,7 +68,7 @@ class PumpNetwork:
     def stop(self, addr=''):
         return self._send_command('STP', addr)
 
-    def stop_all_pumps(list_of_pumps=[1,2]):
+    def stop_all_pumps(self, list_of_pumps=[1,2]):
         logging.debug("CDA: Stopping all pumps.")
         for addr in list_of_pumps:
             try:
