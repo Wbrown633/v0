@@ -1,3 +1,4 @@
 # Ignore the virtual environment
 v0/**
 logs/**
+workspace.code-workspace
