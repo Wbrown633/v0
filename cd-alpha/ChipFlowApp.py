@@ -12,6 +12,7 @@ import serial
 import time
 from datetime import datetime
 import logging
+from Device import Device
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -26,6 +27,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+# TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if sys.platform.startswith('win32'):
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
@@ -90,6 +92,7 @@ else:
     ser = SerialStub()
 pumps = PumpNetwork(ser)
 
+# TODO: import all constants from config file 
 # Set constants
 WASTE_ADDR = 1
 LYSATE_ADDR = 2
@@ -97,6 +100,8 @@ WASTE_DIAMETER_mm = 12.55
 LYSATE_DIAMETER_mm = 12.55
 scheduled_events = []
 list_of_pumps = [WASTE_ADDR, LYSATE_ADDR]
+
+
 
 ### UTIL FUNCTIONS ###
 
