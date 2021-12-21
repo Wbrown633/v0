@@ -153,8 +153,8 @@ logging.info("CDA: Starting main script.")
 
 pumps.stop_all_pumps(list_of_pumps)
 
-pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
-pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
+for diam, addr in device.PUMP_DIAMETER, device.PUMP_ADDR:
+    pumps.set_diameter(diameter_mm=diam, addr=addr)
 
 nano = Nano(8, 7)
 
