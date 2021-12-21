@@ -78,12 +78,12 @@ class Device:
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
                 if not hasattr(self, "PUMP_ADDR"):
-                    self.PUMP_SERIAL_ADDR = [R0_PUMP_ADDR_DEFAULT]
+                    self.PUMP_ADDR = [R0_PUMP_ADDR_DEFAULT]
                 if not hasattr(self, "PUMP_DIAMETER"):
                     self.PUMP_DIAMETER = [R0_PUMP_DIAMETER_DEFAULT]
             elif self.DEVICE_TYPE == "V0":
                 if not hasattr(self, "PUMP_ADDR"):
-                    self.PUMP_SERIAL_ADDR = [V0_WASTE_ADDR_DEFAULT,V0_LYSATE_ADDR_DEFAULT]
+                    self.PUMP_ADDR = [V0_WASTE_ADDR_DEFAULT,V0_LYSATE_ADDR_DEFAULT]
                 if not hasattr(self, "PUMP_DIAMETER"):
                     self.PUMP_DIAMETER = [V0_WASTE_DIAMETER_DEFAULT, V0_LYSATE_DIAMETER_DEFAULT]
             else:
