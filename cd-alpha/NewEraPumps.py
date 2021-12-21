@@ -72,7 +72,7 @@ class PumpNetwork:
         logging.debug("CDA: Stopping all pumps.")
         for addr in list_of_pumps:
             try:
-                pumps.stop(addr)
+                self.stop(addr)
             except IOError as err:
                 if str(err)[-3:] == "?NA":
                     logging.debug(f"CDA: Pump {addr:02} already stopped.")
