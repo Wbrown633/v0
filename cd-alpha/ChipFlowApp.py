@@ -28,8 +28,8 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 
 from kivy.config import Config
 # For R0 debug
-Config.set('graphics', 'width', '200')
-Config.set('graphics', 'height', '200')
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '400')
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 # TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if sys.platform.startswith('win32'):
