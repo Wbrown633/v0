@@ -19,7 +19,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 0
             }
         },
@@ -43,8 +43,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1,
-                "rate_mh": 50,
+                "vol_ml": 0.2,
+                "rate_mh": -50,
                 "eq_time": 0
             }
         }
@@ -73,7 +73,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.85,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 120
             }
         },
@@ -92,7 +92,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1.2,
-                "rate_mh": 10,
+                "rate_mh": -10,
                 "eq_time": 120
             }
         },
@@ -111,7 +111,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.2,
-                "rate_mh": 10,
+                "rate_mh": -10,
                 "eq_time": 120
             }
         },
@@ -130,7 +130,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.4,
-                "rate_mh": 10,
+                "rate_mh": -10,
                 "eq_time": 120
             }
         },
@@ -145,7 +145,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.4,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 120
             }
         },
@@ -165,7 +165,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1.2,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 120
             }
         },
@@ -186,7 +186,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.6,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 0
             }
         },
@@ -207,7 +207,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.1,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 300
             }
         },
@@ -229,7 +229,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.8,
-                "rate_mh": 50,
+                "rate_mh": -50,
                 "eq_time": 120
             }
         }
