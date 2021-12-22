@@ -99,8 +99,8 @@ logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 # TODO: import all constants from config file 
 # Set constants
 if device.DEVICE_TYPE == "R0":
-    WASTE_ADDR = device.PUMP_ADDR
-    WASTE_DIAMETER_mm = device.PUMP_DIAMETER
+    WASTE_ADDR = device.PUMP_ADDR[0]
+    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
 else:
     WASTE_ADDR = device.PUMP_ADDR[0]
     LYSATE_ADDR = device.PUMP_ADDR[1]
