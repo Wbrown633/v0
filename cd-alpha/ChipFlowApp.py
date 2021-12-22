@@ -26,6 +26,10 @@ from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 
+from kivy.config import Config
+# For R0 debug
+Config.set('graphics', 'width', '200')
+Config.set('graphics', 'height', '200')
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 # TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if sys.platform.startswith('win32'):
@@ -270,7 +274,7 @@ class MachineActionScreen(ChipFlowScreen):
                             LYSATE_ADDR, 2, self.next_step),
                     switch_update_interval
                 ))
-
+            #TODO: make this work on r0
             if action == 'GRAB':
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
