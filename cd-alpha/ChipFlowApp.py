@@ -241,6 +241,7 @@ class MachineActionScreen(ChipFlowScreen):
                 eq_time = params.get('eq_time', 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
+                logging.info("Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, 'MH', addr)
                 pumps.set_volume(vol_ml, 'ML',  addr)
                 pumps.run(addr)
