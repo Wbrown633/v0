@@ -109,6 +109,7 @@ else:
 
 scheduled_events = []
 list_of_pumps = device.PUMP_ADDR
+DEBUG_MODE = device.DEBUG_MODE
 
 
 
@@ -257,6 +258,8 @@ class MachineActionScreen(ChipFlowScreen):
             if action == 'RESET':
                 # TODO: set progress bar to be invisible
                 # Go down for a little while, in case forks are already in position
+                if device.DEVICE_TYPE == "R0":
+                    return
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     pumps.purge(1, addr)
                 time.sleep(1)
