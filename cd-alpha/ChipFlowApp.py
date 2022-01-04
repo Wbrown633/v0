@@ -28,7 +28,7 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.config import Config
 # For R0 debug
-Window.fullscreen = True
+Window.fullscreen = 'auto'
 #Config.set('graphics', 'width', '800')
 #Config.set('graphics', 'height', '400')
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
