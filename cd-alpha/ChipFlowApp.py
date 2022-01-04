@@ -25,11 +25,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
-
+from kivy.core.window import Window
 from kivy.config import Config
 # For R0 debug
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '400')
+Window.fullscreen = True
+#Config.set('graphics', 'width', '800')
+#Config.set('graphics', 'height', '400')
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 # TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if sys.platform.startswith('win32'):
