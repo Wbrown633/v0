@@ -27,10 +27,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.config import Config
-# For R0 debug
-Window.fullscreen = 'auto'
-#Config.set('graphics', 'width', '800')
-#Config.set('graphics', 'height', '400')
+
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 # TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if sys.platform.startswith('win32'):
@@ -50,6 +47,8 @@ else:
     # Normal production mode
     from NanoController import Nano
     from NewEraPumps import PumpNetwork
+    # For R0 debug
+    Window.fullscreen = 'auto'
     DEBUG_MODE = False
     LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
