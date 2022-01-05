@@ -5,16 +5,6 @@
         "description": "Ready for a new test with protocol 16v2. Press 'Start' to begin.",
         "next_text": "Start"
     },
-    "reset_start": {
-        "type": "MachineActionScreen",
-        "header": "Initialization",
-        "description": "Initializing device. Resetting syringe positions and checking connections.",
-        "action": {
-            "RESET": {}
-        },
-        "remove_progress_bar": true,
-        "completion_msg": "Machine has been homed"
-    },
     "insert_syringes": {
         "type": "UserActionScreen",
         "header": "Insert syringes",
