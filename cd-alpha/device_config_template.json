@@ -3,8 +3,8 @@
     "device_type":"R0",
     "default_script":"ExoT_r0_script_13v1.py",
     "path_to_scripts":"",
-    "pump_serial_addr":"/dev/ttyUSB0",
-    "pump_addr":2,
+    "pump_serial_addr":"",
+    "pump_addr":[2],
     "pump_diameter":12.4,
-    "debug_mode":false
+    "debug_mode":true
 }

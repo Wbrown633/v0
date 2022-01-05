@@ -124,4 +124,17 @@ class PumpNetwork:
 
     def buzz(self, addr='', repetitions=1):
         return self._send_command("BUZ 1 {:}".format(int(repetitions)), addr)
+    
+    def stop_all_pumps(self, list_of_pumps=[1,2]):
+        logging.debug("CDA: Stopping all pumps.")
+        for addr in list_of_pumps:
+            try:
+                self.stop(addr)
+            except IOError as err:
+                if str(err)[-3:] == "?NA":
+                    logging.debug(f"CDA: Pump {addr:02} already stopped.")
+                else:
+                    raise        
+
+    
 
