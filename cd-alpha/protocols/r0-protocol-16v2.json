@@ -2,13 +2,23 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 17v0. Press 'Start' to begin.",
+        "description": "Ready for a new test with protocol 16v2. Press 'Start' to begin.",
         "next_text": "Start"
+    },
+    "reset_start": {
+        "type": "MachineActionScreen",
+        "header": "Initialization",
+        "description": "Initializing device. Resetting syringe positions and checking connections.",
+        "action": {
+            "RESET": {}
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "Machine has been homed"
     },
     "insert_syringes": {
         "type": "UserActionScreen",
         "header": "Insert syringes",
-        "description": "Insert the waste syringe. Press 'Start initialization' to initialize when ready.",
+        "description": "Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.",
         "next_text": "Start initialization"
     },
     "grab_syringes": {
@@ -16,11 +26,9 @@
         "header": "Grabbing syringes",
         "description": "The device is now grabbing hold of the syringes to secure a precise operation.",
         "action": {
-            "PUMP": {
-                "target": "waste",
-                "vol_ml": 0.3,
-                "rate_mh": -50,
-                "eq_time": 0
+            "GRAB": {
+                "post_run_rate_mm": 5,
+                "post_run_vol_ml": 0.3
             }
         },
         "remove_progress_bar": true,
@@ -44,8 +52,8 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1,
-                "rate_mh": -50,
-                "eq_time": 0
+                "rate_mh": 50,
+                "eq_time": 1
             }
         }
     },
@@ -63,7 +71,7 @@
     "pbs_1": {
         "type": "UserActionScreen",
         "header": "PBS rinse",
-        "description": "Add 0.8 mL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 1 mL 1xPBS to reservoir. Press 'Next' to start."
     },
     "flush_2": {
         "type": "MachineActionScreen",
@@ -72,8 +80,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.85,
-                "rate_mh": -50,
+                "vol_ml": 1.05,
+                "rate_mh": 50,
                 "eq_time": 120
             }
         },
@@ -92,7 +100,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1.2,
-                "rate_mh": -10,
+                "rate_mh": 10,
                 "eq_time": 120
             }
         },
@@ -111,7 +119,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.2,
-                "rate_mh": -10,
+                "rate_mh": 10,
                 "eq_time": 120
             }
         },
@@ -130,7 +138,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.4,
-                "rate_mh": -10,
+                "rate_mh": 10,
                 "eq_time": 120
             }
         },
@@ -145,7 +153,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.4,
-                "rate_mh": -50,
+                "rate_mh": 50,
                 "eq_time": 120
             }
         },
@@ -165,7 +173,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 1.2,
-                "rate_mh": -50,
+                "rate_mh": 50,
                 "eq_time": 120
             }
         },
@@ -174,44 +182,23 @@
 
     "qiazol": {
         "type": "UserActionScreen",
-        "header": "QIAzol",
-        "description": "Add 700 µL QIAzol to reservoir. Press 'Next' to start."
+        "header": "RIPA",
+        "description": "Add 600 µL RIPA to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
         "type": "MachineActionScreen",
-        "header": "QIAzol 1",
-        "description": "Pulling QIAzol into chip.",
+        "header": "RIPA 1",
+        "description": "Pulling RIPA into chip.",
         "action": {
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.6,
-                "rate_mh": -50,
-                "eq_time": 0
-            }
-        },
-        "completion_msg": "QIAzol waste complete"
-    },
-
-    "switch_syringe": {
-        "type": "UserActionScreen",
-        "header": "Lysate Syringe Switch",
-        "description": "Switch to 5 mL lysate syringe. Press 'Next' to start."
-    },
-
-    "extract_2": {
-        "type": "MachineActionScreen",
-        "header": "QIAzol 2",
-        "description": "Pulling QIAzol into chip.",
-        "action": {
-            "PUMP": {
-                "target": "waste",
-                "vol_ml": 0.1,
-                "rate_mh": -50,
+                "rate_mh": 50,
                 "eq_time": 300
             }
         },
-        "completion_msg": "QIAzol pull and incubation complete"
+        "completion_msg": "RIPA pull and incubation complete"
     },
 
 
@@ -227,9 +214,9 @@
         "description": "Extracting lysate from chip.",
         "action": {
             "PUMP": {
-                "target": "waste",
-                "vol_ml": 0.8,
-                "rate_mh": -50,
+                "target": "lysate",
+                "vol_ml": 0.7,
+                "rate_mh": 50,
                 "eq_time": 120
             }
         }
@@ -244,10 +231,9 @@
     },
     "reset_end": {
         "type": "MachineActionScreen",
-        "header": "End of Test",
-        "description": "Abort test to begin a new test, or reboot.",
+        "header": "End of test, please abort test to start a new test",
+        "description": "Resetting syringe pump positions.",
         "action": {
-            "RESET": {}
         },
         "remove_progress_bar": true,
         "completion_msg": "App will restart so a new test may begin."

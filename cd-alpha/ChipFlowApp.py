@@ -88,6 +88,7 @@ device = Device("device_config.json")
 # Change the value here and below to edit which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
 PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+DEBUG_MODE = device.DEBUG_MODE
 
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
@@ -259,6 +260,7 @@ class MachineActionScreen(ChipFlowScreen):
                 # TODO: set progress bar to be invisible
                 # Go down for a little while, in case forks are already in position
                 if device.DEVICE_TYPE == "R0":
+                    logging.info("No RESET work to be done on the R0, passing to end of program")
                     return
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     pumps.purge(1, addr)
