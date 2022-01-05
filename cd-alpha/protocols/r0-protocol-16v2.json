@@ -18,7 +18,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.3,
+                "vol_ml": 0.2,
                 "rate_mh": -50,
                 "eq_time": 0
             }
@@ -193,6 +193,11 @@
         "completion_msg": "RIPA pull and incubation complete"
     },
 
+    "switch_syringe": {
+        "type": "UserActionScreen",
+        "header": "Lysate Syringe Switch",
+        "description": "Switch to 5 mL lysate syringe. Press 'Next' to start."
+    },
 
     "PBSchase": {
         "type": "UserActionScreen",
@@ -206,7 +211,7 @@
         "description": "Extracting lysate from chip.",
         "action": {
             "PUMP": {
-                "target": "lysate",
+                "target": "waste",
                 "vol_ml": 0.7,
                 "rate_mh": -50,
                 "eq_time": 120
