@@ -231,9 +231,10 @@
     },
     "reset_end": {
         "type": "MachineActionScreen",
-        "header": "End of test, please abort test to start a new test",
-        "description": "Resetting syringe pump positions.",
+        "header": "End of Test",
+        "description": "Abort test to begin a new test, or reboot.",
         "action": {
+            "RESET": {}
         },
         "remove_progress_bar": true,
         "completion_msg": "App will restart so a new test may begin."
