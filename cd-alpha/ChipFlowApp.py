@@ -305,6 +305,12 @@ class MachineActionScreen(ChipFlowScreen):
                     grab_overrun_check_interval
                 )
                 scheduled_events.append(self.grab_overrun_check_schedule)
+
+            if action == "CHANGE_SYRINGE":
+                diameter = params["diam"]
+                pump_addr = params["pump_addr"]
+                pumps.set_diameter(diameter, pump_addr)
+                logging.debug("Switching current loaded syringe to {} diam on pump {}".format(diameter, pump_addr))
                 
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):

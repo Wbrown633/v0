@@ -201,7 +201,13 @@
     "switch_syringe": {
         "type": "UserActionScreen",
         "header": "Lysate Syringe Switch",
-        "description": "Switch to 5 mL lysate syringe. Press 'Next' to start."
+        "description": "Switch to 5 mL lysate syringe. Press 'Next' to start.",
+        "action": {
+            "CHANGE_SYRINGE": {
+                "pump_addr": 2,
+                "diam": 12.45
+            }
+        }
     },
 
     "PBSchase": {
