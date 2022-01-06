@@ -18,7 +18,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.2,
+                "vol_ml": 0.8,
                 "rate_mh": -50,
                 "eq_time": 0
             }
@@ -86,7 +86,7 @@
     "add_sample": {
         "type": "UserActionScreen",
         "header": "Add sample",
-        "description": "Add 1 mL sample to reservoir. Press 'Next' to start"
+        "description": "Add 2 mL sample to reservoir. Press 'Next' to start"
     },
     "flush_3": {
         "type": "MachineActionScreen",
@@ -95,7 +95,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1.2,
+                "vol_ml": 2.2,
                 "rate_mh": -10,
                 "eq_time": 120
             }
