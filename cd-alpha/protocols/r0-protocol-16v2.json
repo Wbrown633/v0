@@ -222,7 +222,7 @@
         "description": "Extracting lysate from chip.",
         "action": {
             "PUMP": {
-                "target": "lysate",
+                "target": "waste",
                 "vol_ml": 0.7,
                 "rate_mh": -50,
                 "eq_time": 120
