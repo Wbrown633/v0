@@ -8,7 +8,7 @@
     "insert_syringes": {
         "type": "UserActionScreen",
         "header": "Insert syringes",
-        "description": "Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.",
+        "description": "Insert the 20 mL waste syringe. Press 'Start initialization' to initialize when ready.",
         "next_text": "Start initialization"
     },
     "grab_syringes": {
@@ -18,7 +18,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.8,
+                "vol_ml": 2.0,
                 "rate_mh": -50,
                 "eq_time": 0
             }
