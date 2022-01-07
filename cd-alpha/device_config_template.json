@@ -1,6 +1,7 @@
 {
     "WARNING":"This is a template for example use only, change the values before deployment!",
     "DEVICE_TYPE":"V0",
+    "DEV_MACHINE":false,
     "DEFAULT_PROTOCOL":"ExoT_r0_script_13v1.py",
     "PATH_TO_PROTOCOLS":"",
     "PUMP_SERIAL_ADDR":"",

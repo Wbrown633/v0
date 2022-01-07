@@ -28,37 +28,6 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.config import Config
 
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
-# TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
-if sys.platform.startswith('win32'):
-    LOCAL_TESTING = True
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
-    logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
-    from software_testing.NanoControllerTestStub import Nano
-    from software_testing.NewEraPumpsTestStub import PumpNetwork
-    from software_testing.SerialStub import SerialStub
-    
-else:
-    # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
-    # For R0 debug
-    Window.fullscreen = 'auto'
-    DEBUG_MODE = False
-    LOCAL_TESTING = False
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
-
 
 kivy.require('1.11.0')
 
@@ -80,6 +49,38 @@ PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
 PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
 DEBUG_MODE = device.DEBUG_MODE
 SERIAL_PATH = device.PUMP_SERIAL_ADDR
+DEV_MACHINE = device.DEV_MACHINE
+
+# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+# TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
+if DEV_MACHINE:
+    LOCAL_TESTING = True
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
+    from software_testing.NanoControllerTestStub import Nano
+    from software_testing.NewEraPumpsTestStub import PumpNetwork
+    from software_testing.SerialStub import SerialStub
+    
+else:
+    # Normal production mode
+    from NanoController import Nano
+    from NewEraPumps import PumpNetwork
+    # For R0 debug
+    Window.fullscreen = 'auto'
+    LOCAL_TESTING = False
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
+
 
 # Establish serial connection to the pump controllers
 if not LOCAL_TESTING:

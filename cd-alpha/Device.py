@@ -22,6 +22,10 @@ class Device:
     Optional parameters should only be altered if the user is confident they know what they are doing.
     They should not need to be altered during the course of normal operation.
 
+    DEV_MACHINE: bool
+        - Set this flag true to disable all communication over serial to motors. This is usefull when doing graphical/app dev,
+        or anytime you wish to run the program not on a properly configured device
+
     PUMP_SERIAL_ADDR: str
         - Serial address for the pump/pump network. Defaults to "/dev/ttyUSB0" on linux 
         which shouldn't need to be changed
@@ -74,6 +78,9 @@ class Device:
 
             if not hasattr(self, "PATH_TO_PROTOCOLS"):
                 self.PATH_TO_PROTOCOLS = "/home/pi/v0/cd-alpha/protocols/"
+
+            if not hasattr(self, "DEV_MACHINE"):
+                self.DEV_MACHINE = False
             
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
