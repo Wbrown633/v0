@@ -1,10 +1,10 @@
 {
     "WARNING":"This is a template for example use only, change the values before deployment!",
-    "device_type":"R0",
-    "default_script":"ExoT_r0_script_13v1.py",
-    "path_to_scripts":"",
-    "pump_serial_addr":"",
-    "pump_addr":[2],
-    "pump_diameter":12.4,
-    "debug_mode":true
+    "DEVICE_TYPE":"V0",
+    "DEFAULT_PROTOCOL":"ExoT_r0_script_13v1.py",
+    "PATH_TO_PROTOCOLS":"",
+    "PUMP_SERIAL_ADDR":"",
+    "PUMP_ADDR":[1,2],
+    "PUMP_DIAMETER":[12.4,12.4],
+    "DEBUG_MODE":true
 }
