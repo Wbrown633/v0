@@ -1,0 +1,5 @@
+# Ignore the virtual environment
+v0venv/**
+v0/**
+cd-alpha/logs/**
+workspace.code-workspace
