@@ -74,8 +74,12 @@ Builder.load_file('gui-elements/circlebutton.kv')
 Builder.load_file('gui-elements/errorpopup.kv')
 Builder.load_file('gui-elements/abortpopup.kv')
 
-# logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
-
+device = Device("device_config.json")
+# Change the value in the config file to change which protocol is in use
+PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+DEBUG_MODE = device.DEBUG_MODE
+SERIAL_PATH = device.PUMP_SERIAL_ADDR
 
 # Establish serial connection to the pump controllers
 if not LOCAL_TESTING:
@@ -84,20 +88,12 @@ else:
     ser = SerialStub()
 pumps = PumpNetwork(ser)
 
-device = Device("device_config.json")
-# Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
-DEBUG_MODE = device.DEBUG_MODE
-
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
     logging.warning("CDA: System will not reboot after exiting program.")
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
-
-# TODO: import all constants from config file 
 # Set constants
 if device.DEVICE_TYPE == "R0":
     WASTE_ADDR = device.PUMP_ADDR[0]
@@ -110,7 +106,6 @@ else:
 
 scheduled_events = []
 list_of_pumps = device.PUMP_ADDR
-DEBUG_MODE = device.DEBUG_MODE
 
 
 
