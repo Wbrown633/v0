@@ -364,7 +364,7 @@ class MachineActionScreen(ChipFlowScreen):
                 primary_color = (1, .33, .33, 1)
             )
 
-
+    # TODO: fix bug caused in this method when skipping through a debug session
     def set_progress(self, dt):
         self.time_elapsed += dt
         time_remaining = max(self.time_total - self.time_elapsed, 0)
