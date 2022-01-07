@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 # Ignore the virtual environment
 v0venv/**
 v0/**
 cd-alpha/logs/**
 workspace.code-workspace
+=======
+>>>>>>> 6eac8ce425bd7bd66e279ab7180f2bca817d4bad
 cd_alpha/device_config.json
 cd_alpha/workspace.code-workspace
