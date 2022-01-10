@@ -136,7 +136,7 @@ while True:
 
 ##F127
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 1.8 mL F127, then push 'ok'")
 
 while True:
@@ -167,7 +167,7 @@ while True:
     
 ###PBS wash
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 1 mL 1x PBS, then push 'ok'")
 
 while True:
@@ -200,7 +200,7 @@ while True:
     
 ###Sample flow step
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 2 mL Sample, then push 'ok'")
 
 while True:
@@ -220,7 +220,7 @@ while True:
     
 ###PBS wash 1
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 200 uL 1x PBS, then push 'ok'")
 
 while True:
@@ -240,7 +240,7 @@ while True:
     
 ###PBS wash 2
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 800 uL 1x PBS, then push 'ok'")
 
 while True:
@@ -270,7 +270,7 @@ while True:
         break
 ###PBS wash 3
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 1000 uL 1x PBS, then push 'ok'")
 
 while True:
@@ -290,7 +290,7 @@ while True:
        
 ###  LYSIS
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("Add 600 uL QiaZOL, and push 'ok'")
 
 while True:
@@ -309,10 +309,10 @@ while True:
         break
 
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("Switch to 5 mL lysate syringe")
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 
 pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=WASTE_ADDR)
 
@@ -327,12 +327,12 @@ while True:
         print("QiaZOL incubation complete")
         break
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 
 
 ###PBS wash post lysis
 
-pumps.buzz(0)
+pumps.buzz(WASTE_ADDR)
 print("add 1 mL 1x PBS, then push 'ok'")
 
 while True:
