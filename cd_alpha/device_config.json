@@ -1,0 +1,9 @@
+{
+    "DEVICE_TYPE":"R0",
+    "DEFAULT_PROTOCOL":"ExoT_r0_script_13v1.py",
+    "PATH_TO_PROTOCOLS":"",
+    "PUMP_SERIAL_ADDR":"/dev/ttyUSB0",
+    "PUMP_ADDR":2,
+    "PUMP_DIAMETER":12.55,
+    "DEBUG_MODE": false
+}
