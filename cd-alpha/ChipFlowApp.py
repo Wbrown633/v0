@@ -12,6 +12,7 @@ import serial
 import time
 from datetime import datetime
 import logging
+from Device import Device
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -24,36 +25,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
-
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
-if sys.platform.startswith('win32'):
-    LOCAL_TESTING = True
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
-    logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
-    from software_testing.NanoControllerTestStub import Nano
-    from software_testing.NewEraPumpsTestStub import PumpNetwork
-    from software_testing.SerialStub import SerialStub
-    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\" # TODO fix this ugliness 
-    DEBUG_MODE = True
-else:
-    # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
-    PATH_TO_PROTOCOLS = "/home/pi/cd-alpha/protocols/"
-    DEBUG_MODE = False
-    LOCAL_TESTING = False
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
+from kivy.core.window import Window
+from kivy.config import Config
 
 
 kivy.require('1.11.0')
@@ -70,18 +43,44 @@ Builder.load_file('gui-elements/circlebutton.kv')
 Builder.load_file('gui-elements/errorpopup.kv')
 Builder.load_file('gui-elements/abortpopup.kv')
 
-# logging.basicConfig(filename='cda.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging_level)
+device = Device("device_config.json")
+# Change the value in the config file to change which protocol is in use
+PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+DEBUG_MODE = device.DEBUG_MODE
+SERIAL_PATH = device.PUMP_SERIAL_ADDR
+DEV_MACHINE = device.DEV_MACHINE
 
-# Change the value here and below to edit which protocol is in use
-PROTOCOL_FILE_NAME = "v0-protocol-17v0.json"
+# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+# TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
+if DEV_MACHINE:
+    LOCAL_TESTING = True
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
+    from software_testing.NanoControllerTestStub import Nano
+    from software_testing.NewEraPumpsTestStub import PumpNetwork
+    from software_testing.SerialStub import SerialStub
+    
+else:
+    # Normal production mode
+    from NanoController import Nano
+    from NewEraPumps import PumpNetwork
+    # For R0 debug
+    Window.fullscreen = 'auto'
+    LOCAL_TESTING = False
+    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    logging.basicConfig(
+        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filemode='w',
+        datefmt="%Y-%m-%d_%H:%M:%S",
+        level=logging.DEBUG)
+    logging.info("Logging started")
 
-
-
-if DEBUG_MODE:
-    logging.warning("CDA: *** DEBUG MODE ***")
-    logging.warning("CDA: System will not reboot after exiting program.")
-
-logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
 # Establish serial connection to the pump controllers
 if not LOCAL_TESTING:
@@ -90,24 +89,28 @@ else:
     ser = SerialStub()
 pumps = PumpNetwork(ser)
 
+if DEBUG_MODE:
+    logging.warning("CDA: *** DEBUG MODE ***")
+    logging.warning("CDA: System will not reboot after exiting program.")
+
+logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+
 # Set constants
-WASTE_ADDR = 1
-LYSATE_ADDR = 2
-WASTE_DIAMETER_mm = 12.55
-LYSATE_DIAMETER_mm = 12.55
+if device.DEVICE_TYPE == "R0":
+    WASTE_ADDR = device.PUMP_ADDR[0]
+    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+else:
+    WASTE_ADDR = device.PUMP_ADDR[0]
+    LYSATE_ADDR = device.PUMP_ADDR[1]
+    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+    LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
+
 scheduled_events = []
+list_of_pumps = device.PUMP_ADDR
+
+
 
 ### UTIL FUNCTIONS ###
-def stop_all_pumps():
-    logging.debug("CDA: Stopping all pumps.")
-    for addr in [WASTE_ADDR, LYSATE_ADDR]:
-        try:
-            pumps.stop(addr)
-        except IOError as err:
-            if str(err)[-3:] == "?NA":
-                logging.debug(f"CDA: Pump {addr:02} already stopped.")
-            else:
-                raise
 
 
 def cleanup():
@@ -119,7 +122,7 @@ def cleanup():
             se.cancel()
         except AttributeError: pass
     scheduled_events = []
-    stop_all_pumps()
+    pumps.stop_all_pumps(list_of_pumps)
 
 
 def shutdown():
@@ -148,12 +151,16 @@ def reboot():
 
 logging.info("CDA: Starting main script.")
 
-stop_all_pumps()
+pumps.stop_all_pumps(list_of_pumps)
 
-pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
-pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
+# diam and addr must be same length
+for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
+    pumps.set_diameter(diameter_mm=diam, addr=addr)
 
-nano = Nano(8, 7)
+if device.DEVICE_TYPE == "V0":
+    nano = Nano(8, 7)
+else:
+    nano = None
 
 progressbar_update_interval = .5
 switch_update_interval = .1
@@ -232,6 +239,7 @@ class MachineActionScreen(ChipFlowScreen):
                 eq_time = params.get('eq_time', 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
+                logging.info("Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, 'MH', addr)
                 pumps.set_volume(vol_ml, 'ML',  addr)
                 pumps.run(addr)
@@ -247,6 +255,9 @@ class MachineActionScreen(ChipFlowScreen):
             if action == 'RESET':
                 # TODO: set progress bar to be invisible
                 # Go down for a little while, in case forks are already in position
+                if device.DEVICE_TYPE == "R0":
+                    logging.info("No RESET work to be done on the R0, passing to end of program")
+                    return
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     pumps.purge(1, addr)
                 time.sleep(1)
@@ -265,7 +276,7 @@ class MachineActionScreen(ChipFlowScreen):
                             LYSATE_ADDR, 2, self.next_step),
                     switch_update_interval
                 ))
-
+            #TODO: make this work on r0
             if action == 'GRAB':
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
@@ -290,9 +301,18 @@ class MachineActionScreen(ChipFlowScreen):
                     grab_overrun_check_interval
                 )
                 scheduled_events.append(self.grab_overrun_check_schedule)
+
+            # Use this if you're changing the size of the syringe mid protocol
+            if action == "CHANGE_SYRINGE":
+                diameter = params["diam"]
+                pump_addr = params["pump_addr"]
+                pumps.set_diameter(diameter, pump_addr)
+                logging.debug("Switching current loaded syringe to {} diam on pump {}".format(diameter, pump_addr))
                 
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):
+        if nano is None:
+            raise IOError("No switches on the R0 should not be calling a switch reset!")
         nano.update()
         if not getattr(nano, switch):
             logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
@@ -304,6 +324,8 @@ class MachineActionScreen(ChipFlowScreen):
             return False
 
     def switched_grab(self, switch, addr, max_count, final_action, post_run_rate_mm, post_run_vol_ml, dt):
+        if nano is None:
+            raise IOError("No switches on the R0 should not be calling switch grab!")
         nano.update()
         if not getattr(nano, switch):
             logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
@@ -320,6 +342,8 @@ class MachineActionScreen(ChipFlowScreen):
             return False
 
     def grab_overrun_check(self, swgs, dt):
+        if nano is None:
+            raise IOError("No switches on the R0, should not be calling grab_overrrun_check!")
         nano.update()
         overruns = []
         if getattr(nano, 'd4'):
@@ -329,7 +353,7 @@ class MachineActionScreen(ChipFlowScreen):
             overruns.append("2 (lysate)")
             swgs[1].cancel()
         if len(overruns) > 0:
-            stop_all_pumps()
+            pumps.stop_all_pumps(list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
@@ -341,7 +365,7 @@ class MachineActionScreen(ChipFlowScreen):
                 primary_color = (1, .33, .33, 1)
             )
 
-
+    # TODO: fix bug caused in this method when skipping through a debug session
     def set_progress(self, dt):
         self.time_elapsed += dt
         time_remaining = max(self.time_total - self.time_elapsed, 0)
@@ -637,7 +661,7 @@ if __name__ == '__main__':
     try:
         ChipFlowApp().run()
     except:
-        stop_all_pumps()
+        pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection
         ser.close()
         if not DEBUG_MODE:
