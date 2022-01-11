@@ -302,6 +302,7 @@ class MachineActionScreen(ChipFlowScreen):
                 )
                 scheduled_events.append(self.grab_overrun_check_schedule)
 
+            # Use this if you're changing the size of the syringe mid protocol
             if action == "CHANGE_SYRINGE":
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
