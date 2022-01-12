@@ -185,7 +185,7 @@
         "header": "Grabbing syringes",
         "description": "The device is now grabbing hold of the syringes to secure a precise operation.",
         "action": {
-            "GRAB": {
+            "GRAB_WASTE": {
                 "post_run_rate_mm": 5,
                 "post_run_vol_ml": 0.3
             }

@@ -302,6 +302,25 @@ class MachineActionScreen(ChipFlowScreen):
                 )
                 scheduled_events.append(self.grab_overrun_check_schedule)
 
+            if action == 'GRAB_WASTE':
+                post_run_rate_mm = params["post_run_rate_mm"]
+                post_run_vol_ml = params["post_run_vol_ml"]
+                for addr in [WASTE_ADDR]:
+                    logging.debug(f"CDA: Grabbing pump {addr}")
+                    pumps.purge(1, addr)
+                self.grab_stop_counter = 0
+                swg1 = Clock.schedule_interval(
+                    partial(self.switched_grab, 'd4',
+                            WASTE_ADDR, 2, self.next_step,
+                            post_run_rate_mm, post_run_vol_ml),
+                    switch_update_interval)
+                scheduled_events.append(swg1)
+                self.grab_overrun_check_schedule = Clock.schedule_once(
+                    partial(self.grab_overrun_check, [swg1]),
+                    grab_overrun_check_interval
+                )
+                scheduled_events.append(self.grab_overrun_check_schedule)
+
             # Use this if you're changing the size of the syringe mid protocol
             if action == "CHANGE_SYRINGE":
                 diameter = params["diam"]
