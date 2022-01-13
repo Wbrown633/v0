@@ -1,9 +1,10 @@
 {
     "DEVICE_TYPE":"V0",
-    "DEV_MACHINE":false,
-    "DEFAULT_PROTOCOL":"v0-protocol-17v0.json",
-    "PATH_TO_PROTOCOLS":"/home/pi/cd-alpha/protocols/",
+    "DEV_MACHINE":true,
+    "DEFAULT_PROTOCOL":"v0-protocol-18v0.json",
+    "PATH_TO_PROTOCOLS":"C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd-alpha\\protocols\\",
     "PUMP_ADDR":[1,2],
-    "PUMP_DIAMETER":[12.4, 12.4],
-    "DEBUG_MODE":false
+    "PUMP_DIAMETER":[12.45, 12.45],
+    "DEBUG_MODE":true,
+    "START_STEP": "flush_5"
 }

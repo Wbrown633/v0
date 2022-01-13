@@ -81,6 +81,9 @@ class Device:
 
             if not hasattr(self, "DEV_MACHINE"):
                 self.DEV_MACHINE = False
+
+            if not hasattr(self, "START_STEP"):
+                self.START_STEP = "home"
             
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":
