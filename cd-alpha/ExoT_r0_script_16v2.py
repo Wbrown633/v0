@@ -1,6 +1,6 @@
 
-# Script written for Griffin breast cancer QiaZol elution experiment
-# 2.5 mL sample volume
+# Wester RIPA
+# 2 mL sample volume
 # 20 mL syringe waste
 # 5 mL syringe lysate
 
@@ -10,6 +10,7 @@ import json
 import sys
 import os
 import RPi.GPIO as GPIO
+import time
 
 # RasPi Pin definitions
 Sw1 = 16 # User Switch supply
@@ -103,18 +104,15 @@ logging.info("CDA: Starting main script.")
 stop_all_pumps()
 
 pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
-#pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
-
-#nano = Nano(8, 7)
-
-#progressbar_update_interval = .5
-#switch_update_interval = .1
-#grab_overrun_check_interval = 20
 
 addr = WASTE_ADDR
 #print("STOP:", pumps.stop(addr))
 
 # MM=ml/min, MH=ml/hr, UH=μl/hr, UM=μl/min
+print("Insert Chip, reservoir, and tubing.")
+while True:
+    if GPIO.input(Sw2) == 0:
+        break
 
 print("load 20 mL syringe")
 
@@ -221,7 +219,7 @@ while True:
 ###PBS wash 1
 
 pumps.buzz(WASTE_ADDR)
-print("add 200 uL 1x PBS, then push 'ok'")
+print("add 400 uL 1x PBS, then push 'ok'")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -258,6 +256,9 @@ while True:
         print("Second PBS wash complete")
         break
 
+print("Waiting for two minutes")
+time.sleep(120)
+
 print("running second half of PBS wash 2") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(0.4, 'ML',  addr))
@@ -279,7 +280,7 @@ while True:
     
 print("running third PBS wash") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
-print("Volume:", pumps.set_volume(1, 'ML',  addr))
+print("Volume:", pumps.set_volume(1.2, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
 while True:
@@ -291,13 +292,13 @@ while True:
 ###  LYSIS
 
 pumps.buzz(WASTE_ADDR)
-print("Add 600 uL QiaZOL, and push 'ok'")
+print("Add 600 uL RIPA, and push 'ok'")
 
 while True:
     if GPIO.input(Sw2) == 0:
         break
 
-print("pulling in QiaZOL") 
+print("pulling in RIPA") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(0.6, 'ML',  addr))
 print("Run:", pumps.run(addr))
@@ -305,18 +306,13 @@ print("Run:", pumps.run(addr))
 while True:
     stat = pumps.status(addr)
     if stat == 'S':
-        print("QiaZOL pull-in complete")
+        print("RIPA pull-in complete")
         break
 
-
-pumps.buzz(WASTE_ADDR)
-print("Switch to 5 mL lysate syringe")
-
 pumps.buzz(WASTE_ADDR)
 
-pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=WASTE_ADDR)
 
-print("incubating QiaZOL 2 minutes, Switch to 5 mL lysate syringe") 
+print("Incubating RIPA 2 minutes.") 
 print("Rate:", pumps.set_rate(-500, 'UH', addr))
 print("Volume:", pumps.set_volume(0.016, 'ML',  addr))
 print("Run:", pumps.run(addr))
@@ -324,12 +320,22 @@ print("Run:", pumps.run(addr))
 while True:
     stat = pumps.status(addr)
     if stat == 'S':
-        print("QiaZOL incubation complete")
+        print("RIPA incubation complete")
+        break
+
+time.sleep(180) # 3 minute wait
+
+pumps.buzz(WASTE_ADDR)
+
+print("Switch to 5 mL lysate syringe")
+
+while True:
+    if GPIO.input(Sw2) == 0:
         break
 
 pumps.buzz(WASTE_ADDR)
 
-
+pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=WASTE_ADDR)
 ###PBS wash post lysis
 
 pumps.buzz(WASTE_ADDR)
