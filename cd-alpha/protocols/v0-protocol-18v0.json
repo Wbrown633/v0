@@ -169,7 +169,7 @@
         "header": "Initialization",
         "description": "Initializing device. Resetting syringe positions and checking connections.",
         "action": {
-            "RESET": {}
+            "RESET_WASTE": {}
         },
         "remove_progress_bar": true,
         "completion_msg": "Machine has been homed"
@@ -183,7 +183,7 @@
     "grab_syringes_waste": {
         "type": "MachineActionScreen",
         "header": "Grabbing syringes",
-        "description": "The device is now grabbing hold of the syringes to secure a precise operation.",
+        "description": "The device is now grabbing hold of the waste syringe to secure a precise operation.",
         "action": {
             "GRAB_WASTE": {
                 "post_run_rate_mm": 5,

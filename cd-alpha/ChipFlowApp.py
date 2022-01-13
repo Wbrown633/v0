@@ -320,6 +320,24 @@ class MachineActionScreen(ChipFlowScreen):
                     grab_overrun_check_interval
                 )
                 scheduled_events.append(self.grab_overrun_check_schedule)
+            if action == 'RESET_WASTE':
+                # TODO: set progress bar to be invisible
+                # Go down for a little while, in case forks are already in position
+                if device.DEVICE_TYPE == "R0":
+                    logging.info("No RESET work to be done on the R0, passing to end of program")
+                    return
+                for addr in [WASTE_ADDR]:
+                    pumps.purge(1, addr)
+                time.sleep(1)
+                for addr in [WASTE_ADDR]:
+                    pumps.stop(addr)
+                    pumps.purge(-1, addr)
+                self.reset_stop_counter = 0
+                scheduled_events.append(Clock.schedule_interval(
+                    partial(self.switched_reset, 'd2',
+                            WASTE_ADDR, 2, self.next_step),
+                    switch_update_interval
+                ))
 
             # Use this if you're changing the size of the syringe mid protocol
             if action == "CHANGE_SYRINGE":
