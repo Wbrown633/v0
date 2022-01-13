@@ -1,5 +1,5 @@
 
-# Wester RIPA
+# Western RIPA
 # 2 mL sample volume
 # 20 mL syringe waste
 # 5 mL syringe lysate
@@ -101,6 +101,11 @@ def reboot():
 
 logging.info("CDA: Starting main script.")
 
+print("Western RIPA")
+print("2 mL sample volume")
+print("20 mL syringe waste")
+print("5 mL syringe Lysate")
+
 stop_all_pumps()
 
 pumps.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
@@ -109,10 +114,6 @@ addr = WASTE_ADDR
 #print("STOP:", pumps.stop(addr))
 
 # MM=ml/min, MH=ml/hr, UH=μl/hr, UM=μl/min
-print("Insert Chip, reservoir, and tubing.")
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
 
 print("load 20 mL syringe")
 
@@ -132,10 +133,15 @@ while True:
         print("engagement complete")
         break
 
+print("Insert Chip, reservoir, and tubing.")
+while True:
+    if GPIO.input(Sw2) == 0:
+        break
+
 ##F127
 
 pumps.buzz(WASTE_ADDR)
-print("add 1.8 mL F127, then push 'ok'")
+print("add 1.8 mL F127, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -166,7 +172,7 @@ while True:
 ###PBS wash
 
 pumps.buzz(WASTE_ADDR)
-print("add 1 mL 1x PBS, then push 'ok'")
+print("add 1 mL 1x PBS, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -199,7 +205,7 @@ while True:
 ###Sample flow step
 
 pumps.buzz(WASTE_ADDR)
-print("add 2 mL Sample, then push 'ok'")
+print("add 2 mL Sample, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -219,7 +225,7 @@ while True:
 ###PBS wash 1
 
 pumps.buzz(WASTE_ADDR)
-print("add 400 uL 1x PBS, then push 'ok'")
+print("add 400 uL 1x PBS, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -239,7 +245,7 @@ while True:
 ###PBS wash 2
 
 pumps.buzz(WASTE_ADDR)
-print("add 800 uL 1x PBS, then push 'ok'")
+print("add 800 uL 1x PBS, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -272,7 +278,7 @@ while True:
 ###PBS wash 3
 
 pumps.buzz(WASTE_ADDR)
-print("add 1000 uL 1x PBS, then push 'ok'")
+print("add 1000 uL 1x PBS, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -292,7 +298,7 @@ while True:
 ###  LYSIS
 
 pumps.buzz(WASTE_ADDR)
-print("Add 600 uL RIPA, and push 'ok'")
+print("Add 600 uL RIPA, and push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -339,7 +345,7 @@ pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=WASTE_ADDR)
 ###PBS wash post lysis
 
 pumps.buzz(WASTE_ADDR)
-print("add 1 mL 1x PBS, then push 'ok'")
+print("add 1 mL 1x PBS, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
