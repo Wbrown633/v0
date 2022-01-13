@@ -331,7 +331,7 @@ class MachineActionScreen(ChipFlowScreen):
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
                     partial(self.switched_grab, 'd4',
-                            WASTE_ADDR, 2, self.next_step,
+                            WASTE_ADDR, 1, self.next_step,
                             post_run_rate_mm, post_run_vol_ml),
                     switch_update_interval)
                 scheduled_events.append(swg1)
@@ -556,7 +556,7 @@ class ProcessWindow(BoxLayout):
 
         if START_STEP not in protocol.keys():
             raise KeyError("{} not a valid step in the protocol.".format(START_STEP))
-            
+
         # if we're supposed to start at a step other than 'home' remove other steps from the protocol
         protocol_copy = OrderedDict()
         keep_steps = False
