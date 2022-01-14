@@ -29,7 +29,7 @@ from kivy.core.window import Window
 from kivy.config import Config
 
 
-kivy.require('1.11.0')
+kivy.require('2.0.0')
 
 Builder.load_file("gui-elements/widget.kv")
 Builder.load_file("gui-elements/roundedbutton.kv")
@@ -296,7 +296,7 @@ class MachineActionScreen(ChipFlowScreen):
                             WASTE_ADDR, 1, self.next_step),
                     switch_update_interval
                 ))
-                
+
             #TODO: make this work on r0
             if action == 'GRAB':
                 post_run_rate_mm = params["post_run_rate_mm"]
