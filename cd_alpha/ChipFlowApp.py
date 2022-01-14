@@ -28,39 +28,6 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.config import Config
 
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
-if sys.platform.startswith('win32'):
-    LOCAL_TESTING = True
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
-    logging.basicConfig(
-        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
-    from software_testing.NanoControllerTestStub import Nano
-    from software_testing.NewEraPumpsTestStub import PumpNetwork
-    from software_testing.SerialStub import SerialStub
-    PATH_TO_PROTOCOLS = "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\cd_alpha\\protocols\\" # TODO fix this ugliness 
-    DEBUG_MODE = True
-    SPLIT_CHAR = "\\"
-else:
-    # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
-    PATH_TO_PROTOCOLS = "/home/pi/cd_alpha/protocols/"
-    DEBUG_MODE = False
-    LOCAL_TESTING = False
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    logging.basicConfig(
-        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
-        filemode='w',
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG)
-    logging.info("Logging started")
-    SPLIT_CHAR = "/"
-
-
 kivy.require('2.0.0')
 
 Builder.load_file("gui-elements/widget.kv")
@@ -87,7 +54,6 @@ DEV_MACHINE = device.DEV_MACHINE
 START_STEP = device.START_STEP
 
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
-# TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
 if DEV_MACHINE:
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
@@ -129,13 +95,6 @@ if DEBUG_MODE:
     logging.warning("CDA: System will not reboot after exiting program.")
 
 logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
-
-# Establish serial connection to the pump controllers
-if not LOCAL_TESTING:
-    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
-else:
-    ser = SerialStub()
-pumps = PumpNetwork(ser)
 
 # Set constants
 if device.DEVICE_TYPE == "R0":
