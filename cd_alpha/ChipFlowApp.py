@@ -66,6 +66,7 @@ if DEV_MACHINE:
     from software_testing.NanoControllerTestStub import Nano
     from software_testing.NewEraPumpsTestStub import PumpNetwork
     from software_testing.SerialStub import SerialStub
+    SPLIT_CHAR = "\\"
     
 else:
     # Normal production mode
