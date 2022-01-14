@@ -296,6 +296,7 @@ class MachineActionScreen(ChipFlowScreen):
                             WASTE_ADDR, 1, self.next_step),
                     switch_update_interval
                 ))
+                
             #TODO: make this work on r0
             if action == 'GRAB':
                 post_run_rate_mm = params["post_run_rate_mm"]
