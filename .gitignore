@@ -6,3 +6,4 @@ workspace.code-workspace
 cd_alpha/device_config.json
 cd-alpha/device_config.json
 cd_alpha/workspace.code-workspace
+cd_alpha/tests/.coverage

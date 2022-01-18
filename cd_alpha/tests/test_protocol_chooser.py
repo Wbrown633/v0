@@ -1,3 +1,4 @@
+from signal import valid_signals
 import unittest
 from cd_alpha.ChipFlowApp import ProcessWindow
 
@@ -6,11 +7,12 @@ class ProtocolChooserTestCase(unittest.TestCase):
     def setUp(self):
         # import class and prepare everything here.
         self.test_window = ProcessWindow(protocol_file_name="v0-protocol-16v1.json")
+        self.test_protocol_location = "v0-protocol-16v1.json"
 
     # Test a standard protocol load, make sure all steps are present and in the right order
-    def test_protocol_load(self):
+    def test_protocol_load_basic(self):
         # create a test window and check that all of the required screens are added
-        self.test_window.load_protocol("v0-protocol-16v1.json")
+        self.test_window.load_protocol(self.test_protocol_location)
 
         # For 16v1 there should be 35 screens. {'protocol_chooser': 1, 'home': 1, 'reset_start': 1, 'reset_start_done': 1, 
         # 'insert_syringes': 1, 'grab_syringes': 1, 'grab_syringes_done': 1, 'insert_chip': 1, 'f127': 1, 'flush_1': 1, 
@@ -23,9 +25,26 @@ class ProtocolChooserTestCase(unittest.TestCase):
         # Check that there are no duplicate steps 
         self.assertFalse(self._find_duplicates(self.test_window.process_sm.screen_names))
 
-        # Test that loading protocols multiple times in a row doesn't cause duplicate steps
+    # Test that loading protocols multiple times in a row doesn't cause duplicate steps
+    def test_protocol_load_multiple(self):
+        # create a test window and check that all of the required screens are added
+        self.test_window.load_protocol(self.test_protocol_location)
 
-        # Test that loading an invalid file raises a non fatal error
+        # Load the same protocol multiple times in a row to make sure there are no duplicate steps
+        for x in range(5):
+            self.test_window.load_protocol(self.test_protocol_location)
+
+        self.assertFalse(self._find_duplicates(self.test_window.process_sm.screen_names))
+
+    # Test that loading an invalid file raises an error
+    def test_load_invalid_file(self):
+        with self.assertRaises(FileNotFoundError):
+            self.test_window.load_protocol("foobar.json")
+
+    # Test that loading an invalid protocol raises an error
+    def test_load_invalid_protocol(self):
+        with self.assertRaises(TypeError):
+            self.test_window.load_protocol("invalid_protocol.json")
 
     def _find_duplicates(self, list_of_values):
         # Check that there are no duplicate steps
@@ -33,6 +52,7 @@ class ProtocolChooserTestCase(unittest.TestCase):
             if self.test_window.process_sm.screen_names.count(value) > 1:
                 return True
         return False
+
 
 
 
