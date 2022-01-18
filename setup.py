@@ -9,5 +9,6 @@ setup(
       author='Will Brown',
       author_email='will.brown@chip-diagnostics.com',
       url='https://www.chip-diagnostics.com/',
-      packages=["cd_alpha",]
+      packages=["cd_alpha", "cd_alpha.tests", "cd_alpha.software_testing"],
+      package_data={'cd_alpha': ['gui-elements/']},
 )

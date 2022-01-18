@@ -1,5 +1,5 @@
 import unittest
-from cd_alpha import ProcessWindow
+from cd_alpha.ChipFlowApp import ProcessWindow
 
 class ProtocolChooserTestCase(unittest.TestCase):
 

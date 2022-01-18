@@ -6,13 +6,12 @@
 from collections import OrderedDict
 import json
 import os
-import sys
 from functools import partial
 import serial
 import time
 from datetime import datetime
 import logging
-from Device import Device
+from cd_alpha.Device import Device
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -26,7 +25,6 @@ from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
-from kivy.config import Config
 
 kivy.require('2.0.0')
 
@@ -763,7 +761,7 @@ class ProcessWindow(BoxLayout):
             
             protocol_chooser = self.process_sm.get_screen("protocol_chooser")
             #screens_to_remove.remove(protocol_chooser)
-            self.process_sm.clear_widgets() #this line just isn't working on device for some reason
+            self.process_sm.clear_widgets()
             # End voodoo
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
             
