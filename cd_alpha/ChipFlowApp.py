@@ -25,24 +25,25 @@ from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
+from pkg_resources import resource_filename
 
 kivy.require('2.0.0')
 
-Builder.load_file("gui-elements/widget.kv")
-Builder.load_file("gui-elements/roundedbutton.kv")
-Builder.load_file("gui-elements/abortbutton.kv")
-Builder.load_file("gui-elements/useractionscreen.kv")
-Builder.load_file("gui-elements/machineactionscreen.kv")
-Builder.load_file("gui-elements/actiondonescreen.kv")
-Builder.load_file('gui-elements/processwindow.kv')
-Builder.load_file('gui-elements/progressdot.kv')
-Builder.load_file('gui-elements/circlebutton.kv')
-Builder.load_file('gui-elements/errorpopup.kv')
-Builder.load_file('gui-elements/abortpopup.kv')
-Builder.load_file('gui-elements/homescreen.kv')
-Builder.load_file('gui-elements/protocolchooser.kv')
+Builder.load_file(resource_filename("cd_alpha","gui-elements/widget.kv"))
+Builder.load_file(resource_filename("cd_alpha","gui-elements/roundedbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha","gui-elements/abortbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha","gui-elements/useractionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha","gui-elements/machineactionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha","gui-elements/actiondonescreen.kv"))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/processwindow.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/progressdot.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/circlebutton.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/errorpopup.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/abortpopup.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/homescreen.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/protocolchooser.kv'))
 
-device = Device("device_config.json")
+device = Device(resource_filename("cd_alpha","device_config.json"))
 # Change the value in the config file to change which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
 PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
@@ -61,9 +62,9 @@ if DEV_MACHINE:
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
     logging.info("Logging started")
-    from software_testing.NanoControllerTestStub import Nano
-    from software_testing.NewEraPumpsTestStub import PumpNetwork
-    from software_testing.SerialStub import SerialStub
+    from cd_alpha.software_testing.NanoControllerTestStub import Nano
+    from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
+    from cd_alpha.software_testing.SerialStub import SerialStub
     SPLIT_CHAR = "\\"
     
 else:

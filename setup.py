@@ -10,5 +10,6 @@ setup(
       author_email='will.brown@chip-diagnostics.com',
       url='https://www.chip-diagnostics.com/',
       packages=["cd_alpha", "cd_alpha.tests", "cd_alpha.software_testing"],
-      package_data={'cd_alpha': ['gui-elements/']},
+      include_package_data=True,
+      package_data={'': ['gui-elements/*.kv', 'device_config.json']},
 )

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import serial
-import re
 import logging
 
 class PumpNetwork:
