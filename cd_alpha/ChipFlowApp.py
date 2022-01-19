@@ -7,6 +7,7 @@ from collections import OrderedDict
 import json
 import os
 from functools import partial
+from tracemalloc import stop
 import serial
 import time
 from datetime import datetime
@@ -432,9 +433,16 @@ class MachineActionScreen(ChipFlowScreen):
         self.start()
 
     def skip(self):
-        # Check that the motor is not moving 
-        status = pumps.status()
-        if status == "S":
+        # Check that the motor is not moving
+        number_of_stopped_pumps = 0
+        for pump in list_of_pumps:
+            status = pumps.status(addr=pump)
+            logging.info("Pump number {} status was: {}".format(pump, status))
+            stopped_status = "0{}S".format(pump)
+            if status == stopped_status:
+                number_of_stopped_pumps += 1
+            
+        if number_of_stopped_pumps == len(list_of_pumps):
             logging.info("Skip button pressed. Moving to next step. ")
             Clock.unschedule(self.set_progress)
             self.next_step()
