@@ -1,7 +1,6 @@
 
 # Western RIPA
-# SAME AS 16V2 but with 1 mL Sample instead of 2 mL
-# 1 mL sample volume
+# 2 mL sample volume
 # 20 mL syringe waste
 # 5 mL syringe lysate
 
@@ -206,7 +205,7 @@ while True:
 ###Sample flow step
 
 pumps.buzz(WASTE_ADDR)
-print("add 1 mL Sample, then push the switch")
+print("add 2 mL Sample, then push the switch")
 
 while True:
     if GPIO.input(Sw2) == 0:
@@ -214,7 +213,7 @@ while True:
     
 print("running sample") 
 print("Rate:", pumps.set_rate(-10, 'MH', addr))
-print("Volume:", pumps.set_volume(1.2, 'ML',  addr))
+print("Volume:", pumps.set_volume(2.2, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
 while True:
