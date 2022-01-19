@@ -753,6 +753,10 @@ class ProcessWindow(BoxLayout):
         error_window.open()
         pumps.buzz(addr=WASTE_ADDR, repetitions=5)
 
+    def start_over(self):
+        logging.info("Sending Program to home screen")
+        self.process_sm.current = "home"
+
     def next_step(self):
         self.process_sm.next_screen()
         if self.process_sm.current in self.progress_screen_names:
