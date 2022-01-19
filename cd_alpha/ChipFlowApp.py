@@ -431,8 +431,13 @@ class MachineActionScreen(ChipFlowScreen):
         self.start()
 
     def skip(self):
-        logging.warning("Skip button pressed, stopping motor and moving to next step! If the motor is currently moving this will leave the test in an unknown state.")
-        self.next_step()
+        # Check that the motor is not moving 
+        status = pumps.status()
+        if status == "S":
+            Clock.unschedule(self.set_progress)
+            self.next_step()
+        else:
+            logging.warning("Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(status))
 
 
 class ActionDoneScreen(ChipFlowScreen):

@@ -106,10 +106,12 @@ class PumpNetwork:
 
     #     return response
 
+    # Status stub
     def status(self, addr=''):
         response = self._send_command("", addr)
         # resp_addr = int(response[0:2])
-        current_status = response[2]
+        #current_status = response[2]
+        current_status = "S"
         return current_status
 
 

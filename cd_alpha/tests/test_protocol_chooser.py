@@ -1,4 +1,3 @@
-from signal import valid_signals
 import unittest
 from cd_alpha.ChipFlowApp import ProcessWindow
 
