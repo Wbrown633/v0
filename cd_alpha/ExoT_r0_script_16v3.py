@@ -1,6 +1,6 @@
 
 # Western RIPA
-# 2 mL sample volume
+# 1 mL sample volume
 # 20 mL syringe waste
 # 5 mL syringe lysate
 
