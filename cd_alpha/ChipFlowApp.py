@@ -438,8 +438,7 @@ class MachineActionScreen(ChipFlowScreen):
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
             logging.info("Pump number {} status was: {}".format(pump, status))
-            stopped_status = "0{}S".format(pump)
-            if status == stopped_status:
+            if status == "S":
                 number_of_stopped_pumps += 1
             
         if number_of_stopped_pumps == len(list_of_pumps):
