@@ -81,6 +81,7 @@ else:
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
     logging.info("Logging started")
+    SPLIT_CHAR = "/"
 
 
 # Establish serial connection to the pump controllers
