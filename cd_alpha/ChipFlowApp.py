@@ -435,6 +435,7 @@ class MachineActionScreen(ChipFlowScreen):
         # Check that the motor is not moving 
         status = pumps.status()
         if status == "S":
+            logging.info("Skip button pressed. Moving to next step. ")
             Clock.unschedule(self.set_progress)
             self.next_step()
         else:
