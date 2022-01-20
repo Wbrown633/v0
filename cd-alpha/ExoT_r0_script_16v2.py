@@ -95,6 +95,7 @@ def reboot():
         # call("sudo reboot --poweroff now", shell=True)
 
 def wait_for_switch():
+    time.sleep(1)
     while True:
         if GPIO.input(Sw2) == 0:
             break
