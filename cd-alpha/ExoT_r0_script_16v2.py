@@ -311,7 +311,7 @@ wait_for_switch()
     
 print("running post-lysis PBS wash") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
-print("Volume:", pumps.set_volume(1.1, 'ML',  addr))
+print("Volume:", pumps.set_volume(0.9, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
 wait_for_pump("Post-lysis PBS wash complete")
