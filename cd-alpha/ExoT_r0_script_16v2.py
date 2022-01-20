@@ -5,8 +5,11 @@
 # 5 mL syringe lysate
 
 
+from asyncio import wait_for
+from audioop import add
 from collections import OrderedDict
 import json
+from multiprocessing.connection import wait
 import sys
 import os
 import RPi.GPIO as GPIO
@@ -39,14 +42,6 @@ logging.basicConfig(
 logging.info("Logging started")
 
 DEBUG_MODE = False
-
-if not DEBUG_MODE:
-    # Make sure the 'real' protocol is used
-    PROTOCOL_FILE_NAME = "cda-protocol-v01.json"
-else:
-    logging.warning("CDA: *** DEBUG MODE ***")
-
-logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
 
 ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
 pumps = PumpNetwork(ser)
@@ -99,7 +94,25 @@ def reboot():
         os.system('sudo reboot --poweroff now')
         # call("sudo reboot --poweroff now", shell=True)
 
-logging.info("CDA: Starting main script.")
+def wait_for_switch():
+    while True:
+        if GPIO.input(Sw2) == 0:
+            break
+
+def wait_for_pump(completion_msg):
+    while True:
+        stat = pumps.status(addr)
+        if stat == 'S':
+            print(completion_msg)
+            break
+
+def wait_timer(start_msg, complete_msg, wait_time):
+    print(start_msg)
+    time.sleep(wait_time)
+    print(complete_msg)
+    pumps.buzz(WASTE_ADDR)
+
+logging.info("CDA: Starting main script. 16v2")
 
 print("Western RIPA")
 print("2 mL sample volume")
@@ -117,45 +130,33 @@ addr = WASTE_ADDR
 
 print("load 20 mL syringe")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
 
-##ENGAGE PUMP
+## ENGAGE PUMP
 
 print("Rate:", pumps.set_rate(-5, 'MM', addr))
 print("Volume:", pumps.set_volume(0.8, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("engagement complete")
-        break
+wait_for_pump("engagement complete")
 
 print("Insert Chip, reservoir, and tubing.")
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
 
-##F127
+wait_for_switch()
+
+## F127
 
 pumps.buzz(WASTE_ADDR)
 print("add 1.8 mL F127, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(1, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("F127 fast step complete")
-        break
+wait_for_pump("F127 fast step complete")
+
 #60 minute pause. 0.500ML/0.5 MH = 1H = 60 min
 
 print("running slow flow for 60 minutes")
@@ -163,32 +164,23 @@ print("Rate:", pumps.set_rate(-500, 'UH', addr))
 print("Volume:", pumps.set_volume(0.5, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("F127 slow step complete")
-        break
-    
-###PBS wash
+wait_for_pump("F127 slow step complete")
+
+
+### PBS wash
 
 pumps.buzz(WASTE_ADDR)
 print("add 1 mL 1x PBS, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
 
 print("running PBS wash") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(1, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("PBS wash step complete")
-        break
-    
+wait_for_pump("PBS wash step complete")
+
 #2 minute pause. 0.003ML/0.1 MH = 0.03H = 2 min
 
 print("running slow flow for 2 minutes")
@@ -196,124 +188,99 @@ print("Rate:", pumps.set_rate(-100, 'UH', addr))
 print("Volume:", pumps.set_volume(0.003, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("PBS slow step complete")
-        break
-    
-###Sample flow step
+wait_for_pump("PBS slow step complete")
+
+
+### Sample flow step
 
 pumps.buzz(WASTE_ADDR)
 print("add 2 mL Sample, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
-    
+wait_for_switch()
+
 print("running sample") 
 print("Rate:", pumps.set_rate(-10, 'MH', addr))
 print("Volume:", pumps.set_volume(2.2, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("Sample flow complete")
-        break
-    
-###PBS wash 1
+wait_for_pump("Sample flow complete")
+
+wait_timer("Waiting for two minutes", "Sample wait complete.", 120)
+
+
+### PBS wash 1
 
 pumps.buzz(WASTE_ADDR)
 print("add 400 uL 1x PBS, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
     
 print("running first PBS wash") 
 print("Rate:", pumps.set_rate(-10, 'MH', addr))
 print("Volume:", pumps.set_volume(0.2, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("First PBS wash complete")
-        break
+wait_for_pump("First PBS wash complete")
+
+wait_timer("Waiting for two minutes", "PBS Wash 1 complete", 120)
     
-###PBS wash 2
+### PBS Wash 2 Part 1
 
 pumps.buzz(WASTE_ADDR)
 print("add 800 uL 1x PBS, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
     
-print("running second PBS wash") 
+print("running PBS Wash 2 PT. 1") 
 print("Rate:", pumps.set_rate(-10, 'MH', addr))
 print("Volume:", pumps.set_volume(0.4, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("Second PBS wash complete")
-        break
+wait_for_pump("Second PBS wash complete")
 
-print("Waiting for two minutes")
-time.sleep(120)
+wait_timer("Waiting for two minutes", "PBS wash 2 part 1 wait complete", 120)
 
-print("running second half of PBS wash 2") 
+### PBS Wash 2 part 2
+
+print("running PBS Wash 2 PT. 2") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(0.4, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("Second PBS wash complete")
-        break
+wait_for_pump("Second PBS wash complete")
+
+wait_timer("Waiting two minutes", "PBS Wash 2 PT. 2 wait complete", 120)
+
 ###PBS wash 3
 
 pumps.buzz(WASTE_ADDR)
 print("add 1000 uL 1x PBS, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
     
 print("running third PBS wash") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(1.2, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("Third PBS wash complete")
-        break
+wait_for_pump("Third PBS wash complete")
+
+wait_timer("Waiting for two minutes", "PBS Wash 3 wait complete", 120)
+
        
 ###  LYSIS
 
 pumps.buzz(WASTE_ADDR)
 print("Add 600 uL RIPA, and push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
 
 print("pulling in RIPA") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
 print("Volume:", pumps.set_volume(0.6, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("RIPA pull-in complete")
-        break
+wait_for_pump("RIPA pull-in complete")
 
 pumps.buzz(WASTE_ADDR)
 
@@ -323,21 +290,13 @@ print("Rate:", pumps.set_rate(-500, 'UH', addr))
 print("Volume:", pumps.set_volume(0.016, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("RIPA incubation complete")
-        break
+wait_for_pump("RIPA slow pull incubation complete")
 
-time.sleep(180) # 3 minute wait
-
-pumps.buzz(WASTE_ADDR)
+wait_timer("Waiting 3 more minutes with no pull", "RIPA incubation complete", 180)
 
 print("Switch to 5 mL lysate syringe")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
 
 pumps.buzz(WASTE_ADDR)
 
@@ -347,20 +306,15 @@ pumps.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=WASTE_ADDR)
 pumps.buzz(WASTE_ADDR)
 print("add 1 mL 1x PBS, then push the switch")
 
-while True:
-    if GPIO.input(Sw2) == 0:
-        break
+wait_for_switch()
     
 print("running post-lysis PBS wash") 
 print("Rate:", pumps.set_rate(-50, 'MH', addr))
-print("Volume:", pumps.set_volume(0.7, 'ML',  addr))
+print("Volume:", pumps.set_volume(1.1, 'ML',  addr))
 print("Run:", pumps.run(addr))
 
-while True:
-    stat = pumps.status(addr)
-    if stat == 'S':
-        print("Post-lysis PBS wash complete")
-        break
+wait_for_pump("Post-lysis PBS wash complete")
 
+wait_timer("Waiting for two minutes", "PBS Chase wait complete", 120)
 
 GPIO.cleanup() # clean up all GPIO 
