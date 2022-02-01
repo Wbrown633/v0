@@ -51,6 +51,9 @@ DEBUG_MODE = device.DEBUG_MODE
 SERIAL_PATH = device.PUMP_SERIAL_ADDR
 DEV_MACHINE = device.DEV_MACHINE
 START_STEP = device.START_STEP
+POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
+POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
+
 
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 # TODO make this a tag in the config file "WINDOWS_DEV_MACHINE"
@@ -299,8 +302,18 @@ class MachineActionScreen(ChipFlowScreen):
 
             #TODO: make this work on r0
             if action == 'GRAB':
-                post_run_rate_mm = params["post_run_rate_mm"]
-                post_run_vol_ml = params["post_run_vol_ml"]
+                if POST_RUN_RATE_MM_CALIBRATION:
+                    logging.debug("Using calibration post run rate values")
+                    post_run_rate_mm = POST_RUN_RATE_MM_CALIBRATION
+                else:
+                    post_run_rate_mm = params["post_run_rate_mm"]
+                if POST_RUN_VOL_ML_CALIBRATION:
+                    logging.debug("Using calibration post run volume values")
+                    post_run_vol_ml = POST_RUN_VOL_ML_CALIBRATION
+                else:
+                    post_run_vol_ml = params["post_run_vol_ml"]
+
+                logging.debug("Using Post Run Rate MM: {}, ML : {}".format(post_run_rate_mm, post_run_vol_ml))
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
                     pumps.purge(1, addr)

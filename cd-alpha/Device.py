@@ -57,6 +57,8 @@ class Device:
         R0_PUMP_DIAMETER_DEFAULT = 12.55
         V0_WASTE_DIAMETER_DEFAULT = 12.55
         V0_LYSATE_DIAMETER_DEFAULT = 12.55
+        POST_RUN_RATE_MM_DEFAULT = None
+        POST_RUN_VOL_ML_DEFAULT = None
 
         try:
             with open(config_file_json) as f:
@@ -84,6 +86,12 @@ class Device:
 
             if not hasattr(self, "START_STEP"):
                 self.START_STEP = "home"
+
+            if not hasattr(self, "POST_RUN_RATE_MM"):
+                self.POST_RUN_RATE_MM = POST_RUN_RATE_MM_DEFAULT
+
+            if not hasattr(self, "POST_RUN_VOL_ML"):
+                self.POST_RUN_VOL_ML = POST_RUN_VOL_ML_DEFAULT
             
             # Set defaults based on device type
             if self.DEVICE_TYPE == "R0":

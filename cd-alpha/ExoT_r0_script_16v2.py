@@ -45,7 +45,7 @@ DEBUG_MODE = False
 
 ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
 pumps = PumpNetwork(ser)
-WASTE_ADDR = 2
+WASTE_ADDR = 0
 #LYSATE_ADDR = 2
 WASTE_DIAMETER_mm = 20.10
 LYSATE_DIAMETER_mm = 12.45
