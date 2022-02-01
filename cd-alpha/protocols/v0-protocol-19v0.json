@@ -51,7 +51,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.5,
+                "vol_ml": 0.7,
                 "rate_mh": 50,
                 "eq_time": 1
             }
