@@ -168,7 +168,7 @@
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
-        "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
+        "description": "Add 70 µL Qiazol to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
@@ -178,7 +178,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.0625,
+                "vol_ml": 0.07,
                 "rate_mh": 15,
                 "eq_time": 300
             }
@@ -190,7 +190,7 @@
     "PBSchase": {
         "type": "UserActionScreen",
         "header": "PBS Chase",
-        "description": "Add 700 µL PBS to reservoir. Press 'Next' to start."
+        "description": "Add 70 µL PBS to reservoir. Press 'Next' to start."
     },
 
     "chase_1": {
