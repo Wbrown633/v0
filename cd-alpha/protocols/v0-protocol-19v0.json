@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 18v0. Press 'Start' to begin.",
+        "description": "Ready for a new test with protocol 19v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
     "reset_start": {
@@ -109,7 +109,7 @@
     "pbs_2": {
         "type": "UserActionScreen",
         "header": "PBS Wash 1",
-        "description": "Add 400 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 700 µL 1xPBS to reservoir. Press 'Next' to start."
     },
     "wash_1": {
         "type": "MachineActionScreen",
@@ -128,7 +128,7 @@
     "pbs_3": {
         "type": "UserActionScreen",
         "header": "PBS Wash 2",
-        "description": "Add 800 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 700 µL 1xPBS to reservoir. Press 'Next' to start."
     },
     "flush_5": {
         "type": "MachineActionScreen",
@@ -178,8 +178,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.6,
-                "rate_mh": 50,
+                "vol_ml": 0.0625,
+                "rate_mh": 15,
                 "eq_time": 300
             }
         },
@@ -190,7 +190,7 @@
     "PBSchase": {
         "type": "UserActionScreen",
         "header": "PBS Chase",
-        "description": "Add 1 mL PBS to reservoir. Press 'Next' to start."
+        "description": "Add 700 µL PBS to reservoir. Press 'Next' to start."
     },
 
     "chase_1": {
@@ -200,8 +200,8 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.7,
-                "rate_mh": 50,
+                "vol_ml": 0.07,
+                "rate_mh": 15,
                 "eq_time": 120
             }
         }
