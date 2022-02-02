@@ -168,7 +168,7 @@
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
-        "description": "Add 150 µL Qiazol to reservoir. Press 'Next' to start."
+        "description": "Add 200 µL Qiazol to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
@@ -178,12 +178,12 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.15,
+                "vol_ml": 0.21,
                 "rate_mh": 15,
                 "eq_time": 300
             }
         },
-        "completion_msg": "RIPA pull and incubation complete"
+        "completion_msg": "Qiazol pull and incubation complete"
     },
 
 
@@ -200,7 +200,7 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.25,
+                "vol_ml": 0.4,
                 "rate_mh": 15,
                 "eq_time": 120
             }
