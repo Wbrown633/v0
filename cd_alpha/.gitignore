@@ -1,5 +1,0 @@
-# Ignore the virtual environment
-v0/**
-logs/**
-device_config.json
-workspace.code-workspace
