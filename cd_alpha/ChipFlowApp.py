@@ -177,8 +177,14 @@ class ProcessScreenManager(ScreenManager):
         super().__init__(*args, **kwargs)
 
     def next_screen(self):
-        logging.debug(f"CDA: Next screen, going from {self.current} to {self.next()}")
-        self.current = self.next()
+        current = self.current
+        next_screen = self.next()
+
+        # Don't go to protocol_chooser as a next step, go home instead
+        if self.next() == "protocol_chooser":
+            next_screen = "home"
+        logging.debug(f"CDA: Next screen, going from {current} to {next_screen}")
+        self.current = next_screen
 
     def next_step(self):
         '''Propagate this command one level up.'''
@@ -289,6 +295,7 @@ class MachineActionScreen(ChipFlowScreen):
                             LYSATE_ADDR, 2, self.next_step),
                     switch_update_interval
                 ))
+
 
             if action == 'RESET_WASTE':
                 # TODO: set progress bar to be invisible
@@ -762,6 +769,7 @@ class ProcessWindow(BoxLayout):
         if self.process_sm.current in self.progress_screen_names:
             pos = self.progress_screen_names.index(self.process_sm.current)
             self.overall_progress_bar.set_position(pos)
+
   
     def cleanup(self):
         # Global cleanup
