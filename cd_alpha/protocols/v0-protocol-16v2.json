@@ -182,23 +182,38 @@
 
     "qiazol": {
         "type": "UserActionScreen",
-        "header": "RIPA",
-        "description": "Add 600 µL RIPA to reservoir. Press 'Next' to start."
+        "header": "Qiazol",
+        "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
         "type": "MachineActionScreen",
-        "header": "RIPA 1",
-        "description": "Pulling RIPA into chip.",
+        "header": "Qiazol 1",
+        "description": "Pulling Qiazol into chip.",
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.6,
-                "rate_mh": 50,
-                "eq_time": 300
+                "vol_ml": 0.5,
+                "rate_mh": 25,
+                "eq_time": 60
             }
         },
-        "completion_msg": "RIPA pull and incubation complete"
+        "completion_msg": "Qiazol pull and incubation complete"
+    },
+
+    "extract_2": {
+        "type": "MachineActionScreen",
+        "header": "Qiazol 2",
+        "description": "Pulling Qiazol into chip.",
+        "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 0.2,
+                "rate_mh": 25,
+                "eq_time": 140
+            }
+        },
+        "completion_msg": "Qiazol pull and incubation complete"
     },
 
 
@@ -216,7 +231,7 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.7,
-                "rate_mh": 50,
+                "rate_mh": 25,
                 "eq_time": 120
             }
         }
