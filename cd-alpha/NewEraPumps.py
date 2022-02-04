@@ -93,7 +93,7 @@ class PumpNetwork:
         direction = 'INF'
         if flow_rate < 0: direction = 'WDR'
         resp_dir = self._send_command("DIR{:}".format(direction), addr)
-        resp_rate = self._send_command("RAT{:.0f}{:}".format(abs(flow_rate), unit), addr)
+        resp_rate = self._send_command("RAT{:.2f}{:}".format(abs(flow_rate), unit), addr)
         return resp_dir, resp_rate
 
     def set_volume(self, volume, unit, addr=''):

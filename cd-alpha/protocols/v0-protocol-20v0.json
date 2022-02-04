@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 16v3. Press 'Start' to begin.",
+        "description": "Ready for a new test with protocol 20v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
     "reset_start": {
@@ -194,8 +194,8 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.5,
-                "rate_mh": 25,
-                "eq_time": 60
+                "rate_mh": 8.4,
+                "eq_time": 0
             }
         },
         "completion_msg": "Qiazol pull and incubation complete"
