@@ -198,7 +198,7 @@
                 "eq_time": 0
             }
         },
-        "completion_msg": "Qiazol pull and incubation complete"
+        "completion_msg": "Qiazol pull to waste complete"
     },
 
     "extract_2": {
@@ -209,9 +209,16 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.2,
-                "rate_mh": 25,
-                "eq_time": 140
+                "rate_mh": 8.4,
+                "eq_time": 0
+            },
+            "RELEASE": {
+                "target": "waste",
+                "vol_ml": 1.0,
+                "rate_mh": -50,
+                "eq_time": 0
             }
+            
         },
         "completion_msg": "Qiazol pull and incubation complete"
     },
