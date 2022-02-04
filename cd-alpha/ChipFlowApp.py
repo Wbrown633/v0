@@ -361,6 +361,21 @@ class MachineActionScreen(ChipFlowScreen):
                 pump_addr = params["pump_addr"]
                 pumps.set_diameter(diameter, pump_addr)
                 logging.debug("Switching current loaded syringe to {} diam on pump {}".format(diameter, pump_addr))
+
+            if action == "RELEASE":
+                # make a delay work
+                if params['target'] == 'waste':
+                    addr = WASTE_ADDR
+                if params['target'] == 'lysate':
+                    addr = LYSATE_ADDR
+                rate_mh = params['rate_mh']
+                vol_ml = params['vol_ml']
+                eq_time = params.get('eq_time', 0)
+                logging.info("SENDING RELEASE COMMAND TO: Addr = {}".format(addr))
+                pumps.set_rate(rate_mh, 'MH', addr)
+                pumps.set_volume(vol_ml, 'ML',  addr)
+                pumps.run(addr)
+
                 
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):
@@ -418,7 +433,6 @@ class MachineActionScreen(ChipFlowScreen):
                 primary_color = (1, .33, .33, 1)
             )
 
-    # TODO: fix bug caused in this method when skipping through a debug session
     def set_progress(self, dt):
         self.time_elapsed += dt
         time_remaining = max(self.time_total - self.time_elapsed, 0)
