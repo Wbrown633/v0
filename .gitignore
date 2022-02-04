@@ -2,5 +2,4 @@
 v0venv/**
 cd-alpha/logs/**
 cd_alpha/device_config.json
-cd_alpha/workspace.code-workspace
 cd-alpha/device_config.json
