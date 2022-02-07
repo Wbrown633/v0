@@ -214,7 +214,7 @@
             },
             "RELEASE": {
                 "target": "waste",
-                "vol_ml": 1.0,
+                "vol_ml": 2.5,
                 "rate_mh": -50,
                 "eq_time": 0
             }
