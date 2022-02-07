@@ -1,0 +1,22 @@
+#:kivy 1.11.0
+
+
+<-FileListIconView>:
+    BoxLayout:
+        pos: root.pos
+        size_hint_x: None
+        width: root.width - dp(10)
+        Label:
+            id: filename
+            font_size: dp(20)                                  # adjust this font size
+            size_hint_x: None
+            width: root.width - sz.width                       # this allows filename Label to fill width less size Label
+            text_size: self.width, None
+            halign: 'left'
+            shorten: True
+        Label:
+            id: sz
+            font_size: dp(10)                                  # adjust this font size
+            #text_size: self.width, None
+            size_hint_x: None
+            width: self.texture_size[0]

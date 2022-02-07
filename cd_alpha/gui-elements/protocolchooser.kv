@@ -1,0 +1,37 @@
+<ProtocolChooser>:
+    
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        padding: 20, 20
+
+        # I wish this was an Icon view but the following things need to be fixed for that to work
+        # 1. The default font size set in widget.kv needs to be over-ridden so that the font is not cut off as it is now
+        # 2. The columns must be constrained so that there are fewer icons per row allowing the text to have more space
+        # or 
+        # 3. The file name is shortened to just "16v0" so that the file names are readable with fix from #1
+        FileChooserListView:
+            id: filechooser
+            path: "./protocols"
+            filters: ["*.json"]
+
+        BoxLayout:
+            size_hint_y: None
+            padding: 20, 20
+            spacing: 10
+
+            RoundedButton:
+                text: "Cancel"
+                bold: True
+                on_release: root.cancel()
+                size: self.texture_size
+                font_size: sp(30)
+
+            RoundedButton:
+                id: load
+                text: "Load"
+                bold: True
+                on_release: root.load(filechooser.path, filechooser.selection)
+                size: self.texture_size
+                font_size: sp(30)

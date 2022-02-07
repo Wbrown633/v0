@@ -1,5 +1,7 @@
 # Ignore the virtual environment
-v0venv/**
 cd-alpha/logs/**
 cd_alpha/device_config.json
 cd-alpha/device_config.json
+cd_alpha/workspace.code-workspace
+cd_alpha/tests/.coverage
+cd_alpha/device_config.json

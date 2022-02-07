@@ -1,0 +1,17 @@
+#:kivy 1.11.0
+
+<RoundedButton@Button>
+    background_color: (0, 0, 0, 0)
+    background_normal: ''
+    button_color: (0.33, 0.66, 1, 1)
+    border_radius: [(10, 10), (10, 10), (10, 10), (10, 10)]
+    border: [10, 10, 10, 10]
+    font_size: sp(30)
+    canvas.before:
+        Color:
+            rgba: self.button_color
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10]
+
