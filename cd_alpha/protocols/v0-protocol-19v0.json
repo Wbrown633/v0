@@ -42,7 +42,7 @@
     "f127": {
         "type": "UserActionScreen",
         "header": "Add F-127",
-        "description": "Add 0.7 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 1.0 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start."
     },
     "flush_1": {
         "type": "MachineActionScreen",
@@ -51,9 +51,9 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.8,
-                "rate_mh": 50,
-                "eq_time": 1
+                "vol_ml": 0.5,
+                "rate_mh": 15,
+                "eq_time": 0
             }
         }
     },
@@ -68,21 +68,37 @@
         },
         "completion_msg": "F-127 blocking finished."
     },
+
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "F-127 pull",
+        "description": "Wetting the chip with F-127",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.5,
+                "rate_mh": 15,
+                "eq_time": 0
+            }
+        }
+    },
+
     "pbs_1": {
         "type": "UserActionScreen",
         "header": "PBS rinse",
         "description": "Add 1 mL 1xPBS to reservoir. Press 'Next' to start."
     },
-    "flush_2": {
+
+    "flush_3": {
         "type": "MachineActionScreen",
         "header": "PBS rinse",
         "description": "Rinsing the chip.",
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1.1,
+                "vol_ml": 1.0,
                 "rate_mh": 15,
-                "eq_time": 120
+                "eq_time": 0
             }
         },
         "completion_msg": "PBS rinse complete"
@@ -92,7 +108,7 @@
         "header": "Add sample",
         "description": "Add 1 mL sample to reservoir. Press 'Next' to start"
     },
-    "flush_3": {
+    "flush_4": {
         "type": "MachineActionScreen",
         "header": "Sample pull",
         "description": "Pulling sample thru chip.",
@@ -101,7 +117,7 @@
                 "target": "waste",
                 "vol_ml": 1.1,
                 "rate_mh": 2.5,
-                "eq_time": 120
+                "eq_time": 0
             }
         },
         "completion_msg": "Sample pull completed"
@@ -118,9 +134,9 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.8,
+                "vol_ml": 0.7,
                 "rate_mh": 15,
-                "eq_time": 120
+                "eq_time": 0
             }
         },
         "completion_msg": "Wash 1 complete"
@@ -137,9 +153,9 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.8,
+                "vol_ml": 0.7,
                 "rate_mh": 15,
-                "eq_time": 120
+                "eq_time": 0
             }
         },
         "completion_msg": "Wash 2 complete"
@@ -150,16 +166,16 @@
         "header": "PBS Wash 3",
         "description": "Add 700 µL 1xPBS to reservoir. Press 'Next' to start."
     },
-    "flush_7": {
+    "flush_6": {
         "type": "MachineActionScreen",
         "header": "PBS Wash 3",
         "description": "Washing the chip.",
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.8,
+                "vol_ml": 0.7,
                 "rate_mh": 15,
-                "eq_time": 120
+                "eq_time": 0
             }
         },
         "completion_msg": "Wash 3 complete"
@@ -168,7 +184,7 @@
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
-        "description": "Add 200 µL Qiazol to reservoir. Press 'Next' to start."
+        "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
@@ -178,9 +194,9 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.21,
-                "rate_mh": 15,
-                "eq_time": 300
+                "vol_ml": 0.7,
+                "rate_mh": 7,
+                "eq_time": 0
             }
         },
         "completion_msg": "Qiazol pull and incubation complete"
@@ -190,7 +206,7 @@
     "PBSchase": {
         "type": "UserActionScreen",
         "header": "PBS Chase",
-        "description": "Add 250 µL PBS to reservoir. Press 'Next' to start."
+        "description": "Add 500 µL PBS to reservoir. Press 'Next' to start."
     },
 
     "chase_1": {
@@ -200,9 +216,9 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.4,
+                "vol_ml": 0.2,
                 "rate_mh": 15,
-                "eq_time": 120
+                "eq_time": 0
             }
         }
     },
