@@ -194,7 +194,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.5,
-                "rate_mh": 8.4,
+                "rate_mh": 10,
                 "eq_time": 0
             }
         },
@@ -209,12 +209,12 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.2,
-                "rate_mh": 8.4,
+                "rate_mh": 10,
                 "eq_time": 0
             },
             "RELEASE": {
                 "target": "waste",
-                "vol_ml": 2.5,
+                "vol_ml": 1.5,
                 "rate_mh": -50,
                 "eq_time": 0
             }
@@ -238,7 +238,7 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.7,
-                "rate_mh": 25,
+                "rate_mh": 15,
                 "eq_time": 120
             }
         }
