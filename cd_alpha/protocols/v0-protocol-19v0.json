@@ -193,7 +193,7 @@
         "description": "Pulling Qiazol into chip.",
         "action": {
             "PUMP": {
-                "target": "waste",
+                "target": "lysate",
                 "vol_ml": 0.7,
                 "rate_mh": 7,
                 "eq_time": 0
@@ -202,22 +202,29 @@
         "completion_msg": "Qiazol pull and incubation complete"
     },
 
-
-    "PBSchase": {
-        "type": "UserActionScreen",
-        "header": "PBS Chase",
-        "description": "Add 500 µL PBS to reservoir. Press 'Next' to start."
-    },
-
     "chase_1": {
         "type": "MachineActionScreen",
-        "header": "PBS Chase",
+        "header": "Qiazol 2",
         "description": "Extracting lysate from chip.",
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.2,
+                "vol_ml": 1.0,
                 "rate_mh": 15,
+                "eq_time": 0
+            }
+        }
+    },
+
+    "release": {
+        "type": "MachineActionScreen",
+        "header": "Qiazol Release",
+        "description": "Releasing excess pressure from lysate syringe",
+        "action": {
+            "PUMP":{
+                "target":"lysate",
+                "vol_ml": 0.5,
+                "rate_mh": -50,
                 "eq_time": 0
             }
         }
