@@ -114,8 +114,6 @@ else:
 scheduled_events = []
 list_of_pumps = device.PUMP_ADDR
 
-
-
 ### UTIL FUNCTIONS ###
 
 
@@ -808,15 +806,9 @@ class ProcessWindow(BoxLayout):
         with open(path_to_protocol, 'r') as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
-        # TODO: this block has some voodoo in it and seems overly complicated but makes the protocol chooser work
-        screens_to_remove = self.process_sm.screens
         if self.process_sm.has_screen("protocol_chooser"):
-            # Start voodoo, I don't think this does anything but if you remove it the process_sm freaks out
-            
             protocol_chooser = self.process_sm.get_screen("protocol_chooser")
-            #screens_to_remove.remove(protocol_chooser)
             self.process_sm.clear_widgets()
-            # End voodoo
             self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
             
             
