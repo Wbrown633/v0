@@ -197,6 +197,12 @@
                 "vol_ml": 0.7,
                 "rate_mh": 7,
                 "eq_time": 0
+            }, 
+            "RELEASE": {
+                "target": "waste",
+                "vol_ml" : 1.5,
+                "rate_mh" : -50,
+                "eq_time": 0
             }
         },
         "completion_msg": "Qiazol pull and incubation complete"
