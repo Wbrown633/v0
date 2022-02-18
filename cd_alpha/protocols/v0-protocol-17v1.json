@@ -160,13 +160,28 @@
         "completion_msg": "Wash 2 complete"
     },
 
+    "flush_6": {
+        "type": "MachineActionScreen",
+        "header": "PBS Wash 2 Part 2",
+        "description": "Washing the chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.4,
+                "rate_mh": 50,
+                "eq_time": 120
+            }
+        },
+        "completion_msg": "Wash 2 complete"
+    },
+
     "pbs_4": {
         "type": "UserActionScreen",
         "header": "PBS Wash 3",
         "description": "Add 1.0 mL 1xPBS to reservoir. Press 'Next' to start."
     },
 
-    "flush_6": {
+    "flush_7": {
         "type": "MachineActionScreen",
         "header": "PBS Wash 3",
         "description": "Washing the chip.",
