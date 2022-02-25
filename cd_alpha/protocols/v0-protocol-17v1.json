@@ -226,7 +226,7 @@
                 "target": "lysate",
                 "vol_ml": 3.0,
                 "rate_mh": 50,
-                "eq_time": 10
+                "eq_time": 120
             },
             "RELEASE": {
                 "target": "waste",
