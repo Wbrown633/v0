@@ -201,12 +201,6 @@
         "completion_msg": "RIPA pull and incubation complete"
     },
 
-    "PBSchase": {
-        "type": "UserActionScreen",
-        "header": "PBS Chase",
-        "description": "Add 1 mL PBS to reservoir. Press 'Next' to start."
-    },
-
     "extract_2": {
         "type": "MachineActionScreen",
         "header": "Lysate extraction",
