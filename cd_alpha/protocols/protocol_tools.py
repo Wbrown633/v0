@@ -4,7 +4,7 @@ import json
 from multiprocessing.sharedctypes import Value
 from textwrap import indent
 from unicodedata import name
-import pprint
+import sys
 
 
 
@@ -21,36 +21,41 @@ class ProcessProtocol:
             self.protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
     def list_steps(self):
-        step_number = 1
+        step_number = 0
         for key in self.protocol.keys():
             step_number += 1
             for k in self.protocol[key]:
                 if k == "header":
-                    print("Step # {} : {}".format(step_number, self.protocol[key][k]))
+                    print("\nStep # {} : {}".format(step_number, self.protocol[key][k]))
                 
                 if k == "description":
-                    p.pprint(self.protocol[key][k])
-                    print("\n")
+                    print("\n\tStep Description: {}\n".format(self.protocol[key][k]))
                 if k == "action":
                     for steps in self.protocol[key][k]:
-                        p.pprint(steps)
+                        if steps == "PUMP":
+                            print("\t\tRun Pump: ")
                         for s in self.protocol[key][k][steps]:
                             if s == "target":
-                                p.pprint("Targeting Syringe : {}".format(self.protocol[key][k][steps][s]))
+                                print("\t\t\tTargeting Syringe : {}".format(self.protocol[key][k][steps][s]))
                             elif s == "vol_ml":
-                                p.pprint("Volume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
+                                print("\t\t\tVolume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
                             elif s == "rate_mh":
-                                p.pprint("Syringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
+                                print("\t\t\tSyringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
                             elif s == "eq_time":
-                                p.pprint("Wait time (s) : {}".format(self.protocol[key][k][steps][s]))
-                        print("\n")
+                                print("\t\t\tWait time (s) : {}".format(self.protocol[key][k][steps][s]))
+                        print('\n')
 
-                    print("\n")
+                    
 
 if __name__ == "__main__":
-    p = pprint.PrettyPrinter(indent=4)
-    proto = ProcessProtocol("v0-protocol-17v1.json")
-    print("Process Protocol")
-    proto.load_protocol()
-    proto.list_steps()
+    filename = 'v0-protocol-17v1-pretty.txt'
+    original_stdout = sys.stdout
+    with open(filename, 'w') as f:
+        proto = ProcessProtocol("v0-protocol-17v1.json")
+        print("Process Protocol")
+        sys.stdout = f
+        proto.load_protocol()
+        proto.list_steps()
+        sys.stdout = original_stdout
+        print("File Output to: {}".format(filename))
 
