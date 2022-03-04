@@ -34,16 +34,18 @@ class ProcessProtocol:
                     for steps in self.protocol[key][k]:
                         if steps == "PUMP":
                             print("\t\tRun Pump: ")
-                        for s in self.protocol[key][k][steps]:
-                            if s == "target":
-                                print("\t\t\tTargeting Syringe : {}".format(self.protocol[key][k][steps][s]))
-                            elif s == "vol_ml":
-                                print("\t\t\tVolume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
-                            elif s == "rate_mh":
-                                print("\t\t\tSyringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
-                            elif s == "eq_time":
-                                print("\t\t\tWait time (s) : {}".format(self.protocol[key][k][steps][s]))
-                        print('\n')
+                            for s in self.protocol[key][k][steps]:
+                                if s == "target":
+                                    print("\t\t\tTargeting Syringe : {}".format(self.protocol[key][k][steps][s]))
+                                elif s == "vol_ml":
+                                    print("\t\t\tVolume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
+                                elif s == "rate_mh":
+                                    print("\t\t\tSyringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
+                                elif s == "eq_time":
+                                    print("\t\t\tWait time (s) : {}".format(self.protocol[key][k][steps][s]))
+                            print('\n')
+                        elif steps == "INCUBATE":
+                            print("\t\tIncubating for {} (s)".format(self.protocol[key][k][steps]["time"]))
 
                     
 
