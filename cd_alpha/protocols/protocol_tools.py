@@ -47,7 +47,8 @@ class ProcessProtocol:
                         elif steps == "INCUBATE":
                             print("\t\tIncubating for {} (s)".format(self.protocol[key][k][steps]["time"]))
 
-                    
+    def calculate_step_time(self, step: OrderedDict):
+        step["time"]           
 
 if __name__ == "__main__":
     filename = 'v0-protocol-17v1-pretty.txt'

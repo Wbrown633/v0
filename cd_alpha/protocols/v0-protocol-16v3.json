@@ -183,7 +183,7 @@
     "RIPA": {
         "type": "UserActionScreen",
         "header": "RIPA",
-        "description": "Add 500 µL RIPA Lysis to reservoir. Press 'Next' to start."
+        "description": "Add 600 µL RIPA Lysis to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
