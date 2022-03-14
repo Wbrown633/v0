@@ -63,7 +63,7 @@
         "description": "Blocking chip with F-127",
         "action": {
             "INCUBATE": {
-                "time": 3600
+                "time": 180
             }
         },
         "completion_msg": "F-127 blocking finished."
@@ -106,7 +106,7 @@
     "add_sample": {
         "type": "UserActionScreen",
         "header": "Add sample",
-        "description": "Add 1 mL sample to reservoir. Press 'Next' to start"
+        "description": "Add 500 µL sample to reservoir. Press 'Next' to start"
     },
     "flush_4": {
         "type": "MachineActionScreen",
@@ -115,7 +115,7 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1.1,
+                "vol_ml": 0.6,
                 "rate_mh": 2.5,
                 "eq_time": 0
             }
@@ -221,22 +221,6 @@
             }
         }
     },
-
-    "release": {
-        "type": "MachineActionScreen",
-        "header": "Qiazol Release",
-        "description": "Releasing excess pressure from lysate syringe",
-        "action": {
-            "PUMP":{
-                "target":"lysate",
-                "vol_ml": 0.5,
-                "rate_mh": -50,
-                "eq_time": 0
-            }
-        }
-    },
-
-
 
     "remove_kit": {
         "type": "UserActionScreen",
