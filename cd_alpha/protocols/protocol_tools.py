@@ -51,10 +51,10 @@ class ProcessProtocol:
         step["time"]           
 
 if __name__ == "__main__":
-    filename = 'v0-protocol-17v1-pretty.txt'
+    filename = 'v0-protocol-19v1-pretty.txt'
     original_stdout = sys.stdout
     with open(filename, 'w') as f:
-        proto = ProcessProtocol("v0-protocol-17v1.json")
+        proto = ProcessProtocol("v0-protocol-19v1.json")
         print("Process Protocol")
         sys.stdout = f
         proto.load_protocol()
