@@ -1,0 +1,22 @@
+
+<ManualControl>:
+    
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+
+        Label:
+            font_size: sp(32)
+            text: 'Volume Dispensed: ' + root.info
+        
+        GridLayout:
+            cols: 4
+            Button:
+                text: root.run_status
+                on_press: root.do_action()
+            Button:
+                text: 'Infuse/Withdraw'
+            Button:
+                text: 'Rate'
+            Button:
+                text:'Syringe 1/2'
