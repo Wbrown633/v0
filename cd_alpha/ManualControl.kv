@@ -13,10 +13,14 @@
             cols: 4
             Button:
                 text: root.run_status
-                on_press: root.do_action()
+                on_press: root.start_stop()
             Button:
-                text: 'Infuse/Withdraw'
+                id:"infuse_withdraw"
+                text: root.run_direction
+                on_press: root.change_direction()
             Button:
                 text: 'Rate'
             Button:
-                text:'Syringe 1/2'
+                id: "syringe_switch"
+                text: root.syringe
+                on_press: root.select_syringe()

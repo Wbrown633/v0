@@ -6,7 +6,7 @@ kivy.require('2.0.0')
 
 from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, OptionProperty
 
 
 class RedPumps:
@@ -22,15 +22,29 @@ class ManualControl(FloatLayout):
 
     Add an action to be called from the kv lang file.
     '''
-    label_wid = ObjectProperty()
     info = StringProperty()
-    run_status = StringProperty()
+    run_status = OptionProperty("START", options=["START", "STOP"])
+    syringe = OptionProperty("1", options=["1", "2"])
+    run_direction = OptionProperty("INFUSING", options=["INFUSING", "WITHDRAWING"])
 
-    run_status = "START"
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    def do_action(self):
+    def _toggle(self, val):
+        if val:
+            return 0
+        else:
+            return 1
+
+    def start_stop(self):
         print("Doing Action")
-        self.run_status = "STOP"
+        self.run_status = self._toggle(self.run_status)
+
+    def change_direction(self):
+        self.run_direction = "INFUSING"
+
+    def select_syringe(self):
+        self.syringe = "1"
 
 if __name__ == '__main__':
     ManualControlApp().run()
