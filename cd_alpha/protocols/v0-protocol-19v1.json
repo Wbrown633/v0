@@ -204,8 +204,8 @@
                 "rate_mh" : -50,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Qiazol pull and incubation complete"
+        }
+        
     },
 
     "chase_1": {
@@ -219,7 +219,8 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Qiazol pull and incubation complete"
     },
 
     "remove_kit": {
