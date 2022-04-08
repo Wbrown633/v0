@@ -20,7 +20,7 @@ if __name__ == '__main__':
                     time.sleep(0.1) #wait for arduino to answer
                     while arduino.inWaiting()==0: pass
                     if  arduino.inWaiting()>0: 
-                        answer=arduino.readlines()
+                        answer=arduino.readline()
                         print(answer)
                         arduino.reset_input_buffer() #remove data after reading
             except KeyboardInterrupt:
