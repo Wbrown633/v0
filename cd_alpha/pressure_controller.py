@@ -21,7 +21,7 @@ if __name__ == '__main__':
                     arduino.reset_output_buffer
                     while arduino.inWaiting()==0: pass
                     if  arduino.inWaiting()>0: 
-                        answer=arduino.readlines()
+                        answer=arduino.readlines(1000)
                         print(answer)
                         arduino.reset_input_buffer() #remove data after reading
             except KeyboardInterrupt:
