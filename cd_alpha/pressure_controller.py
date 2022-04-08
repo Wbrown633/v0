@@ -24,7 +24,6 @@ if __name__ == '__main__':
                     if  arduino.in_waiting > 0: 
                         answer=arduino.readline()
                         print(answer)
-                        if arduino.in_waiting  > 0:
-                            arduino.reset_input_buffer() #remove data after reading
+                        #remove data after reading
             except KeyboardInterrupt:
                 print("KeyboardInterrupt has been caught.")
