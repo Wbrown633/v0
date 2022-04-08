@@ -19,10 +19,11 @@ if __name__ == '__main__':
                     arduino.writelines(cmd.encode())
                     time.sleep(0.1) #wait for arduino to answer
                     arduino.reset_output_buffer
-                    while arduino.inWaiting()==0: pass
-                    if  arduino.inWaiting()>0: 
-                        answer=arduino.readlines(1000)
+                    while arduino.in_waiting == 0: pass
+                    if  arduino.in_waiting > 0: 
+                        answer=arduino.readlines()
                         print(answer)
-                        arduino.reset_input_buffer() #remove data after reading
+                        if arduino.out_waiting  > 0:
+                            arduino.reset_input_buffer() #remove data after reading
             except KeyboardInterrupt:
                 print("KeyboardInterrupt has been caught.")
