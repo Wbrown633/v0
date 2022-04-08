@@ -18,12 +18,13 @@ if __name__ == '__main__':
                     cmd=input("Enter command : ")
                     arduino.writelines(cmd.encode())
                     time.sleep(0.1) #wait for arduino to answer
-                    arduino.reset_output_buffer
+                    if arduino.out_waiting > 0:
+                        arduino.reset_output_buffer()
                     while arduino.in_waiting == 0: pass
                     if  arduino.in_waiting > 0: 
                         answer=arduino.readlines()
                         print(answer)
-                        if arduino.out_waiting  > 0:
+                        if arduino.in_waiting  > 0:
                             arduino.reset_input_buffer() #remove data after reading
             except KeyboardInterrupt:
                 print("KeyboardInterrupt has been caught.")
