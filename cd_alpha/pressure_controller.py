@@ -22,8 +22,8 @@ if __name__ == '__main__':
                     if arduino.out_waiting > 0:
                         arduino.reset_output_buffer()
                     while arduino.in_waiting == 0: pass
-                    while  arduino.in_waiting > 0: 
-                        answer=arduino.readline()
+                    if  arduino.in_waiting > 0: 
+                        answer=arduino.readlines()
                         print(answer)
                         #remove data after reading
                     arduino.reset_input_buffer()
