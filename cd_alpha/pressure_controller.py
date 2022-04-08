@@ -3,6 +3,7 @@
 # lsusb to check device name
 #dmesg | grep "tty" to find port name
 
+from ast import While
 import serial,time
 
 
@@ -21,9 +22,10 @@ if __name__ == '__main__':
                     if arduino.out_waiting > 0:
                         arduino.reset_output_buffer()
                     while arduino.in_waiting == 0: pass
-                    if  arduino.in_waiting > 0: 
+                    while  arduino.in_waiting > 0: 
                         answer=arduino.readline()
                         print(answer)
                         #remove data after reading
+                    arduino.reset_input_buffer()
             except KeyboardInterrupt:
                 print("KeyboardInterrupt has been caught.")
