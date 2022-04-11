@@ -898,6 +898,8 @@ class ChipFlowApp(App):
         logging.debug("CDA: Creating main window")
         return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
 
+    def get_updates(self):
+        os.system('sudo source')
     def on_close(self):
         cleanup()
         if not DEBUG_MODE:
