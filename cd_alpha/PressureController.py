@@ -31,12 +31,10 @@ class PressureController:
         while self.arduino.in_waiting == 0:
             pass
         if  self.arduino.in_waiting > 0: 
-            confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
-            time.sleep(1)
             self.arduino.reset_input_buffer()
-            time.sleep(1)
+            confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
+            
             self.arduino.reset_output_buffer()
-            time.sleep(1)
         return confirmation_msg
 
     def _switch_status(self, switch_name:str, status:bool) -> str:
