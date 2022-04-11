@@ -69,4 +69,11 @@ if __name__ == '__main__':
     
     print('Running. Press CTRL-C to exit.')
     with PressureController() as pres:
+        print("Set pump pressure")
         print(pres.set_pressure_pump(-15.0))
+        print("Open Res Switch")
+        print(pres.res_switch(1))
+        print("Close Res Switch")
+        print(pres.res_switch(0))
+        print("Open Dump Switch")
+        print(pres.dump_switch(1))
