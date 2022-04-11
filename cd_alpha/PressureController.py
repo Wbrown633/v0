@@ -65,6 +65,8 @@ class PressureController:
 
 
 if __name__ == '__main__':
+
+    print("Pyserial Versio:", serial.__version__)
     
     print('Running. Press CTRL-C to exit.')
     with PressureController() as pres:
