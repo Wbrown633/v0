@@ -44,7 +44,7 @@ class PressureController:
         if status:
             switch_status = 1
         cmd_string = "{}:{};".format(switch_name, switch_status)
-        response = self._send_command_str(self, cmd_string)
+        response = self._send_command_str(cmd_string)
         return response[-1]
         
     def res_switch(self, status:bool) -> str:
