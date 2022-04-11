@@ -45,7 +45,7 @@ class PressureController:
             switch_status = 1
         cmd_string = "{}:{};".format(switch_name, switch_status)
         response = self._send_command_str(cmd_string)
-        return response[-1]
+        return response
         
     def res_switch(self, status:bool) -> str:
         return self._switch_status("RESSWITCH", status)
@@ -60,8 +60,7 @@ class PressureController:
         assert pressure_set_kPa < self.max_pressure_set_point_kPa, "Invalid pressure"
         cmd_string = "PUMP:{};".format(pressure_set_kPa)
         response = self._send_command_str(cmd_string)
-        return response[-1]
-        
+        return response
 
 
 
