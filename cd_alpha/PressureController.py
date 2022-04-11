@@ -17,6 +17,8 @@ class PressureController:
         time.sleep(0.1)
         logging.info("{} connected!".format(self.arduino.port))
         self.arduino.write("".encode())
+        time.sleep(0.5)
+        self.arduino.reset_input_buffer()
         return self
         
     def __exit__(self, exc_type, exc_value, exc_traceback): 
