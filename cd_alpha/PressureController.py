@@ -16,7 +16,7 @@ class PressureController:
         self.arduino = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
         time.sleep(0.1)
         logging.info("{} connected!".format(self.arduino.port))
-        self.arduino.write("")
+        self.arduino.write("".encode())
         return self
         
     def __exit__(self, exc_type, exc_value, exc_traceback): 
