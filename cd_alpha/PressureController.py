@@ -31,7 +31,7 @@ class PressureController:
         time.sleep(0.5) #wait for arduino to answer
         if self.arduino.out_waiting > 0:
             self.arduino.reset_output_buffer()
-        while self.arduino.out_waiting == 0:
+        while self.arduino.in_waiting == 0:
             pass
         if  self.arduino.in_waiting > 0: 
             confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
