@@ -26,10 +26,10 @@ class PressureController:
     def _send_command_str(self, cmd: str) -> List[str]:
         assert self.arduino.isOpen(), "Serial port not open."
         self.arduino.write(cmd.encode())
-        time.sleep(0.1) #wait for arduino to answer
+        time.sleep(0.5) #wait for arduino to answer
         if self.arduino.out_waiting > 0:
             self.arduino.reset_output_buffer()
-        time.sleep(0.1)
+        time.sleep(0.5)
         if  self.arduino.in_waiting > 0: 
             confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
             self.arduino.reset_input_buffer
