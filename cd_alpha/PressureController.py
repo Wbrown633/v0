@@ -3,7 +3,6 @@
 # lsusb to check device name
 #dmesg | grep "tty" to find port name
 
-from mimetypes import init
 from typing import List
 import serial,time
 import logging
@@ -33,9 +32,11 @@ class PressureController:
             pass
         if  self.arduino.in_waiting > 0: 
             confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
+            time.sleep(1)
             self.arduino.reset_input_buffer()
+            time.sleep(1)
             self.arduino.reset_output_buffer()
-            self.arduino.flush()
+            time.sleep(1)
         return confirmation_msg
 
     def _switch_status(self, switch_name:str, status:bool) -> str:
