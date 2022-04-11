@@ -3,6 +3,7 @@
 # lsusb to check device name
 #dmesg | grep "tty" to find port name
 
+from mimetypes import init
 from typing import List
 import serial,time
 import logging
@@ -16,9 +17,8 @@ class PressureController:
         self.arduino = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
         time.sleep(0.1)
         logging.info("{} connected!".format(self.arduino.port))
-        self.arduino.write("".encode())
-        time.sleep(0.5)
-        self.arduino.reset_input_buffer()
+        init_msg = self._send_command_str("")
+        logging.info("Got init msg: {}".format(init_msg))
         return self
         
     def __exit__(self, exc_type, exc_value, exc_traceback): 
