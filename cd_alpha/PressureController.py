@@ -29,13 +29,12 @@ class PressureController:
         assert self.arduino.isOpen(), "Serial port not open."
         self.arduino.write(cmd.encode())
         time.sleep(0.5) #wait for arduino to answer
-        if self.arduino.out_waiting > 0:
-            self.arduino.reset_output_buffer()
         while self.arduino.in_waiting == 0:
             pass
         if  self.arduino.in_waiting > 0: 
             confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
             self.arduino.reset_input_buffer()
+            self.arduino.reset_output_buffer()
         return confirmation_msg
 
     def _switch_status(self, switch_name:str, status:bool) -> str:
@@ -54,7 +53,6 @@ class PressureController:
         '''Change the status of the pressure dump switch. Return the response string.'''
         return self._switch_status("DUMPSWITCH", status)
         
-
     def set_pressure_pump(self, pressure_set_kPa: float) -> str:
         '''Change the pressure set point for the pump.'''
         assert pressure_set_kPa < self.max_pressure_set_point_kPa, "Invalid pressure"
@@ -66,8 +64,7 @@ class PressureController:
 
 if __name__ == '__main__':
 
-    print("Pyserial Versio:", serial.__version__)
-    
+    print("Pyserial Version:", serial.__version__)
     print('Running. Press CTRL-C to exit.')
     with PressureController() as pres:
         print("Set pump pressure")
