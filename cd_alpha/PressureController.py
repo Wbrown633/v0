@@ -3,6 +3,7 @@
 # lsusb to check device name
 #dmesg | grep "tty" to find port name
 
+from typing import List
 import serial,time
 import logging
 
@@ -22,7 +23,7 @@ class PressureController:
         logging.info("Closing serial port.")
         self.arduino.close()
 
-    def _send_command_str(self, cmd: str) -> list[str]:
+    def _send_command_str(self, cmd: str) -> List[str]:
         assert self.arduino.isOpen(), "Serial port not open."
         self.arduino.write(cmd.encode())
         time.sleep(0.1) #wait for arduino to answer
