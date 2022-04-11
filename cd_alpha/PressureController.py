@@ -8,7 +8,7 @@ import logging
 
 class PressureController:
     def __init__(self) -> None:
-        pass
+        self.max_pressure_set_point_kPa = 3.0
             
     def __enter__(self) -> None: 
         logging.info("Opening Serial connection")
@@ -22,39 +22,41 @@ class PressureController:
         logging.info("Closing serial port.")
         self.arduino.close()
 
-    def _send_command_str(self, cmd: str) -> str:
-        assert arduino.isOpen(), "Serial port not open."
-        confirmation_msgs = []
-        while True:
-            prev_msg = confirmation_msg
-            arduino.write(cmd.encode())
-            time.sleep(0.5) #wait for arduino to answer
-            if arduino.out_waiting > 0:
-                arduino.reset_output_buffer()
-            while arduino.in_waiting == 0: pass
-            if  arduino.in_waiting > 0: 
-                confirmation_msg = arduino.readline()
-                #remove data after reading
-                arduino.reset_input_buffer()
+    def _send_command_str(self, cmd: str) -> list[str]:
+        assert self.arduino.isOpen(), "Serial port not open."
+        self.arduino.write(cmd.encode())
+        time.sleep(0.1) #wait for arduino to answer
+        if self.arduino.out_waiting > 0:
+            self.arduino.reset_output_buffer()
+        time.sleep(0.1)
+        if  self.arduino.in_waiting > 0: 
+            confirmation_msg = self.arduino.readlines(self.arduino.in_waiting)
+            self.arduino.reset_input_buffer
+        return confirmation_msg
 
-    def res_switch(self, status:bool) -> str:
+    def _switch_status(self, switch_name:str, status:bool) -> str:
         '''Change the status of the Reservoir switch. Return the response string.'''
         switch_status = 0
-
         if status:
             switch_status = 1
-
-        cmd_string = "RESSWITCH:{};".format(switch_status)
-        self.arduino.write()
+        cmd_string = "{}:{};".format(switch_name, switch_status)
+        response = self._send_command_str(self, cmd_string)
+        return response[-1]
         
+    def res_switch(self, status:bool) -> str:
+        return self._switch_status("RESSWITCH", status)
     
-    def dump_switch(self) -> str:
+    def dump_switch(self, status:bool) -> str:
         '''Change the status of the pressure dump switch. Return the response string.'''
-        self.arduino.write()
+        return self._switch_status("DUMPSWITCH", status)
         
 
     def set_pressure_pump(self, pressure_set_kPa: float) -> str:
         '''Change the pressure set point for the pump.'''
+        assert pressure_set_kPa < self.max_pressure_set_point_kPa, "Invalid pressure"
+        cmd_string = "PUMP:{};".format(pressure_set_kPa)
+        response = self._send_command_str(cmd_string)
+        return response[-1]
         
 
 
@@ -62,23 +64,5 @@ class PressureController:
 if __name__ == '__main__':
     
     print('Running. Press CTRL-C to exit.')
-    with serial.Serial("/dev/ttyACM0", 115200, timeout=1) as arduino:
-        time.sleep(0.1) #wait for serial to open
-        if arduino.isOpen():
-            print("{} connected!".format(arduino.port))
-            try:
-                while True:
-                    cmd=input("Enter command : ")
-                    arduino.write(cmd.encode())
-                    time.sleep(0.5) #wait for arduino to answer
-                    if arduino.out_waiting > 0:
-                        arduino.reset_output_buffer()
-                    while arduino.in_waiting == 0: pass
-                    if  arduino.in_waiting > 0: 
-                        answer=arduino.readline()
-                        print(answer)
-                        #remove data after reading
-                        arduino.reset_input_buffer()
-                        print(arduino.in_waiting)
-            except KeyboardInterrupt:
-                print("KeyboardInterrupt has been caught.")
+    with PressureController() as pres:
+        print(pres.set_pressure_pump(-15.0))
