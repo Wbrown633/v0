@@ -13,7 +13,7 @@ class PressureController:
             
     def __enter__(self) -> None: 
         logging.info("Opening Serial connection")
-        self.arduino = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+        self.arduino = serial.Serial("/dev/ttyACM0", 115200, timeout=0)
         time.sleep(0.1)
         logging.info("{} connected!".format(self.arduino.port))
         init_msg = self._send_command_str("")
@@ -31,7 +31,7 @@ class PressureController:
         while self.arduino.in_waiting == 0:
             pass
         if  self.arduino.in_waiting > 0: 
-            confirmation_msg = self.arduino.read(self.arduino.in_waiting)
+            confirmation_msg = self.arduino.readline(self.arduino.in_waiting)
             self.arduino.reset_input_buffer()
         return confirmation_msg
 
