@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Chip Dx
+Exec=python3 /home/pi/v0/cd_alpha/ChipFlowApp.py
+Terminal=false
+Icon=/home/pi/v0/cd_alpha/setup/chipdx-icon.png
