@@ -899,7 +899,13 @@ class ChipFlowApp(App):
         return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
 
     def get_updates(self):
-        os.system('sudo source')
+        # Pseudo code 
+        # check github for updates, automatically merge results
+        # Throw nonfatal error if we cannot merge 
+        # Show confirmation popup after merge
+        #os.system('sudo source')
+        pass
+    
     def on_close(self):
         cleanup()
         if not DEBUG_MODE:
