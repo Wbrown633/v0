@@ -905,8 +905,7 @@ class ChipFlowApp(App):
         else:
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
 
-
-if __name__ == '__main__':
+def main():
     try:
         ChipFlowApp().run()
     except:
@@ -918,3 +917,7 @@ if __name__ == '__main__':
         else:
             logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
+
+
+if __name__ == '__main__':
+    main()
