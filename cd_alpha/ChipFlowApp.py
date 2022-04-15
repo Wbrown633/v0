@@ -27,6 +27,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
+from git import Repo
 
 kivy.require('2.0.0')
 
@@ -893,6 +894,7 @@ class ChipFlowApp(App):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.get_updates()
 
     def build(self):
         logging.debug("CDA: Creating main window")
@@ -904,7 +906,8 @@ class ChipFlowApp(App):
         # Throw nonfatal error if we cannot merge 
         # Show confirmation popup after merge
         #os.system('sudo source')
-        pass
+        repo = Repo('/home/pi/v0')
+        print(repo.remotes.origin.pull())
     
     def on_close(self):
         cleanup()
