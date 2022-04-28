@@ -13,7 +13,7 @@ class PressureController:
             
     def __enter__(self) -> None: 
         logging.info("Opening Serial connection")
-        self.arduino = serial.Serial("COM3", 115200, timeout=0) #for pi its "/dev/ttyACM0"
+        self.arduino = serial.Serial("/dev/ttyACM0", 115200, timeout=0) #for pi its "/dev/ttyACM0" for win it's usually "COM3"
         time.sleep(1)
         print("{} connected!".format(self.arduino.port))
         init_msg = self._read_input()
