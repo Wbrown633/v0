@@ -9,7 +9,7 @@ import logging
 
 class PressureController:
     def __init__(self) -> None:
-        self.max_pressure_set_point_kPa = 3.0
+        self.max_pressure_set_point_kPa = 120
         self.flow_rate_ml_per_hr = None
         self.volume_ml = None
             
@@ -97,6 +97,9 @@ class PressureController:
 
     def set_volume(self, volume, unit="ML", addr=''):
         self.volume_ml = volume
+
+    def stop_all_pumps(self, list_of_pumps):
+        self.set_pressure_pump(100.0)
 
     def run(self, addr="0") -> None:
 

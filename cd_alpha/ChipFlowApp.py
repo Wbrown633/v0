@@ -27,6 +27,8 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
+from cd_alpha.PressureController import PressureController
+from cd_alpha.software_testing.PressureControllerStub import PressureControllerStub
 
 kivy.require('2.0.0')
 
@@ -88,13 +90,6 @@ else:
     SPLIT_CHAR = "/"
 
 
-# Establish serial connection to the pump controllers
-if not LOCAL_TESTING:
-    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
-else:
-    ser = SerialStub()
-pumps = PumpNetwork(ser)
-
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
     logging.warning("CDA: System will not reboot after exiting program.")
@@ -155,11 +150,12 @@ def reboot():
 
 logging.info("CDA: Starting main script.")
 
-pumps.stop_all_pumps(list_of_pumps)
+# TODO these functions need to move 
+# pumps.stop_all_pumps(list_of_pumps)
 
 # diam and addr must be same length
-for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
-    pumps.set_diameter(diameter_mm=diam, addr=addr)
+# for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
+    # pumps.set_diameter(diameter_mm=diam, addr=addr)
 
 if device.DEVICE_TYPE == "V0":
     nano = Nano(8, 7)
@@ -908,7 +904,17 @@ class ChipFlowApp(App):
 
 if __name__ == '__main__':
     try:
-        ChipFlowApp().run()
+        # Establish serial connection to the pump controllers
+        if not LOCAL_TESTING:
+            #ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+            # handle serial
+            with PressureController() as pumps:
+                ChipFlowApp.run()
+
+        else:
+            ser = SerialStub()
+            with PressureControllerStub() as pumps:
+                ChipFlowApp.run()
     except:
         pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection
