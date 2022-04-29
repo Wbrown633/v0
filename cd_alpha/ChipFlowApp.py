@@ -462,6 +462,7 @@ class MachineActionScreen(ChipFlowScreen):
 
     def skip(self):
         # Check that the motor is not moving
+        # TODO make this work for pressure drive by checking if we've finished a step
         number_of_stopped_pumps = 0
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
@@ -909,12 +910,12 @@ if __name__ == '__main__':
             #ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
             # handle serial
             with PressureController() as pumps:
-                ChipFlowApp.run()
+                ChipFlowApp().run()
 
         else:
             ser = SerialStub()
             with PressureControllerStub() as pumps:
-                ChipFlowApp.run()
+                ChipFlowApp().run()
     except:
         pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection

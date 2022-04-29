@@ -6,6 +6,7 @@
 from typing import List
 import serial,time
 import logging
+from kivy.clock import Clock
 
 class PressureController:
     def __init__(self) -> None:
@@ -101,6 +102,11 @@ class PressureController:
     def stop_all_pumps(self, list_of_pumps):
         self.set_pressure_pump(100.0)
 
+    def release_pressure(self, dt):
+        print("Pressure released after : {} seconds".format(dt))
+        self.res_switch(False) # at the end of the step close the res switch
+        self.dump_switch(True) # open the release valve to stop the pressure on the chip
+
     def run(self, addr="0") -> None:
 
         ''' Step logic:
@@ -109,8 +115,6 @@ class PressureController:
             - keep the res switch open for the duration period
             - close res switch, open dump switch
         '''
-        if addr != "0":
-            raise ValueError("Pump addresses other than 0 not implemented")
 
         
         logging.info(self.set_pressure_pump(self._pressure_from_flowrate()))
@@ -118,21 +122,13 @@ class PressureController:
         # these waits should be re-factored to use either kivy clock or async await, this is just a rough draft
 
         # Using sleeps for proof of concept, will block GUI and is really ugly
-
-        time.sleep(2) # Wait for the pressure to reach the set point in the reservoir
-
         # Open the res_switch
         self.res_switch(True)
         
         # Wait for the provided step duration
-        #time.sleep(self._calculate_time_secs()) 
-        #just print the time don't wait for debug
+        Clock.schedule_once(self.release_pressure, self._calculate_time_secs())
         print("Seconds to wait for step time: {}".format(self._calculate_time_secs()))
 
-        self.res_switch(False) # at the end of the step close the res switch
-        time.sleep(0.5)
-        self.dump_switch(True) # open the release valve to stop the pressure on the chip
-        time.sleep(0.5) # wait for the pressure to be relieved before moving on to another step
         
 
 
