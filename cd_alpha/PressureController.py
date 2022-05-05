@@ -6,10 +6,13 @@
 from typing import List
 import serial,time
 import logging
+from kivy.clock import Clock
 
 class PressureController:
     def __init__(self) -> None:
-        self.max_pressure_set_point_kPa = 3.0
+        self.max_pressure_set_point_kPa = 120
+        self.flow_rate_ml_per_hr = None
+        self.volume_ml = None
             
     def __enter__(self) -> None: 
         logging.info("Opening Serial connection")
@@ -46,6 +49,18 @@ class PressureController:
         cmd_string = "{}:{};\n".format(switch_name, switch_status)
         response = self._send_command_str(cmd_string)
         return response
+
+    def _calculate_time_secs(self) -> int:
+        '''Given a the flowrate and volume to be pumped calculate the time required.'''
+        # TODO make sure this level of accuracy is enough, int rounding could lose information
+        return int(self.volume_ml / self.flow_rate_ml_per_hr * 3600)
+
+    def _pressure_from_flowrate(self) -> float:
+        '''Using provided calibration curves calculate the pressure needed to achieve the desired flowrate.'''
+
+        #TODO these curves may need to depend on the liquid that is being used, make a dictionary of fluid type -> 2 point calibration equation
+
+        return self.flow_rate_ml_per_hr * 0.12 - 100.0  # Totally made up place holder curve
         
     def res_switch(self, status:bool) -> str:
         return self._switch_status("RESSWITCH", status)
@@ -61,6 +76,10 @@ class PressureController:
         response = self._send_command_str(cmd_string)
         return response
 
+    def get_pressure_reading(self) -> float:
+        # needs to be implemented in the Arduino
+        pass 
+
     def parse_command(self, command_string: str) -> str:
         command_list = command_string.split(" ")
         command_type = command_list[0].upper()
@@ -73,6 +92,43 @@ class PressureController:
             return self.dump_switch(command_content == "1")
         else:
             raise ValueError("Command Type was not one of {PUMP/RESSWITCH/DUMPSWITCH}")
+
+    def set_rate(self, rate, unit="MH", addr=''):
+        self.flow_rate_ml_per_hr = rate
+
+    def set_volume(self, volume, unit="ML", addr=''):
+        self.volume_ml = volume
+
+    def stop_all_pumps(self, list_of_pumps):
+        self.set_pressure_pump(100.0)
+
+    def release_pressure(self, dt):
+        print("Pressure released after : {} seconds".format(dt))
+        self.res_switch(False) # at the end of the step close the res switch
+        self.dump_switch(True) # open the release valve to stop the pressure on the chip
+
+    def run(self, addr="0") -> None:
+
+        ''' Step logic:
+            - set the pressure of the pump
+            - when the pressure in the reservoir is achieved open the res switch
+            - keep the res switch open for the duration period
+            - close res switch, open dump switch
+        '''
+
+        
+        logging.info(self.set_pressure_pump(self._pressure_from_flowrate()))
+
+        # these waits should be re-factored to use either kivy clock or async await, this is just a rough draft
+
+        # Using sleeps for proof of concept, will block GUI and is really ugly
+        # Open the res_switch
+        self.res_switch(True)
+        
+        # Wait for the provided step duration
+        Clock.schedule_once(self.release_pressure, self._calculate_time_secs())
+        print("Seconds to wait for step time: {}".format(self._calculate_time_secs()))
+
         
 
 
