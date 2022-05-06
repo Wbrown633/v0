@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copy autostart file to relevant dir
-sudo cp "/home/pi/cd_alpha/setup/autostart" "/etc/xdg/lxsession/LXDE-pi/"
+sudo cp "/home/pi/v0/cd_alpha/setup/autostart" "/etc/xdg/lxsession/LXDE-pi/"
 
 
 
@@ -14,7 +14,7 @@ sudo cp "/home/pi/cd_alpha/setup/autostart" "/etc/xdg/lxsession/LXDE-pi/"
 
 
 # Link the unit into the global systemd unit dir
-sudo ln -fs "/home/pi/cd_alpha/setup/cd-alpha-starter.service" /lib/systemd/system/
+sudo ln -fs "/home/pi/v0/cd_alpha/setup/cd-alpha-starter.service" /lib/systemd/system/
 
 # Enable it
 sudo systemctl enable cd-alpha-starter.service
