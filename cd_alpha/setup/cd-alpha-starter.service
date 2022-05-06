@@ -11,7 +11,7 @@ Environment=XAUTHORITY=/home/pi/.Xauthority
 Restart=always
 RestartSec=3s
 KillMode=process
-TimeoutSec=infinity
+TimeoutSec=300
 WorkingDirectory=/home/pi/v0/cd_alpha
 User=pi
 Group=pi
