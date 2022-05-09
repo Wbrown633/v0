@@ -1,9 +1,9 @@
 {
     "DEVICE_TYPE":"V0",
-    "DEV_MACHINE": true,
+    "DEV_MACHINE": false,
     "DEFAULT_PROTOCOL":"v0-protocol-16v2.json",
-    "PATH_TO_PROTOCOLS":"C:\\Users\\Will\\Documents\\CODE\\v0\\cd_alpha\\protocols\\",
+    "PATH_TO_PROTOCOLS":"/home/pi/v0/cd_alpha/protocols/",
     "PUMP_ADDR":[1,2],
     "PUMP_DIAMETER":[12.55,12.55],
-    "DEBUG_MODE": true
+    "DEBUG_MODE": false
 }
