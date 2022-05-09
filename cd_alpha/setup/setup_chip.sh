@@ -3,4 +3,6 @@ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 python3 -m pip install --upgrade --user pip setuptools
 python3 -m pip install --upgrade --user Cython==0.29.10 pillow
 python3 -m pip install --user kivy
+pip3 install -e .
+pip3 install -r requirements.txt
 sudo reboot
