@@ -7,7 +7,6 @@ from collections import OrderedDict
 import json
 import os
 from functools import partial
-from tracemalloc import stop
 import serial
 import time
 from datetime import datetime
@@ -20,7 +19,6 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock

@@ -141,8 +141,7 @@
                 "rate_mh": 10,
                 "eq_time": 120
             }
-        },
-        "completion_msg": "Wash 2 complete"
+        }
     },
 
     "flush_6": {
