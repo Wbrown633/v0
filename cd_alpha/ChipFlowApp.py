@@ -1,4 +1,4 @@
-# !/usr/bin/python3
+# !/usr/bin/python3py
 
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
