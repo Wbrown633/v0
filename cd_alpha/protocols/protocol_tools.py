@@ -22,24 +22,24 @@ class ProcessProtocol:
 
     def list_steps(self):
         step_number = 0
+        print("Step # \t\tMaterial \t\tFlowrate(mL/h) \t\tVolume(mL) \t\tStep Duration")
         for key in self.protocol.keys():
             step_number += 1
             for k in self.protocol[key]:
                 if k == "action":
                     for steps in self.protocol[key][k]:
                         if steps == "PUMP":
-                            print("\t\tRun Pump: ")
                             for s in self.protocol[key][k][steps]:
                                 if s == "vol_ml":
-                                    print("\t\t\tVolume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
+                                    volume = self.protocol[key][k][steps][s]
                                 elif s == "rate_mh":
-                                    print("\t\t\tSyringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
+                                    flowrate = self.protocol[key][k][steps][s]
                                 elif s == "eq_time":
-                                    print("\t\t\tWait time (s) : {}".format(self.protocol[key][k][steps][s]))
-                            print("Material: {}".format(self.protocol[key]["header"].split(" ")[0]))
-                            print('\n')
+                                    duration = self.protocol[key][k][steps][s]
+                            material = self.protocol[key]["header"].split(" ")[0]
+                            print("{} \t\t\t{} \t\t\t{} \t\t\t\t\t{} \t\t\t\t\t{}".format(step_number, material, flowrate, volume, duration))
                         elif steps == "INCUBATE":
-                            print("\t\tIncubating for {} (s)".format(self.protocol[key][k][steps]["time"]))
+                            incubate = self.protocol[key][k][steps]["time"]
 
     def calculate_step_time(self, step: OrderedDict):
         step["time"]          
