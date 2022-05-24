@@ -7,7 +7,8 @@
     },
 
     "summary":{
-        "type": "UserActionScreen"
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
     },
     "reset_start": {
         "type": "MachineActionScreen",

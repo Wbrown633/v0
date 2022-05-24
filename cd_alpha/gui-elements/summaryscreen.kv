@@ -5,18 +5,9 @@
         orientation: 'vertical'
         padding: 0
 
-        ScrollView:
-            do_scroll_x: False
-            do_scroll_y: True
-
-            GridLayout:
-                cols: 1
-                size_hint_y: None
-                height: self.minimum_height
-                padding: 20, 0
-                spacing: 10
-
-
+        Label:
+            text: scrren.add_rows()
+        
         BoxLayout:
             size_hint_y: None
             padding: 80, 20
