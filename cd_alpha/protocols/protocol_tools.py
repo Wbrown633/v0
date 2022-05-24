@@ -25,36 +25,31 @@ class ProcessProtocol:
         for key in self.protocol.keys():
             step_number += 1
             for k in self.protocol[key]:
-                if k == "header":
-                    print("\nStep # {} : {}".format(step_number, self.protocol[key][k]))
-                
-                if k == "description":
-                    print("\n\tStep Description: {}\n".format(self.protocol[key][k]))
                 if k == "action":
                     for steps in self.protocol[key][k]:
                         if steps == "PUMP":
                             print("\t\tRun Pump: ")
                             for s in self.protocol[key][k][steps]:
-                                if s == "target":
-                                    print("\t\t\tTargeting Syringe : {}".format(self.protocol[key][k][steps][s]))
-                                elif s == "vol_ml":
+                                if s == "vol_ml":
                                     print("\t\t\tVolume Pulled (mL) : {}".format(self.protocol[key][k][steps][s])) 
                                 elif s == "rate_mh":
                                     print("\t\t\tSyringe Pull Rate (mL/h) : {}".format(self.protocol[key][k][steps][s]))
                                 elif s == "eq_time":
                                     print("\t\t\tWait time (s) : {}".format(self.protocol[key][k][steps][s]))
+                            print("Material: {}".format(self.protocol[key]["header"].split(" ")[0]))
                             print('\n')
                         elif steps == "INCUBATE":
                             print("\t\tIncubating for {} (s)".format(self.protocol[key][k][steps]["time"]))
 
     def calculate_step_time(self, step: OrderedDict):
-        step["time"]           
+        step["time"]          
+
 
 if __name__ == "__main__":
-    filename = 'v0-protocol-19v1-pretty.txt'
+    filename = 'v0-protocol-16v3-pretty.txt'
     original_stdout = sys.stdout
     with open(filename, 'w') as f:
-        proto = ProcessProtocol("v0-protocol-19v1.json")
+        proto = ProcessProtocol("v0-protocol-16v3.json")
         print("Process Protocol")
         sys.stdout = f
         proto.load_protocol()
