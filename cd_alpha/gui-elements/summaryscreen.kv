@@ -1,0 +1,32 @@
+#:kivy 1.11.0
+
+<SummaryScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 20, 0
+                spacing: 10
+
+
+        BoxLayout:
+            size_hint_y: None
+            padding: 80, 20
+            id: next_button_layout
+            
+            RoundedButton:
+                on_release: app.root.next_step()
+                padding: 20, 20
+                size_hint_y: None
+                height: self.texture_size[1]
+                text: root.next_text
+                bold: True
+

@@ -1,10 +1,7 @@
 from collections import OrderedDict
-import argparse
 import json
-from multiprocessing.sharedctypes import Value
-from textwrap import indent
-from unicodedata import name
 import sys
+from datetime import timedelta
 
 
 
@@ -38,18 +35,18 @@ class ProcessProtocol:
                                     flowrate = self.protocol[key][k][steps][s]
                                 elif s == "eq_time":
                                     duration = self.protocol[key][k][steps][s]
+                            step_time = self.calculate_step_time_sec(volume, flowrate, duration)
                             material = self.protocol[key]["header"].split(" ")[0]
-                            list_of_table_entries.append([step_number, material, flowrate, volume, duration])
+                            list_of_table_entries.append([step_number, material, flowrate, volume, step_time])
                         elif steps == "INCUBATE":
                             incubate = self.protocol[key][k][steps]["time"]
                             list_of_table_entries[-1][-1]+= incubate
         
-        for line in list_of_table_entries:
-            print(line)
+        return list_of_table_entries
                             
 
-    def calculate_step_time(self, step: OrderedDict):
-        step["time"]          
+    def calculate_step_time_sec(self, vol: int, flowrate: float, wait: int):
+        return (vol/flowrate * 3600 + wait)          
 
 
 if __name__ == "__main__":
@@ -60,7 +57,8 @@ if __name__ == "__main__":
         print("Process Protocol")
         sys.stdout = f
         proto.load_protocol()
-        proto.list_steps()
+        for line in proto.list_steps():
+            print(line)
         sys.stdout = original_stdout
         print("File Output to: {}".format(filename))
 

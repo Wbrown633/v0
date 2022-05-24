@@ -5,6 +5,10 @@
         "description": "Ready for a new test with protocol 16v3. Press 'Start' to begin.",
         "next_text": "Start"
     },
+
+    "summary":{
+        "type": "UserActionScreen"
+    },
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",

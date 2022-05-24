@@ -610,6 +610,9 @@ class ProtocolChooser(Screen):
         self.manager.current = "home"
 
 
+class SummaryScreen(Screen):
+    pass
+
 
 class CircleButton(Widget):
     pass
@@ -672,12 +675,16 @@ class ProcessWindow(BoxLayout):
                     next_text=step.get('next_text', 'Next')
                 )
             elif screen_type == "MachineActionScreen":
-                this_screen = MachineActionScreen(
-                    name=name,
-                    header=step["header"],
-                    description=step.get("description", ""),
-                    action=step["action"]
-                )
+
+                if name == "summary":
+                    this_screen = SummaryScreen()
+                else:
+                    this_screen = MachineActionScreen(
+                        name=name,
+                        header=step["header"],
+                        description=step.get("description", ""),
+                        action=step["action"]
+                    )
 
                 # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
@@ -835,13 +842,15 @@ class ProcessWindow(BoxLayout):
                     next_text=step.get('next_text', 'Next')
                 )
             elif screen_type == "MachineActionScreen":
-                this_screen = MachineActionScreen(
-                    name=name,
-                    header=step["header"],
-                    description=step.get("description", ""),
-                    action=step["action"]
-                )
-
+                if name == "summary":
+                    this_screen = SummaryScreen()
+                else:
+                    this_screen = MachineActionScreen(
+                        name=name,
+                        header=step["header"],
+                        description=step.get("description", ""),
+                        action=step["action"]
+                    )
                 # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(this_screen.ids.progress_bar_layout)
