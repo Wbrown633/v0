@@ -9,9 +9,9 @@ class ProcessProtocol:
 
     def __init__(self, protocol_file) -> None:
         self.protocol_file = protocol_file
+        self.load_protocol()
     
     #protocol_file = "v0-protocol-16v3.json"
-    protocol = None
 
     def load_protocol(self):
         with open(self.protocol_file, 'r') as f:
@@ -56,7 +56,6 @@ if __name__ == "__main__":
         proto = ProcessProtocol("v0-protocol-16v3.json")
         print("Process Protocol")
         sys.stdout = f
-        proto.load_protocol()
         for line in proto.list_steps():
             print(line)
         sys.stdout = original_stdout

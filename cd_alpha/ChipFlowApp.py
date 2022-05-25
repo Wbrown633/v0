@@ -18,6 +18,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -616,11 +617,18 @@ class ProtocolChooser(Screen):
 class SummaryScreen(Screen):
     def __init__(self, *args, **kwargs):
         self.next_text = kwargs.pop('next_text', 'Next')
+        self.header_text = kwargs.pop("header_text", "Summary")
         self.protocol_process = ProcessProtocol(PATH_TO_PROTOCOLS + PROTOCOL_FILE_NAME)
         super().__init__(*args, **kwargs)
+        self.add_rows()
 
     def add_rows(self):
-        return self.protocol_process.list_steps()
+        '''Return content of rows as one formatted string, roughly table shape.'''
+        summary_layout = self.ids.summary_layout
+        for line in self.protocol_process.list_steps():
+            for entry in line:
+                summary_layout.add_widget(Label(text=str(entry)))
+
 
 
 
