@@ -911,9 +911,8 @@ class ChipFlowApp(App):
             repo.remotes.origin.pull()
             print(repo.commit('master').message)
             
-
         except:
-            #Implement error for no internet connection
+            logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
             pass
     
     def on_close(self):
