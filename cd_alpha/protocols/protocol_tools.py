@@ -1,8 +1,8 @@
 from collections import OrderedDict
 import json
 import sys
-from datetime import timedelta
-
+import time
+import calendar
 
 
 class ProcessProtocol:
@@ -40,13 +40,18 @@ class ProcessProtocol:
                             list_of_table_entries.append([step_number, material, flowrate, volume, step_time])
                         elif steps == "INCUBATE":
                             incubate = self.protocol[key][k][steps]["time"]
-                            list_of_table_entries[-1][-1]+= incubate
+                            str_time_without_inc = list_of_table_entries[-1][-1]
+                            seconds = calendar.timegm(time.strptime(str_time_without_inc, '%H:%M:%S'))
+                            seconds += incubate
+                            list_of_table_entries[-1][-1] = time.strftime('%H:%M:%S', time.gmtime(seconds))
+
         
         return list_of_table_entries
                             
 
     def calculate_step_time_sec(self, vol: int, flowrate: float, wait: int):
-        return (vol/flowrate * 3600 + wait)          
+        seconds = (vol/flowrate * 3600 + wait)
+        return time.strftime('%H:%M:%S', time.gmtime(seconds))
 
 
 if __name__ == "__main__":

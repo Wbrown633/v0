@@ -28,8 +28,6 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
-from cd_alpha.PressureController import PressureController
-from cd_alpha.software_testing.PressureControllerStub import PressureControllerStub
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 kivy.require('2.0.0')
@@ -92,6 +90,12 @@ else:
     logging.info("Logging started")
     SPLIT_CHAR = "/"
 
+# Establish serial connection to the pump controllers
+if not LOCAL_TESTING:
+    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+else:
+    ser = SerialStub()
+pumps = PumpNetwork(ser)
 
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
@@ -930,19 +934,9 @@ class ChipFlowApp(App):
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
 
 
-if __name__ == '__main__':
+def main():
     try:
-        # Establish serial connection to the pump controllers
-        if not LOCAL_TESTING:
-            #ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
-            # handle serial
-            with PressureController() as pumps:
-                ChipFlowApp().run()
-
-        else:
-            ser = SerialStub()
-            with PressureControllerStub() as pumps:
-                ChipFlowApp().run()
+        ChipFlowApp().run()
     except:
         pumps.stop_all_pumps(list_of_pumps)
         # close the serial connection
@@ -952,3 +946,7 @@ if __name__ == '__main__':
         else:
             logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
+
+
+if __name__ == '__main__':
+    main()
