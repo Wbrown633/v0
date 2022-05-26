@@ -39,11 +39,15 @@ class ProcessProtocol:
                             material = self.protocol[key]["header"].split(" ")[0]
                             list_of_table_entries.append([step_number, material, flowrate, volume, step_time])
                         elif steps == "INCUBATE":
+                            # This is so hacky it's insane, but it I couldn't figure out how to fix the year getting set to 1900
+                            # So if we force the year to 1970 during the conversion all of the conversions back and forth between date-times
+                            # and times work out. 
                             incubate = self.protocol[key][k][steps]["time"]
                             str_time_without_inc = list_of_table_entries[-1][-1]
-                            seconds = calendar.timegm(time.strptime(str_time_without_inc, '%H:%M:%S'))
-                            seconds += incubate
-                            list_of_table_entries[-1][-1] = time.strftime('%H:%M:%S', time.gmtime(seconds))
+                            time_as_struct = time.strptime(str_time_without_inc + ":1970", '%H:%M:%S:%Y')
+                            time_with_inc = calendar.timegm(time_as_struct) + incubate
+                            str_time_with_inc = time.strftime('%H:%M:%S', time.gmtime(time_with_inc))
+                            list_of_table_entries[-1][-1] = str_time_with_inc
 
         
         return list_of_table_entries
