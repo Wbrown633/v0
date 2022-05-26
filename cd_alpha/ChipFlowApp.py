@@ -905,9 +905,16 @@ class ChipFlowApp(App):
         # check github for updates, automatically merge results
         # Throw nonfatal error if we cannot merge 
         # Show confirmation popup after merge
-        #os.system('sudo source')
-        repo = Repo('/home/pi/v0')
-        print(repo.remotes.origin.pull())
+        repo = Repo('C:\\Users\\Will\\Documents\\CODE\\v0\\')
+        try:
+            assert repo.remotes.origin.exists()
+            repo.remotes.origin.pull()
+            print(repo.commit('master').message)
+            
+
+        except:
+            #Implement error for no internet connection
+            pass
     
     def on_close(self):
         cleanup()
