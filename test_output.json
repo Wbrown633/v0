@@ -1,8 +1,8 @@
 {
-    "name": {
-        "type": "screentype",
-        "header": "header_text",
-        "description": "description_text",
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "PBS rinse",
+        "description": "Rinsing the chip.",
         "action": {
             "PUMP": {
                 "target": "WASTE",
