@@ -1,0 +1,15 @@
+{
+    "name": {
+        "type": "screentype",
+        "header": "header_text",
+        "description": "description_text",
+        "action": {
+            "PUMP": {
+                "target": "WASTE",
+                "vol_ml": 1.0,
+                "rate_mh": 10.0,
+                "eq_time": 120
+            }
+        }
+    }
+}
