@@ -1,0 +1,48 @@
+
+from enum import Enum
+from dataclasses import dataclass
+import json
+
+TEST_FILE_LOCATION = "test_output.json"
+
+@dataclass
+class StepType(Enum):
+    PUMP = 1
+    INCUBATE = 2
+    PUMPANDRELEASE = 3
+
+@dataclass
+class Target(Enum):
+    WASTE = 1
+    LYSATE = 2
+
+
+@dataclass
+class Step:
+    steptype: StepType
+    target: Target
+    volume: float
+    flowrate: float
+    wait_time: int
+
+    def makejson(self):
+        return json.dumps({"name": {"type": "screentype", 
+        "header": "header_text", "description": "description_text", 
+        "action": {str(self.steptype): {"target": str(self.target), "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}})
+
+class ProtocolFactory:
+    
+    def create_protocol(self):
+        # PSEUDO CODE
+
+        # Create a JSON protocol given the following information for every step
+        # TYPE: {PUMP, INCUBATE, PUMP/RELEASE}
+        # STEP_INFO: [TARGET, VOL_ML, RATE_MH, EQ_TIME_SECS]
+        pass
+    pass
+
+if __name__ == "__main__":
+    s = Step(StepType.PUMP, Target.WASTE, 1.0, 10.0, 120)
+
+    print("Making json dump ")
+    print(s.makejson())
