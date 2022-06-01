@@ -6,6 +6,6 @@ cd_alpha/workspace.code-workspace
 cd_alpha/tests/.coverage
 cd_alpha/device_config.json
 cd_alpha/software_testing/__pycache__/
-cd_alpha/__pycache__/
+cd_alpha/__pycache__/*
 cd_alpha/protocols/*.txt
 v0venv/*
