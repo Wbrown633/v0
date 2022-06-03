@@ -1,7 +1,7 @@
 {
-    "flush_2": {
+    "PBS_1": {
         "type": "MachineActionScreen",
-        "header": "PBS rinse",
+        "header": "PBS_1",
         "description": "Rinsing the chip.",
         "action": {
             "PUMP": {

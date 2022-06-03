@@ -4,6 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
+# TODO: change this so that it isn't hard coded to ignore v0 directory
 ExecStart=/usr/bin/python3 /home/pi/cd_alpha/ChipFlowApp.py
 Environment=DISPLAY=:0
 # Pick up the users X-cookie that gives access to the display.

@@ -25,8 +25,8 @@ class ScreenType(Enum):
 
 @dataclass
 class Step:
-    step_name: str
-    header_text: str
+    material: str
+    step_number: int
     description_text: str
     screentype: ScreenType
     steptype: StepType
@@ -37,7 +37,7 @@ class Step:
 
     def makejson(self):
         with open(TEST_FILE_LOCATION, 'w') as f:
-            json.dump({self.step_name: {"type": self.screentype.name, "header": self.header_text, "description": self.description_text, 
+            json.dump({self.material + "_" + str(self.step_number): {"type": self.screentype.name, "header": self.material + "_" + str(self.step_number), "description": self.description_text, 
             "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}, f, indent=4)
 
 class ProtocolFactory:
@@ -52,7 +52,7 @@ class ProtocolFactory:
     pass
 
 if __name__ == "__main__":
-    s = Step("flush_2", "PBS rinse", "Rinsing the chip.", ScreenType.MachineActionScreen ,StepType.PUMP, Target.WASTE, 1.0, 10.0, 120)
+    s = Step("PBS", 1, "Rinsing the chip.", ScreenType.MachineActionScreen ,StepType.PUMP, Target.WASTE, volume=1.0, flowrate=10.0, wait_time=120)
 
     print("Making json dump ")
     s.makejson()
