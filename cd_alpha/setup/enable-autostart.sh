@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Copy autostart file to relevant dir
+# TODO: change this so that it isn't hard coded to ignore v0 directory
 sudo cp "/home/pi/cd_alpha/setup/autostart" "/etc/xdg/lxsession/LXDE-pi/"
 
 
@@ -14,6 +15,7 @@ sudo cp "/home/pi/cd_alpha/setup/autostart" "/etc/xdg/lxsession/LXDE-pi/"
 
 
 # Link the unit into the global systemd unit dir
+# TODO: change this so that it isn't hard coded to ignore v0 directory
 sudo ln -fs "/home/pi/cd_alpha/setup/cd-alpha-starter.service" /lib/systemd/system/
 
 # Enable it
