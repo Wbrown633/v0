@@ -59,7 +59,7 @@ if DEV_MACHINE:
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
     logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
         filemode='w',
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
@@ -604,6 +604,9 @@ class ProtocolChooser(Screen):
         except BaseException as err:
             logging.error("Invalid Protocol: {}".format(filename))
             logging.error("Unexpected Error: {}, {}".format(err, type(err)))
+
+    def get_file_path(self):
+        return device.PATH_TO_PROTOCOLS
 
     
     def cancel(self):
