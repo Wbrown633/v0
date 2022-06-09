@@ -11,7 +11,7 @@ import serial
 import time
 from datetime import datetime
 import logging
-from cd_alpha.Device import Device
+from cd_alpha.Device import Device, get_updates
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -22,7 +22,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty, StringProperty, NumericProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty, ListProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
 
@@ -41,6 +41,7 @@ Builder.load_file(resource_filename("cd_alpha",'gui-elements/errorpopup.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/abortpopup.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/homescreen.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/protocolchooser.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/refreshbutton.kv'))
 
 device = Device(resource_filename("cd_alpha","device_config.json"))
 # Change the value in the config file to change which protocol is in use
@@ -629,6 +630,9 @@ class AbortButton(Button):
 class LoadButton(Button):
     pass
 
+class RefreshButton(Button):
+    pass
+
 class ProcessWindow(BoxLayout):
 
     def __init__(self, *args, **kwargs):
@@ -665,9 +669,9 @@ class ProcessWindow(BoxLayout):
                     name,
                     header=step.get('header', 'NO HEADER'),
                     description=step.get('description', 'NO DESCRIPTION'),
-                    next_text=step.get('next_text', 'Next')
+                    next_text=step.get('next_text', 'Next'))
                     
-                )
+
                 else:
                     this_screen = UserActionScreen(
                     name=name,
@@ -718,12 +722,25 @@ class ProcessWindow(BoxLayout):
             size_hint_x=None,
             on_release=self.show_abort_popup
         )
+
+
+        self.refresh_btn = RefreshButton(
+            disabled=False,
+            on_release=self.get_updates
+        )
+
         protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
         self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
+        #self.ids.top_bar.add_widget(self.refresh_btn)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
         logging.info("Widgets in process screen manager: {}".format(self.process_sm.screen_names))
+
+
+    def get_updates(self, btn):
+        logging.info("Update button pressed")
+        get_updates()
 
     def show_abort_popup(self, btn):
         popup_outside_padding = 60

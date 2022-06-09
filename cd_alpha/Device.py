@@ -124,7 +124,7 @@ def get_updates():
     try:
         assert repo.remotes.origin.exists()
         repo.remotes.origin.pull()
-        print(repo.commit('master').message)
+        print("Update was successful, with message: " + repo.commit('master').message)
         
     except:
         logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
