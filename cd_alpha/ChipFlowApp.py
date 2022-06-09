@@ -25,7 +25,6 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
-from git import Repo
 
 kivy.require('2.0.0')
 
@@ -895,26 +894,11 @@ class ChipFlowApp(App):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.get_updates()
 
     def build(self):
         logging.debug("CDA: Creating main window")
         return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
-
-    def get_updates(self):
-        # Pseudo code 
-        # check github for updates, automatically merge results
-        # Throw nonfatal error if we cannot merge 
-        # Show confirmation popup after merge
-        repo = Repo("C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\")
-        try:
-            assert repo.remotes.origin.exists()
-            repo.remotes.origin.pull()
-            print(repo.commit('master').message)
-            
-        except:
-            logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
-    
+   
     def on_close(self):
         cleanup()
         if not DEBUG_MODE:
@@ -934,6 +918,7 @@ def main():
         else:
             logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
+
 
 
 if __name__ == '__main__':

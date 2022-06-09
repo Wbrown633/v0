@@ -12,6 +12,7 @@ setup(
       include_package_data=True,
       package_data={'': ['gui-elements/*.kv', 'device_config.json']},
       entry_points={
-            'console_scripts': ['chipdx = cd_alpha.ChipFlowApp:main',],
+            'console_scripts': ['chipdx = cd_alpha.ChipFlowApp:main',
+                                'update = cd_alpha.Device:get_updates'],
       },
 )
