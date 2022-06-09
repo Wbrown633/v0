@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-from importlib.metadata import entry_points
 from setuptools import setup
 
 setup(
@@ -13,7 +11,7 @@ setup(
       packages=["cd_alpha", "cd_alpha.tests", "cd_alpha.software_testing"],
       include_package_data=True,
       package_data={'': ['gui-elements/*.kv', 'device_config.json']},
-      entry_points = {
-            'console_scripts': ['chipdx=cd_alpha.ChipFlowApp:main'],
-      }
+      entry_points={
+            'console_scripts': ['chipdx = cd_alpha.ChipFlowApp:main',],
+      },
 )
