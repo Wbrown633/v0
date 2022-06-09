@@ -79,7 +79,7 @@ class Device:
                 self.DEBUG_MODE = False
 
             if not hasattr(self, "PATH_TO_PROTOCOLS"):
-                self.PATH_TO_PROTOCOLS = "/home/pi/v0/cd-alpha/protocols/"
+                self.PATH_TO_PROTOCOLS = "/home/pi/v0/cd_alpha/protocols/"
 
             if not hasattr(self, "DEV_MACHINE"):
                 self.DEV_MACHINE = False

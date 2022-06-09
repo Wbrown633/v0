@@ -13,7 +13,8 @@
         # 3. The file name is shortened to just "16v0" so that the file names are readable with fix from #1
         FileChooserListView:
             id: filechooser
-            path: "./protocols"
+            # fix so this works no matter where the python gets called 
+            path: root.get_file_path()
             filters: ["*.json"]
 
         BoxLayout:
