@@ -905,7 +905,7 @@ class ChipFlowApp(App):
         # check github for updates, automatically merge results
         # Throw nonfatal error if we cannot merge 
         # Show confirmation popup after merge
-        repo = Repo('C:\\Users\\Will\\Documents\\CODE\\v0\\')
+        repo = Repo("C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\")
         try:
             assert repo.remotes.origin.exists()
             repo.remotes.origin.pull()
@@ -913,7 +913,6 @@ class ChipFlowApp(App):
             
         except:
             logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
-            pass
     
     def on_close(self):
         cleanup()
