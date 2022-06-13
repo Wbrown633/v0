@@ -1,4 +1,0 @@
-[console_scripts]
-chipdx = cd_alpha.ChipFlowApp:main
-update = cd_alpha.Device:get_updates
-
