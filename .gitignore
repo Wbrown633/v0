@@ -9,3 +9,4 @@ cd_alpha/software_testing/__pycache__/
 cd_alpha/__pycache__/*
 cd_alpha/protocols/*.txt
 v0venv/*
+cd_alpha.egg-info/*
