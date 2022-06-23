@@ -1,0 +1,184 @@
+
+Step # 1 : Chip Diagnostics
+
+	Step Description: Ready for a new test with Small TENPO protocol 19v1. Press 'Start' to begin.
+
+
+Step # 2 : Initialization
+
+	Step Description: Initializing device. Resetting syringe positions and checking connections.
+
+
+Step # 3 : Insert syringes
+
+	Step Description: Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.
+
+
+Step # 4 : Grabbing syringes
+
+	Step Description: The device is now grabbing hold of the syringes to secure a precise operation.
+
+
+Step # 5 : Insert Kit
+
+	Step Description: Insert the chip and inlet reservoir. Press 'Next' to proceed.
+
+
+Step # 6 : Add F-127
+
+	Step Description: Add 1.0 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start.
+
+
+Step # 7 : F-127 pull
+
+	Step Description: Wetting the chip with F-127
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 0.5
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 8 : Blocking
+
+	Step Description: Blocking chip with F-127
+
+		Incubating for 3600 (s)
+
+Step # 9 : F-127 pull
+
+	Step Description: Wetting the chip with F-127
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 0.5
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 10 : PBS rinse
+
+	Step Description: Add 1 mL 1xPBS to reservoir. Press 'Next' to start.
+
+
+Step # 11 : PBS rinse
+
+	Step Description: Rinsing the chip.
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 1.0
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 12 : Add sample
+
+	Step Description: Add 1 mL sample to reservoir. Press 'Next' to start
+
+
+Step # 13 : Sample pull
+
+	Step Description: Pulling sample thru chip.
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 1.0
+			Syringe Pull Rate (mL/h) : 2.5
+			Wait time (s) : 0
+
+
+
+Step # 14 : PBS Wash 1
+
+	Step Description: Add 700 µL 1xPBS to reservoir. Press 'Next' to start.
+
+
+Step # 15 : PBS Wash 1
+
+	Step Description: Washing the chip.
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 0.7
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 16 : PBS Wash 2
+
+	Step Description: Add 700 µL 1xPBS to reservoir. Press 'Next' to start.
+
+
+Step # 17 : PBS Wash 2
+
+	Step Description: Washing the chip.
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 0.7
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 18 : PBS Wash 3
+
+	Step Description: Add 700 µL 1xPBS to reservoir. Press 'Next' to start.
+
+
+Step # 19 : PBS Wash 3
+
+	Step Description: Washing the chip.
+
+		Run Pump: 
+			Targeting Syringe : waste
+			Volume Pulled (mL) : 0.7
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 20 : Qiazol
+
+	Step Description: Add 700 µL Qiazol to reservoir. Press 'Next' to start.
+
+
+Step # 21 : Qiazol 1
+
+	Step Description: Pulling Qiazol into chip.
+
+		Run Pump: 
+			Targeting Syringe : lysate
+			Volume Pulled (mL) : 0.7
+			Syringe Pull Rate (mL/h) : 7
+			Wait time (s) : 0
+
+
+
+Step # 22 : Qiazol 2
+
+	Step Description: Extracting lysate from chip.
+
+		Run Pump: 
+			Targeting Syringe : lysate
+			Volume Pulled (mL) : 0.5
+			Syringe Pull Rate (mL/h) : 15
+			Wait time (s) : 0
+
+
+
+Step # 23 : Remove kit
+
+	Step Description: Remove used kit from machine.
+
+
+Step # 24 : Homing device
+
+	Step Description: Resetting syringe pump positions.
+
