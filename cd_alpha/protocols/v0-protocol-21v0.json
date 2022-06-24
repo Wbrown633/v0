@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with Small TENPO protocol 19v1. Press 'Start' to begin.",
+        "description": "Ready for a new test with Small TENPO protocol 21v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
     "reset_start": {
@@ -37,7 +37,7 @@
     "insert_chip": {
         "type": "UserActionScreen",
         "header": "Insert Kit",
-        "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
+        "description": "Insert the chip. Press 'Next' to proceed."
     },
     "f127": {
         "type": "UserActionScreen",
@@ -80,7 +80,8 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "F-127 Pull Finished."
     },
 
     "pbs_1": {
@@ -106,7 +107,7 @@
     "add_sample": {
         "type": "UserActionScreen",
         "header": "Add sample",
-        "description": "Add 1 mL sample to reservoir. Press 'Next' to start"
+        "description": "Add 0.5 mL sample to reservoir. Press 'Next' to start"
     },
     "flush_4": {
         "type": "MachineActionScreen",
@@ -115,8 +116,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 1.0,
-                "rate_mh": 2.5,
+                "vol_ml": 0.5,
+                "rate_mh": 4.5,
                 "eq_time": 0
             }
         },
@@ -194,9 +195,9 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.7,
-                "rate_mh": 7,
-                "eq_time": 0
+                "vol_ml": 0.2,
+                "rate_mh": 15,
+                "eq_time": 120
             }, 
             "RELEASE": {
                 "target": "waste",
@@ -215,7 +216,7 @@
         "action": {
             "PUMP": {
                 "target": "lysate",
-                "vol_ml": 0.5,
+                "vol_ml": 1.0,
                 "rate_mh": 15,
                 "eq_time": 0
             }

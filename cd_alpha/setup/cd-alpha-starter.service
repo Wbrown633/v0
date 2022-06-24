@@ -4,15 +4,13 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/python3 /home/pi/cd_alpha/ChipFlowApp.py
+ExecStart=/usr/bin/python3 /home/pi/v0/cd_alpha/ChipFlowApp.py
 Environment=DISPLAY=:0
 # Pick up the users X-cookie that gives access to the display.
 Environment=XAUTHORITY=/home/pi/.Xauthority
-Restart=always
-RestartSec=3s
 KillMode=process
-TimeoutSec=infinity
-WorkingDirectory=/home/pi/cd_alpha
+TimeoutSec=300
+WorkingDirectory=/home/pi/v0/cd_alpha
 User=pi
 Group=pi
 

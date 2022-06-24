@@ -1,4 +1,4 @@
-# !/usr/bin/python3
+# !/usr/bin/python3py
 
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
@@ -7,7 +7,6 @@ from collections import OrderedDict
 import json
 import os
 from functools import partial
-from tracemalloc import stop
 import serial
 import time
 from datetime import datetime
@@ -21,7 +20,6 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
@@ -64,7 +62,7 @@ if DEV_MACHINE:
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
     logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
         filemode='w',
         datefmt="%Y-%m-%d_%H:%M:%S",
         level=logging.DEBUG)
@@ -612,6 +610,9 @@ class ProtocolChooser(Screen):
             logging.error("Invalid Protocol: {}".format(filename))
             logging.error("Unexpected Error: {}, {}".format(err, type(err)))
 
+    def get_file_path(self):
+        return device.PATH_TO_PROTOCOLS
+
     
     def cancel(self):
         logging.info("Cancel")
@@ -932,7 +933,6 @@ class ChipFlowApp(App):
             reboot()
         else:
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
-
 
 def main():
     try:

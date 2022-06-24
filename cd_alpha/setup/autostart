@@ -1,4 +1,4 @@
-@/usr/bin/python3 /home/pi/cd-alpha/ChipFlowApp.py
+@/usr/bin/python3 /home/pi/v0/cd_alpha/ChipFlowApp.py
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
 @xscreensaver -no-splash
