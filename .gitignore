@@ -7,5 +7,6 @@ cd_alpha/tests/.coverage
 cd_alpha/software_testing/__pycache__/
 cd_alpha/__pycache__/
 cd_alpha/protocols/*.txt
+cd_alpha/protocols/__pycache__/
 v0venv/*
 cd_alpha.egg-info/*

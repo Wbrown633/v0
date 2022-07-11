@@ -17,6 +17,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -25,6 +26,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
+from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 kivy.require('2.0.0')
 
@@ -40,6 +42,7 @@ Builder.load_file(resource_filename("cd_alpha",'gui-elements/circlebutton.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/errorpopup.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/abortpopup.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/homescreen.kv'))
+Builder.load_file(resource_filename("cd_alpha",'gui-elements/summaryscreen.kv'))
 Builder.load_file(resource_filename("cd_alpha",'gui-elements/protocolchooser.kv'))
 
 device = Device(resource_filename("cd_alpha","device_config.json"))
@@ -84,7 +87,6 @@ else:
         level=logging.DEBUG)
     logging.info("Logging started")
     SPLIT_CHAR = "/"
-
 
 # Establish serial connection to the pump controllers
 if not LOCAL_TESTING:
@@ -153,11 +155,12 @@ def reboot():
 
 logging.info("CDA: Starting main script.")
 
-pumps.stop_all_pumps(list_of_pumps)
+# TODO these functions need to move 
+# pumps.stop_all_pumps(list_of_pumps)
 
 # diam and addr must be same length
-for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
-    pumps.set_diameter(diameter_mm=diam, addr=addr)
+# for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
+    # pumps.set_diameter(diameter_mm=diam, addr=addr)
 
 if device.DEVICE_TYPE == "V0":
     nano = Nano(8, 7)
@@ -464,6 +467,7 @@ class MachineActionScreen(ChipFlowScreen):
 
     def skip(self):
         # Check that the motor is not moving
+        # TODO make this work for pressure drive by checking if we've finished a step
         number_of_stopped_pumps = 0
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
@@ -599,6 +603,7 @@ class ProtocolChooser(Screen):
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
         filename_split_by_delimiter = filename.split(SPLIT_CHAR)
         filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
+        PROTOCOL_FILE_NAME = filename_split_by_delimiter[-1]
         try:
             self.manager.main_window.load_protocol(filename)
         except BaseException as err:
@@ -612,6 +617,23 @@ class ProtocolChooser(Screen):
     def cancel(self):
         logging.info("Cancel")
         self.manager.current = "home"
+
+
+class SummaryScreen(Screen):
+    def __init__(self, *args, **kwargs):
+        self.next_text = kwargs.pop('next_text', 'Next')
+        self.header_text = kwargs.pop("header_text", "Summary")
+        self.protocol_process = ProcessProtocol(PATH_TO_PROTOCOLS + PROTOCOL_FILE_NAME)
+        super().__init__(*args, **kwargs)
+        self.add_rows()
+
+    def add_rows(self):
+        '''Return content of rows as one formatted string, roughly table shape.'''
+        summary_layout = self.ids.summary_layout
+        for line in self.protocol_process.list_steps():
+            for entry in line:
+                summary_layout.add_widget(Label(text=str(entry)))
+
 
 
 
@@ -668,6 +690,9 @@ class ProcessWindow(BoxLayout):
                     next_text=step.get('next_text', 'Next')
                     
                 )
+
+                elif name == "summary":
+                    this_screen = SummaryScreen(next_text=step.get('next_text', 'Next'))
                 else:
                     this_screen = UserActionScreen(
                     name=name,
@@ -676,6 +701,7 @@ class ProcessWindow(BoxLayout):
                     next_text=step.get('next_text', 'Next')
                 )
             elif screen_type == "MachineActionScreen":
+
                 this_screen = MachineActionScreen(
                     name=name,
                     header=step["header"],
@@ -831,6 +857,9 @@ class ProcessWindow(BoxLayout):
                     next_text=step.get('next_text', 'Next')
                     
                 )
+                elif name == "summary":
+                    this_screen = SummaryScreen(next_text=step.get('next_text', 'Next'))
+
                 else:
                     this_screen = UserActionScreen(
                     name=name,
@@ -845,7 +874,6 @@ class ProcessWindow(BoxLayout):
                     description=step.get("description", ""),
                     action=step["action"]
                 )
-
                 # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(this_screen.ids.progress_bar_layout)
