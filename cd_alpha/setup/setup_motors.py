@@ -25,8 +25,8 @@ if __name__ == "__main__":
 
     input("Testing the WASTE pump, after hitting ENTER confirm that the pump moves.")
 
-    WASTE_DIAMETER_mm = 12.55
-    LYSATE_DIAMETER_mm = 12.55
+    WASTE_DIAMETER_mm = 12.45
+    LYSATE_DIAMETER_mm = 12.45
     p.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
     p.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
 
