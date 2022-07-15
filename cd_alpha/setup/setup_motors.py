@@ -30,13 +30,13 @@ if __name__ == "__main__":
     p.set_diameter(diameter_mm=WASTE_DIAMETER_mm, addr=WASTE_ADDR)
     p.set_diameter(diameter_mm=LYSATE_DIAMETER_mm, addr=LYSATE_ADDR)
 
-    print("Rate:", p.set_rate(1.0, 'MM', WASTE_ADDR))
+    print("Rate:", p.set_rate(50.0, 'MM', WASTE_ADDR))
     print("Volume:", p.set_volume(0.5, 'ML',  WASTE_ADDR))
     print("Run:", p.run(WASTE_ADDR))
 
     input("Testing the LYSATE pump, after hitting ENTER confirm that the pump moves.")
 
-    print("Rate:", p.set_rate(1.0, 'MM', LYSATE_ADDR))
+    print("Rate:", p.set_rate(50.0, 'MM', LYSATE_ADDR))
     print("Volume:", p.set_volume(0.5, 'ML',  LYSATE_ADDR))
     print("Run:", p.run(LYSATE_ADDR))
 
