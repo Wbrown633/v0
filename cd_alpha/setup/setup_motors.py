@@ -1,9 +1,5 @@
-from modulefinder import packagePathMap
-from operator import imod
-from cd_alpha.ChipFlowApp import LYSATE_ADDR, WASTE_ADDR
 from cd_alpha.NewEraPumps import PumpNetwork
 import serial
-
 
 
 if __name__ == "__main__":
