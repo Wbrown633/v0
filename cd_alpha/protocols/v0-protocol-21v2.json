@@ -6,6 +6,11 @@
         "next_text": "Start"
     },
 
+    "summary":{
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
+    },
+    
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",

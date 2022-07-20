@@ -2,10 +2,16 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with Small TENPO protocol 21v1. Press 'Start' to begin.",
+        "description": "Ready for a new test with Small TENPO protocol 21v2. Press 'Start' to begin.",
         "next_text": "Start"
     },
 
+
+    "summary":{
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
+    },
+    
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",
