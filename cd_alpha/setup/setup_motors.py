@@ -12,7 +12,6 @@ if __name__ == "__main__":
 
     input("Connect serial cable to the PC port on the WASTE servo control board (#1) and hit ENTER.")
 
-
     print("SETTING WASTE ADR! ", p._set_addr(WASTE_ADDR))
 
     input("Connect serial cable to the PC port on the LYSATE servo control board (#2) and hit ENTER.")
@@ -35,4 +34,3 @@ if __name__ == "__main__":
     print("Rate:", p.set_rate(50.0, 'MM', LYSATE_ADDR))
     print("Volume:", p.set_volume(0.5, 'ML',  LYSATE_ADDR))
     print("Run:", p.run(LYSATE_ADDR))
-
