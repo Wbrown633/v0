@@ -2,16 +2,10 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with Small TENPO protocol 21v2. Press 'Start' to begin.",
+        "description": "Ready for a new test with Small TENPO protocol 22v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
 
-
-    "summary":{
-        "type": "UserActionScreen",
-        "next_text": "Start experiment"
-    },
-    
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",
@@ -114,7 +108,7 @@
     "add_sample": {
         "type": "UserActionScreen",
         "header": "Add sample",
-        "description": "Add 0.5 mL sample to reservoir. Press 'Next' to start"
+        "description": "Add 1.0 mL sample to reservoir. Press 'Next' to start"
     },
     "flush_4": {
         "type": "MachineActionScreen",
@@ -123,8 +117,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.55,
-                "rate_mh": 4.5,
+                "vol_ml": 1.0,
+                "rate_mh": 1.5,
                 "eq_time": 0
             }
         },
@@ -191,20 +185,20 @@
 
     "qiazol": {
         "type": "UserActionScreen",
-        "header": "Qiazol",
-        "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
+        "header": "RIPA",
+        "description": "Add 600 µL RIPA to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
         "type": "MachineActionScreen",
-        "header": "Qiazol 1",
-        "description": "Pulling Qiazol into chip.",
+        "header": "RIPA 1",
+        "description": "Pulling RIPA into chip.",
         "action": {
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.2,
                 "rate_mh": 15,
-                "eq_time": 150
+                "eq_time": 180
             }, 
             "RELEASE": {
                 "target": "waste",
@@ -218,7 +212,7 @@
 
     "chase_1": {
         "type": "MachineActionScreen",
-        "header": "Qiazol 2",
+        "header": "RIPA 2",
         "description": "Extracting lysate from chip.",
         "action": {
             "PUMP": {
@@ -228,7 +222,7 @@
                 "eq_time": 0
             }
         },
-        "completion_msg": "Qiazol pull and incubation complete"
+        "completion_msg": "RIPA pull and incubation complete"
     },
 
     "remove_kit": {
