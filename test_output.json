@@ -1,41 +1,18 @@
 {
-    "PBS_1": {
-        "type": "MachineActionScreen",
-        "header": "PBS_1",
-        "description": "Rinsing the chip step 1.",
-        "action": {
-            "PUMP": {
-                "target": "WASTE",
-                "vol_ml": 1.0,
-                "rate_mh": 10.0,
-                "eq_time": 120
-            }
-        }
+    "home": {
+        "type": "UserActionScreen",
+        "header": "Chip Diagnostics",
+        "description": "Ready for a new test",
+        "next_text": "Start"
     },
-    "PBS_2": {
+    "reset_start": {
         "type": "MachineActionScreen",
-        "header": "PBS_2",
-        "description": "Rinsing the chip step 2.",
+        "header": "Initialization",
+        "description": "Init device",
         "action": {
-            "PUMP": {
-                "target": "WASTE",
-                "vol_ml": 0.5,
-                "rate_mh": 5.0,
-                "eq_time": 120
-            }
-        }
-    },
-    "PBS_3": {
-        "type": "MachineActionScreen",
-        "header": "PBS_3",
-        "description": "Rinsing the chip step 3.",
-        "action": {
-            "PUMP": {
-                "target": "WASTE",
-                "vol_ml": 1.5,
-                "rate_mh": 15.0,
-                "eq_time": 120
-            }
-        }
+            "RESET": {}
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "Machine has been homed"
     }
 }
