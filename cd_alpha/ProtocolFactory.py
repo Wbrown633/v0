@@ -1,12 +1,12 @@
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from argparse import Action
 from collections import OrderedDict
 from enum import Enum
 from dataclasses import dataclass
 import json
 from typing import Dict, List
+
 
 
 
@@ -28,36 +28,29 @@ class StepType(Enum):
 
 
 class ActionType(ABC):
-    @abstractmethod
     def make_dict(self) -> Dict:
-        raise NotImplementedError("Need to override base class")
+        return {self.__class__.__name__.upper():self.__dict__}
 
-
+@dataclass
 class Pump(ActionType):
     target:str
     vol_ml: float
     rate_mh: float
     eq_time: int
 
-    def make_dict(self) -> Dict[str, str]:
-        return {"PUMP": {"target": self.target, "vol_ml": self.vol_ml, "rate_mh": self.rate_mh, "eq_time": self.eq_time}}
-
+@dataclass
 class Grab(ActionType):
     post_run_rate_mm: float
     post_run_vol_ml: float
 
-    def make_dict(self) -> Dict:
-        return {"GRAB": {"post_run_rate_mm": self.post_run_rate_mm, "post_run_vol_ml": self.post_run_vol_ml}}
-
+@dataclass
 class Release(Pump):
     def make_dict(self) -> Dict[str, str]:
-        return {"RELEASE": {"target": self.target, "vol_ml": self.vol_ml, "rate_mh": self.rate_mh, "eq_time": self.eq_time}}
+        return json.dumps(self, default=lambda o: o.__dict__)
 
+@dataclass
 class Incubate(ActionType):
     time: int
-
-    def make_dict(self) -> Dict:
-        return {"INCUBATE": {"time": self.time}}
 
 
 class Reset(ActionType):
@@ -91,8 +84,7 @@ class Step:
 
     # how do we handle description steps ? 
     def makejson(self):
-        return {self.material + "_" + str(self.step_number): {"type": self.screentype.name, "header": self.material + "_" + str(self.step_number), "description": self.description_text, 
-            "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
+        return json.dumps(self, default=lambda o: o.__dict__)
 
 
 class StepBuilder:
@@ -172,11 +164,9 @@ if __name__ == "__main__":
 
     s1 = StepBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics").add_description("Ready for a new test").add_next_text("Start")
     s2 = StepBuilder("reset_start").add_type(ScreenType.MachineActionScreen).add_header("Initialization").add_description("Init device").add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
+    s3 = StepBuilder("flush_2").add_type(ScreenType.MachineActionScreen).add_header("PBS rinse").add_description("Risning the chip.").add_actions([Pump("waste", 1.05, 50, 120)])
 
-
-
-
-    list_of_steps = [s1, s2]
+    list_of_steps = [s1, s2, s3]
 
     p = ProtocolFactory(list_of_steps)
 

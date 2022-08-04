@@ -14,5 +14,18 @@
         },
         "remove_progress_bar": true,
         "completion_msg": "Machine has been homed"
+    },
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "PBS rinse",
+        "description": "Risning the chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1.05,
+                "rate_mh": 50,
+                "eq_time": 120
+            }
+        }
     }
 }
