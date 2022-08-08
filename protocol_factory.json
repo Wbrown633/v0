@@ -2,13 +2,13 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 20v0.                 Press 'Start' to begin.",
+        "description": "Ready for a new test",
         "next_text": "Start"
     },
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",
-        "description": "Initializing device. Resetting syringe positions and checking connections.",
+        "description": "Init device",
         "action": {
             "RESET": {}
         },
@@ -39,10 +39,18 @@
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
     },
-    "f127": {
-        "type": "UserActionScreen",
-        "header": "Add F-127",
-        "description": "Add 1.4 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start."
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "PBS rinse",
+        "description": "Risning the chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1.05,
+                "rate_mh": 50,
+                "eq_time": 120
+            }
+        }
     },
     "remove_kit": {
         "type": "UserActionScreen",
