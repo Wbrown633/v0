@@ -41,8 +41,8 @@ class Grab(ActionType):
 
 @dataclass
 class Release(Pump):
-    def make_dict(self) -> Dict[str, str]:
-        return json.dumps(self, default=lambda o: o.__dict__)
+    pass
+
 
 @dataclass
 class Incubate(ActionType):
@@ -104,8 +104,12 @@ class StepBuilder:
         return self
 
     def add_actions(self, action_types: List[ActionType]) -> StepBuilder:
+        
         for act in action_types:
-            self.stepdict["action"] = act.make_dict()
+            if "action" in self.stepdict:
+                self.stepdict["action"].update(act.make_dict())
+            else:
+                self.stepdict["action"] = act.make_dict()
 
         return self
 
@@ -153,8 +157,7 @@ class ProtocolFactory:
     def _define_setup_steps(self) -> List[Step]:
    
         home_step = StepBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
-            .add_description("Ready for a new test with protocol 20v0. \
-                Press 'Start' to begin.").add_next_text("Start")
+            .add_description("Ready for a new test with protocol 20v0. Press 'Start' to begin.").add_next_text("Start")
 
         reset_start_step = StepBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
             .add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.")\

@@ -144,7 +144,6 @@
         },
         "completion_msg": "Wash 2 complete"
     },
-
     "flush_6": {
         "type": "MachineActionScreen",
         "header": "PBS Wash 2 Part 2",
@@ -159,7 +158,6 @@
         },
         "completion_msg": "Wash 2 complete"
     },
-
     "pbs_4": {
         "type": "UserActionScreen",
         "header": "PBS Wash 3",
@@ -179,13 +177,11 @@
         },
         "completion_msg": "Wash 3 complete"
     },
-
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
         "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
     },
-
     "extract_1": {
         "type": "MachineActionScreen",
         "header": "Qiazol 1",
@@ -200,7 +196,6 @@
         },
         "completion_msg": "Qiazol pull to waste complete"
     },
-
     "extract_2": {
         "type": "MachineActionScreen",
         "header": "Qiazol 2",
@@ -222,14 +217,11 @@
         },
         "completion_msg": "Qiazol pull and incubation complete"
     },
-
-
     "PBSchase": {
         "type": "UserActionScreen",
         "header": "PBS Chase",
         "description": "Add 1 mL PBS to reservoir. Press 'Next' to start."
     },
-
     "chase_1": {
         "type": "MachineActionScreen",
         "header": "PBS Chase",
@@ -243,9 +235,6 @@
             }
         }
     },
-
-
-
     "remove_kit": {
         "type": "UserActionScreen",
         "header": "Remove kit",
