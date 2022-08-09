@@ -3,6 +3,7 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
+from asyncio import protocols
 from collections import OrderedDict
 import json
 import os
@@ -48,7 +49,7 @@ Builder.load_file(resource_filename("cd_alpha",'gui-elements/protocolchooser.kv'
 device = Device(resource_filename("cd_alpha","device_config.json"))
 # Change the value in the config file to change which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
 DEBUG_MODE = device.DEBUG_MODE
 SERIAL_PATH = device.PUMP_SERIAL_ADDR
 DEV_MACHINE = device.DEV_MACHINE
@@ -602,8 +603,7 @@ class ProtocolChooser(Screen):
         
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
         filename_split_by_delimiter = filename.split(SPLIT_CHAR)
-        filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
-        PROTOCOL_FILE_NAME = filename_split_by_delimiter[-1]
+        filename = path + SPLIT_CHAR + filename_split_by_delimiter[-1]
         try:
             self.manager.main_window.load_protocol(filename)
         except BaseException as err:
