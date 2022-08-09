@@ -3,6 +3,7 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
+from asyncio import protocols
 from collections import OrderedDict
 import json
 import os
@@ -48,7 +49,7 @@ Builder.load_file(resource_filename("cd_alpha",'gui-elements/protocolchooser.kv'
 device = Device(resource_filename("cd_alpha","device_config.json"))
 # Change the value in the config file to change which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-PATH_TO_PROTOCOLS = device.PATH_TO_PROTOCOLS
+PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
 DEBUG_MODE = device.DEBUG_MODE
 SERIAL_PATH = device.PUMP_SERIAL_ADDR
 DEV_MACHINE = device.DEV_MACHINE
@@ -58,6 +59,9 @@ POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
 
 
 # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+
+# TODO fix these logic blocks using kivy built in OS testing 
+# TODO fix file path issues using resource_filename() as seen above
 if DEV_MACHINE:
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":",";")
@@ -89,12 +93,14 @@ else:
     SPLIT_CHAR = "/"
 
 # Establish serial connection to the pump controllers
+# TODO should be handled in an object not in a top level namespace
 if not LOCAL_TESTING:
     ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
 else:
     ser = SerialStub()
 pumps = PumpNetwork(ser)
 
+# TODO move out of __main__ namespace
 if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
     logging.warning("CDA: System will not reboot after exiting program.")
@@ -115,7 +121,6 @@ scheduled_events = []
 list_of_pumps = device.PUMP_ADDR
 
 ### UTIL FUNCTIONS ###
-
 
 def cleanup():
     logging.debug("CDA: Cleaning upp")
@@ -149,24 +154,19 @@ def reboot():
         os.system('sudo reboot --poweroff now')
         # call("sudo reboot --poweroff now", shell=True)
 
-# TODO: Should above functions be defined in a helper file? 
 
 ### MAIN ###
 
 logging.info("CDA: Starting main script.")
 
-# TODO these functions need to move 
-# pumps.stop_all_pumps(list_of_pumps)
-
-# diam and addr must be same length
-# for diam, addr in zip(device.PUMP_DIAMETER, device.PUMP_ADDR):
-    # pumps.set_diameter(diameter_mm=diam, addr=addr)
 
 if device.DEVICE_TYPE == "V0":
     nano = Nano(8, 7)
 else:
     nano = None
 
+
+# TODO why are magic numbers being defined mid initialization? 
 progressbar_update_interval = .5
 switch_update_interval = .1
 grab_overrun_check_interval = 20
@@ -248,6 +248,7 @@ class MachineActionScreen(ChipFlowScreen):
         self.time_elapsed = 0
         super().__init__(*args, **kwargs)
 
+    # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
     def start(self):
         for action, params in self.action.items():
             if action == 'PUMP':
@@ -599,11 +600,8 @@ class ProtocolChooser(Screen):
             logging.info("Filename List: {}".format(filename))
         except:
             return
-        
+
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        filename_split_by_delimiter = filename.split(SPLIT_CHAR)
-        filename = PATH_TO_PROTOCOLS + filename_split_by_delimiter[-1]
-        PROTOCOL_FILE_NAME = filename_split_by_delimiter[-1]
         try:
             self.manager.main_window.load_protocol(filename)
         except BaseException as err:
