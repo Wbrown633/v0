@@ -600,9 +600,6 @@ class ProtocolChooser(Screen):
             logging.info("Filename List: {}".format(filename))
         except:
             return
-        
-        # The reason we have to deal with splitting the filename is because on Windows we get 
-        # the entire path instead of just the filename
 
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
         try:
