@@ -601,9 +601,10 @@ class ProtocolChooser(Screen):
         except:
             return
         
+        # The reason we have to deal with splitting the filename is because on Windows we get 
+        # the entire path instead of just the filename
+
         logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
-        filename_split_by_delimiter = filename.split(SPLIT_CHAR)
-        filename = path + SPLIT_CHAR + filename_split_by_delimiter[-1]
         try:
             self.manager.main_window.load_protocol(filename)
         except BaseException as err:
