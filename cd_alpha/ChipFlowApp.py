@@ -3,7 +3,6 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
-from asyncio import protocols
 from collections import OrderedDict
 import json
 import os

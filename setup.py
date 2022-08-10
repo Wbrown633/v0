@@ -11,5 +11,10 @@ setup(
       packages=["cd_alpha", "cd_alpha.tests", "cd_alpha.software_testing"],
       include_package_data=True,
       package_data={'': ['gui-elements/*.kv', 'device_config.json']},
+      entry_points={
+            'console_scripts': [
+                  "chip = cd_alpha.ChipFlowApp:main",
+                  ],
+      },
       
 )
