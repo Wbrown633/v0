@@ -84,8 +84,8 @@ if DEV_MACHINE:
     SPLIT_CHAR = "\\"
 else:
     # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
+    from cd_alpha.NanoController import Nano
+    from cd_alpha.NewEraPumps import PumpNetwork
 
     # For R0 debug
     Window.fullscreen = "auto"
