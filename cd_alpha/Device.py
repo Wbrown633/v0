@@ -125,13 +125,14 @@ class Device:
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
 
-def get_updates(branch="master"):
+def get_updates():
     repo = Repo("C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\")
 
     try:
         assert repo.remotes.origin.exists()
+        repo.remotes.origin.fetch()
         repo.remotes.origin.pull()
-        print(f"Update was successful, with message: {repo.commit(branch).message}")
+        print(f"Update was successful, with message: {repo.commit(repo.active_branch.name).message}")
     except Exception:
         logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
 
