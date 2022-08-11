@@ -1,5 +1,7 @@
 import json
 import logging
+from git import Repo
+
 
 from pkg_resources import resource_filename
 
@@ -122,3 +124,18 @@ class Device:
 
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
+
+def get_updates():
+    # Pseudo code 
+    # check github for updates, automatically merge results
+    # Throw nonfatal error if we cannot merge 
+    # Show confirmation popup after merge
+    repo = Repo("C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents\\Github\\v0\\")
+    try:
+        assert repo.remotes.origin.exists()
+        repo.remotes.origin.pull()
+        print("Update was successful, with message: " + repo.commit('master').message)
+        
+    except:
+        logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")
+

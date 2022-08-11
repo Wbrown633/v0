@@ -14,7 +14,8 @@ setup(
       entry_points={
             'console_scripts': [
                   "chip = cd_alpha.ChipFlowApp:main",
+                  'update = cd_alpha.Device:get_updates',                  
                   ],
       },
-      
+
 )
