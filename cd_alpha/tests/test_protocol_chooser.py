@@ -45,6 +45,11 @@ class ProtocolChooserTestCase(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.test_window.load_protocol("invalid_protocol.json")
 
+
+    def test_load_from_archive(self):
+        pass
+
+    
     def _find_duplicates(self, list_of_values):
         # Check that there are no duplicate steps
         for value in list_of_values:
