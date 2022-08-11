@@ -4,10 +4,7 @@ from collections import OrderedDict
 from enum import Enum
 from dataclasses import dataclass
 import json
-from mimetypes import init
 from typing import List
-
-from requests import head
 
 
 TEST_FILE_LOCATION = "test_output.json"
@@ -53,8 +50,7 @@ class Step:
 
     # how do we handle description steps ? 
     def makejson(self):
-        return {self.material + "_" + str(self.step_number): {"type": self.screentype.name, "header": self.material + "_" + str(self.step_number), "description": self.description_text, 
-            "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
+        return {f"{self.material}_{str(self.step_number)}": {"type": self.screentype.name, "header": f"{self.material}_{str(self.step_number)}", "description": self.description_text, "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
 
 
 class StepBuilder:
@@ -75,7 +71,7 @@ class StepBuilder:
     def add_next_text(self, next_text: str):
         self.stepdict["next_text"] = next_text
 
-    def add_actions(self, action_types: List[Action]):
+    def add_actions(self, action_types: List[ActionType]):
         for act in action_type:
             pass
 
@@ -111,7 +107,7 @@ class ProtocolFactory:
         with open(TEST_FILE_LOCATION, 'w') as f:
             steps_dictionary = {}
             for s in self.list_of_steps:
-                steps_dictionary.update(s.makejson())  
+                steps_dictionary |= s.makejson()
             json.dump(steps_dictionary, f, indent=4)
             
 

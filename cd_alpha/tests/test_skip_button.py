@@ -1,7 +1,7 @@
-import unittest
+import pytest
 from cd_alpha.ChipFlowApp import ProcessWindow
 
-class SkipButtonTestCase(unittest.TestCase):
+class TestSkipButtonCase():
 
     def setUp(self):
         # import class and prepare everything here.
@@ -10,8 +10,3 @@ class SkipButtonTestCase(unittest.TestCase):
 
     def test_skip_and_reschedule(self):
         pass
-
-
-
-if __name__ == '__main__':
-    unittest.main()

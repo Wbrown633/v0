@@ -1,7 +1,7 @@
-import unittest
+import pytest
 from cd_alpha.ChipFlowApp import ProcessWindow
 
-class ProtocolChooserTestCase(unittest.TestCase):
+class TestProtocolChooserCase():
 
     def setUp(self):
         # import class and prepare everything here.
@@ -19,7 +19,7 @@ class ProtocolChooserTestCase(unittest.TestCase):
         # 'flush_3_done': 1, 'pbs_2': 1, 'wash_1': 1, 'wash_1_done': 1, 'pbs_3': 1, 'flush_5': 1, 'flush_5_done': 1, 'pbs_4': 1, 
         # 'flush_6': 1, 'flush_6_done': 1, 'qiazol': 1, 'extract_1': 1, 'extract_1_done': 1, 'PBSchase': 1, 'chase_1': 1, 
         # 'remove_kit': 1, 'reset_end': 1, 'reset_end_done': 1}
-        self.assertEqual(len(self.test_window.process_sm.screens), 35)
+        assert len(self.test_window.process_sm.screens) == 35
 
         # Check that there are no duplicate steps 
         self.assertFalse(self._find_duplicates(self.test_window.process_sm.screen_names))
@@ -33,16 +33,16 @@ class ProtocolChooserTestCase(unittest.TestCase):
         for _ in range(5):
             self.test_window.load_protocol(self.test_protocol_location)
 
-        self.assertFalse(self._find_duplicates(self.test_window.process_sm.screen_names))
+        assert not self._find_duplicates(self.test_window.process_sm.screen_names)
 
     # Test that loading an invalid file raises an error
     def test_load_invalid_file(self):
-        with self.assertRaises(FileNotFoundError):
+        with pytest.raises(FileNotFoundError):
             self.test_window.load_protocol("foobar.json")
 
     # Test that loading an invalid protocol raises an error
     def test_load_invalid_protocol(self):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             self.test_window.load_protocol("invalid_protocol.json")
 
 
@@ -54,7 +54,3 @@ class ProtocolChooserTestCase(unittest.TestCase):
         return any(self.test_window.process_sm.screen_names.count(value) > 1 for value in list_of_values)
 
 
-
-
-if __name__ == '__main__':
-    unittest.main()
