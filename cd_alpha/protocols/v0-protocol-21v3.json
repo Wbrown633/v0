@@ -2,10 +2,9 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with Small TENPO protocol 21v2. Press 'Start' to begin.",
+        "description": "Ready for a new test with Small TENPO protocol 21v3. Press 'Start' to begin.",
         "next_text": "Start"
     },
-
 
     "summary":{
         "type": "UserActionScreen",
@@ -123,8 +122,8 @@
         "action": {
             "PUMP": {
                 "target": "waste",
-                "vol_ml": 0.55,
-                "rate_mh": 4.5,
+                "vol_ml": 0.50,
+                "rate_mh": 1.0,
                 "eq_time": 0
             }
         },

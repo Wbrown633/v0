@@ -6,7 +6,6 @@
         "next_text": "Start"
     },
 
-
     "summary":{
         "type": "UserActionScreen",
         "next_text": "Start experiment"
@@ -124,7 +123,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.55,
-                "rate_mh": 4.5,
+                "rate_mh": 1.0,
                 "eq_time": 0
             }
         },
