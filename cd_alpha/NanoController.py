@@ -59,7 +59,8 @@ if __name__ == '__main__':
         while True:
             nn.update()
             print("1 = Open     0 = Closed")
-            print("D2: {}, D3: {}, D4: {}, D5: {}".format(int(nn.d2), int(nn.d3), int(nn.d4), int(nn.d5)))
+            print(f"D2: {int(nn.d2)}, D3: {int(nn.d3)}, D4: {int(nn.d4)}, D5: {int(nn.d5)}")
+
             sleep(1)
     except KeyboardInterrupt as e:
         nn.close()

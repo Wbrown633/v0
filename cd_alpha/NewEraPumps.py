@@ -73,7 +73,7 @@ class PumpNetwork:
             try:
                 self.stop(addr)
             except IOError as err:
-                if str(err)[-3:] == "?NA":
+                if str(err).endswith("?NA"):
                     logging.debug(f"CDA: Pump {addr:02} already stopped.")
                 else:
                     raise
@@ -87,12 +87,12 @@ class PumpNetwork:
     def set_rate(self, rate, unit, addr=''):
         flow_rate = float(rate)
         if unit not in PumpNetwork.FLOW_RATE_UNITS:
-            raise TypeError('Flow rate unit {} is not i list among the allowed units: [{}]'.format(unit, ', '.join(FLOW_RATE_UNITS)))
-        # TODO Add checks of ranges
-        direction = 'INF'
-        if flow_rate < 0: direction = 'WDR'
+            raise TypeError(f"Flow rate unit {unit} is not i list among the allowed units: [{', '.join(FLOW_RATE_UNITS)}]")
+
+        direction = 'WDR' if flow_rate < 0 else 'INF'
         resp_dir = self._send_command("DIR{:}".format(direction), addr)
         resp_rate = self._send_command("RAT{:.2f}{:}".format(abs(flow_rate), unit), addr)
+
         return resp_dir, resp_rate
 
     def set_volume(self, volume, unit, addr=''):

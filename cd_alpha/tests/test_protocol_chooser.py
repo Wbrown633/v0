@@ -30,7 +30,7 @@ class ProtocolChooserTestCase(unittest.TestCase):
         self.test_window.load_protocol(self.test_protocol_location)
 
         # Load the same protocol multiple times in a row to make sure there are no duplicate steps
-        for x in range(5):
+        for _ in range(5):
             self.test_window.load_protocol(self.test_protocol_location)
 
         self.assertFalse(self._find_duplicates(self.test_window.process_sm.screen_names))
@@ -49,13 +49,9 @@ class ProtocolChooserTestCase(unittest.TestCase):
     def test_load_from_archive(self):
         pass
 
-    
+
     def _find_duplicates(self, list_of_values):
-        # Check that there are no duplicate steps
-        for value in list_of_values:
-            if self.test_window.process_sm.screen_names.count(value) > 1:
-                return True
-        return False
+        return any(self.test_window.process_sm.screen_names.count(value) > 1 for value in list_of_values)
 
 
 
