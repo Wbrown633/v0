@@ -3,6 +3,7 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
+import contextlib
 from collections import OrderedDict
 import json
 import os
@@ -132,10 +133,8 @@ def cleanup():
     global scheduled_events
     logging.debug("CDA: Unscheduling events")
     for se in scheduled_events:
-        try:
+        with contextlib.suppress(AttributeError):
             se.cancel()
-        except AttributeError:
-            pass
     scheduled_events = []
     pumps.stop_all_pumps(list_of_pumps)
 
@@ -487,7 +486,7 @@ class MachineActionScreen(ChipFlowScreen):
             pumps.run(addr)
             self.grab_stop_counter += 1
             if self.grab_stop_counter == max_count:
-                logging.debug(f"CDA: Both syringes grabbed")
+                logging.debug("CDA: Both syringes grabbed")
                 self.grab_overrun_check_schedule.cancel()
                 final_action()
             return False
@@ -505,14 +504,14 @@ class MachineActionScreen(ChipFlowScreen):
         if getattr(nano, "d5"):
             overruns.append("2 (lysate)")
             swgs[1].cancel()
-        if len(overruns) > 0:
+        if overruns:
             pumps.stop_all_pumps(list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
             self.show_fatal_error(
                 title=f"Syringe{plural} not detected",
-                description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.",
+                description=f"Syringe{plural} not inserted correctly in positions{plural}{overruns_str}.\nPlease start the test over.",
                 confirm_text="Start over",
                 confirm_action="abort",
                 primary_color=(1, 0.33, 0.33, 1),
@@ -569,7 +568,6 @@ class ProgressDot(Widget):
     status = StringProperty()
 
     def __init__(self, *args, **kwargs):
-        index = kwargs.pop("index", None)
         self.status = "future"
         super().__init__(*args, **kwargs)
 
@@ -839,7 +837,11 @@ class ProcessWindow(BoxLayout):
         if self.process_sm.current == "home":
             abort_poup = AbortPopup(
                 title="Shut down device?",
-                description="Do you want to shut the device down? Once it has been shut down, you may safely turn it off with the switch located on the back side of the device.",
+                description=(
+                    "Do you want to shut the device down? Once it has been"
+                    "shut down, you may safely turn it off with the switch located on"
+                    " the back side of the device."
+                ),
                 dismiss_text="Cancel",
                 confirm_text="Shut down",
                 confirm_action=self.shutdown,
@@ -1046,9 +1048,8 @@ class ChipFlowApp(App):
 def main():
     try:
         ChipFlowApp().run()
-    except:
+    except Exception:
         pumps.stop_all_pumps(list_of_pumps)
-        # close the serial connection
         ser.close()
         if not DEBUG_MODE:
             reboot()
