@@ -58,7 +58,8 @@ POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
 POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
 
 
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+# Branch below allows for the GUI App to be tested locally on a Windows machine without
+# needing to connect the syringe pump or arduino
 
 # TODO fix these logic blocks using kivy built in OS testing
 # TODO fix file path issues using resource_filename() as seen above
@@ -254,7 +255,8 @@ class MachineActionScreen(ChipFlowScreen):
         self.time_elapsed = 0
         super().__init__(*args, **kwargs)
 
-    # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
+    # TODO this code is re-written multiple times and tied directly to GUI logic,
+    # desperately needs re-factor
     def start(self):
         for action, params in self.action.items():
             if action == "PUMP":

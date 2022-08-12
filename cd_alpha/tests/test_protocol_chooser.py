@@ -31,7 +31,8 @@ class ProtocolChooserTestCase(unittest.TestCase):
         # create a test window and check that all of the required screens are added
         self.test_window.load_protocol(self.test_protocol_location)
 
-        # Load the same protocol multiple times in a row to make sure there are no duplicate steps
+        # Load the same protocol multiple times in a row to make sure there are no
+        # duplicate steps
         for x in range(5):
             self.test_window.load_protocol(self.test_protocol_location)
 
