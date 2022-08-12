@@ -23,23 +23,18 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty, StringProperty, NumericProperty, ListProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 kivy.require("2.0.0")
 
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/widget.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/roundedbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/abortbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/useractionscreen.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/machineactionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/roundedbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/useractionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/machineactionscreen.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/processwindow.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
@@ -541,7 +536,7 @@ class MachineActionScreen(ChipFlowScreen):
         number_of_stopped_pumps = 0
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
-            logging.info("Pump number {} status was: {}".format(pump, status))
+            logging.info(f"Pump number {pump} status was: {status}")
             if status == "S":
                 number_of_stopped_pumps += 1
 
@@ -581,9 +576,7 @@ class ProgressDot(Widget):
             self.status = status
         else:
             raise TypeError(
-                "Status should be either of: 'past', 'present', 'future'. Got: '{}'".format(
-                    status
-                )
+                f"Status should be either of: 'past', 'present', 'future'. Got: '{status}'"
             )
 
 
@@ -716,11 +709,14 @@ class AbortButton(Button):
 class LoadButton(Button):
     pass
 
+
 class RefreshButton(Button):
     pass
 
+
 class ProcessWindow(BoxLayout):
     pass
+
 
 class ProcessWindow(BoxLayout):
     def __init__(self, *args, **kwargs):
@@ -754,11 +750,11 @@ class ProcessWindow(BoxLayout):
             if screen_type == "UserActionScreen":
                 if name == "home":
                     this_screen = HomeScreen(
-
-                    name,
-                    header=step.get('header', 'NO HEADER'),
-                    description=step.get('description', 'NO DESCRIPTION'),
-                    next_text=step.get('next_text', 'Next'))
+                        name,
+                        header=step.get("header", "NO HEADER"),
+                        description=step.get("description", "NO DESCRIPTION"),
+                        next_text=step.get("next_text", "Next"),
+                    )
 
                 else:
                     this_screen = UserActionScreen(
@@ -820,23 +816,17 @@ class ProcessWindow(BoxLayout):
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
 
+        self.refresh_btn = RefreshButton(disabled=False, on_release=self.get_updates)
 
-
-        self.refresh_btn = RefreshButton(
-            disabled=False,
-            on_release=self.get_updates
-        )
-
-        protocol_chooser = ProtocolChooser(name = 'protocol_chooser')
-        self.process_sm.add_widget(protocol_chooser) # add screen for protocol chooser
-        #self.ids.top_bar.add_widget(self.refresh_btn)
+        protocol_chooser = ProtocolChooser(name="protocol_chooser")
+        self.process_sm.add_widget(protocol_chooser)  # add screen for protocol chooser
+        # self.ids.top_bar.add_widget(self.refresh_btn)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
         logging.info(
             "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
         )
-
 
     def get_updates(self, btn):
         logging.info("Update button pressed")
@@ -1042,7 +1032,7 @@ class ChipFlowApp(App):
     def build(self):
         logging.debug("CDA: Creating main window")
         return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
-   
+
     def on_close(self):
         cleanup()
         if not DEBUG_MODE:
@@ -1065,6 +1055,5 @@ def main():
             raise
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
