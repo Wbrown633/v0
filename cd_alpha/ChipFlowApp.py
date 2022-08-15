@@ -3,6 +3,7 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
+import contextlib
 from collections import OrderedDict
 import json
 import os
@@ -11,7 +12,7 @@ import serial
 import time
 from datetime import datetime
 import logging
-from cd_alpha.Device import Device
+from cd_alpha.Device import Device, get_updates
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -30,16 +31,11 @@ from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 kivy.require("2.0.0")
 
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/widget.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/roundedbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/abortbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/useractionscreen.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/machineactionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/roundedbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortbutton.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/useractionscreen.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/machineactionscreen.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/processwindow.kv"))
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
@@ -51,6 +47,7 @@ Builder.load_file(resource_filename("cd_alpha", "gui-elements/summaryscreen.kv")
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/protocolchooser.kv"))
 
 device = Device(resource_filename("cd_alpha", "device_config.json"))
+
 # Change the value in the config file to change which protocol is in use
 PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
 PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
@@ -62,7 +59,8 @@ POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
 POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
 
 
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+# Branch below allows for the GUI App to be tested locally on a Windows machine without
+# needing to connect the syringe pump or arduino
 
 # TODO fix these logic blocks using kivy built in OS testing
 # TODO fix file path issues using resource_filename() as seen above
@@ -83,8 +81,8 @@ if DEV_MACHINE:
     SPLIT_CHAR = "\\"
 else:
     # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
+    from cd_alpha.NanoController import Nano
+    from cd_alpha.NewEraPumps import PumpNetwork
 
     # For R0 debug
     Window.fullscreen = "auto"
@@ -135,10 +133,8 @@ def cleanup():
     global scheduled_events
     logging.debug("CDA: Unscheduling events")
     for se in scheduled_events:
-        try:
+        with contextlib.suppress(AttributeError):
             se.cancel()
-        except AttributeError:
-            pass
     scheduled_events = []
     pumps.stop_all_pumps(list_of_pumps)
 
@@ -258,7 +254,8 @@ class MachineActionScreen(ChipFlowScreen):
         self.time_elapsed = 0
         super().__init__(*args, **kwargs)
 
-    # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
+    # TODO this code is re-written multiple times and tied directly to GUI logic,
+    # desperately needs re-factor
     def start(self):
         for action, params in self.action.items():
             if action == "PUMP":
@@ -489,7 +486,7 @@ class MachineActionScreen(ChipFlowScreen):
             pumps.run(addr)
             self.grab_stop_counter += 1
             if self.grab_stop_counter == max_count:
-                logging.debug(f"CDA: Both syringes grabbed")
+                logging.debug("CDA: Both syringes grabbed")
                 self.grab_overrun_check_schedule.cancel()
                 final_action()
             return False
@@ -507,14 +504,14 @@ class MachineActionScreen(ChipFlowScreen):
         if getattr(nano, "d5"):
             overruns.append("2 (lysate)")
             swgs[1].cancel()
-        if len(overruns) > 0:
+        if overruns:
             pumps.stop_all_pumps(list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
             self.show_fatal_error(
                 title=f"Syringe{plural} not detected",
-                description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.",
+                description=f"Syringe{plural} not inserted correctly in positions{plural}{overruns_str}.\nPlease start the test over.",
                 confirm_text="Start over",
                 confirm_action="abort",
                 primary_color=(1, 0.33, 0.33, 1),
@@ -540,7 +537,7 @@ class MachineActionScreen(ChipFlowScreen):
         number_of_stopped_pumps = 0
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
-            logging.info("Pump number {} status was: {}".format(pump, status))
+            logging.info(f"Pump number {pump} status was: {status}")
             if status == "S":
                 number_of_stopped_pumps += 1
 
@@ -571,7 +568,6 @@ class ProgressDot(Widget):
     status = StringProperty()
 
     def __init__(self, *args, **kwargs):
-        index = kwargs.pop("index", None)
         self.status = "future"
         super().__init__(*args, **kwargs)
 
@@ -580,9 +576,7 @@ class ProgressDot(Widget):
             self.status = status
         else:
             raise TypeError(
-                "Status should be either of: 'past', 'present', 'future'. Got: '{}'".format(
-                    status
-                )
+                f"Status should be either of: 'past', 'present', 'future'. Got: '{status}'"
             )
 
 
@@ -716,6 +710,14 @@ class LoadButton(Button):
     pass
 
 
+class RefreshButton(Button):
+    pass
+
+
+class ProcessWindow(BoxLayout):
+    pass
+
+
 class ProcessWindow(BoxLayout):
     def __init__(self, *args, **kwargs):
         self.protocol_file_name = kwargs.pop("protocol_file_name")
@@ -754,8 +756,6 @@ class ProcessWindow(BoxLayout):
                         next_text=step.get("next_text", "Next"),
                     )
 
-                elif name == "summary":
-                    this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
                 else:
                     this_screen = UserActionScreen(
                         name=name,
@@ -815,8 +815,12 @@ class ProcessWindow(BoxLayout):
         self.abort_btn = AbortButton(
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
+
+        self.refresh_btn = RefreshButton(disabled=False, on_release=self.get_updates)
+
         protocol_chooser = ProtocolChooser(name="protocol_chooser")
         self.process_sm.add_widget(protocol_chooser)  # add screen for protocol chooser
+        # self.ids.top_bar.add_widget(self.refresh_btn)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
@@ -824,12 +828,20 @@ class ProcessWindow(BoxLayout):
             "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
         )
 
+    def get_updates(self, btn):
+        logging.info("Update button pressed")
+        get_updates()
+
     def show_abort_popup(self, btn):
         popup_outside_padding = 60
         if self.process_sm.current == "home":
             abort_poup = AbortPopup(
                 title="Shut down device?",
-                description="Do you want to shut the device down? Once it has been shut down, you may safely turn it off with the switch located on the back side of the device.",
+                description=(
+                    "Do you want to shut the device down? Once it has been"
+                    "shut down, you may safely turn it off with the switch located on"
+                    " the back side of the device."
+                ),
                 dismiss_text="Cancel",
                 confirm_text="Shut down",
                 confirm_action=self.shutdown,
@@ -1036,9 +1048,8 @@ class ChipFlowApp(App):
 def main():
     try:
         ChipFlowApp().run()
-    except:
+    except Exception:
         pumps.stop_all_pumps(list_of_pumps)
-        # close the serial connection
         ser.close()
         if not DEBUG_MODE:
             reboot()
