@@ -1,6 +1,9 @@
 import json
 import logging
+from operator import truediv
 from git import Repo
+import cd_alpha
+import os
 
 
 from pkg_resources import resource_filename
@@ -130,7 +133,7 @@ class Device:
 
 def get_updates():
     # Pull in current directory
-    repo = Repo()
+    repo = Repo(os.path.dirname(cd_alpha.__file__), search_parent_directories=True)
 
     try:
         assert repo.remotes.origin.exists()
