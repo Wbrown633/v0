@@ -129,12 +129,8 @@ class Device:
 
 
 def get_updates():
-    repo = Repo(
-        (
-            "C:\\Users\\ChipDx Workstation\\OneDrive - chip-diagnostics.com\\Documents"
-            "\\Github\\v0\\"
-        )
-    )
+    # Pull in current directory
+    repo = Repo()
 
     try:
         assert repo.remotes.origin.exists()
