@@ -29,154 +29,8 @@ from kivy.core.window import Window
 from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
-kivy.require("2.0.0")
-
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/widget.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/roundedbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/abortbutton.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/useractionscreen.kv"))
-Builder.load_file(resource_filename("cd_alpha",
-                                    "gui-elements/machineactionscreen.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/processwindow.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/circlebutton.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/errorpopup.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortpopup.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/homescreen.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/summaryscreen.kv"))
-Builder.load_file(resource_filename("cd_alpha", "gui-elements/protocolchooser.kv"))
-
-device = Device(resource_filename("cd_alpha", "device_config.json"))
-# Change the value in the config file to change which protocol is in use
-PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
-DEBUG_MODE = device.DEBUG_MODE
-SERIAL_PATH = device.PUMP_SERIAL_ADDR
-DEV_MACHINE = device.DEV_MACHINE
-START_STEP = device.START_STEP
-POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
-POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
-
-
-# Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
-
-# TODO fix these logic blocks using kivy built in OS testing
-# TODO fix file path issues using resource_filename() as seen above
-if DEV_MACHINE:
-    LOCAL_TESTING = True
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":", ";")
-    logging.basicConfig(
-        filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
-        filemode="w",
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG,
-    )
-    logging.info("Logging started")
-    from cd_alpha.software_testing.NanoControllerTestStub import Nano
-    from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
-    from cd_alpha.software_testing.SerialStub import SerialStub
-
-    SPLIT_CHAR = "\\"
-else:
-    # Normal production mode
-    from NanoController import Nano
-    from NewEraPumps import PumpNetwork
-
-    # For R0 debug
-    Window.fullscreen = "auto"
-    LOCAL_TESTING = False
-    time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    logging.basicConfig(
-        filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-        filemode="w",
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG,
-    )
-    logging.info("Logging started")
-    SPLIT_CHAR = "/"
-
-# Establish serial connection to the pump controllers
-# TODO should be handled in an object not in a top level namespace
-if not LOCAL_TESTING:
-    ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
-else:
-    ser = SerialStub()
-pumps = PumpNetwork(ser)
-
-# TODO move out of __main__ namespace
-if DEBUG_MODE:
-    logging.warning("CDA: *** DEBUG MODE ***")
-    logging.warning("CDA: System will not reboot after exiting program.")
-
-logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
-
-# Set constants
-if device.DEVICE_TYPE == "R0":
-    WASTE_ADDR = device.PUMP_ADDR[0]
-    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
-else:
-    WASTE_ADDR = device.PUMP_ADDR[0]
-    LYSATE_ADDR = device.PUMP_ADDR[1]
-    WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
-    LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
-
-scheduled_events = []
-list_of_pumps = device.PUMP_ADDR
 
 ### UTIL FUNCTIONS ###
-
-
-def cleanup():
-    logging.debug("CDA: Cleaning upp")
-    global scheduled_events
-    logging.debug("CDA: Unscheduling events")
-    for se in scheduled_events:
-        with contextlib.suppress(AttributeError):
-            se.cancel()
-    scheduled_events = []
-    pumps.stop_all_pumps(list_of_pumps)
-
-
-def shutdown():
-    logging.info("Shutting down...")
-    cleanup()
-    if DEBUG_MODE:
-        logging.warning(
-            "CDA: In DEBUG mode, not shutting down for real, only ending program."
-        )
-        App.get_running_app().stop()
-    else:
-        os.system("sudo shutdown --poweroff now")
-
-
-def reboot():
-    cleanup()
-    logging.info("CDA: Rebooting...")
-    if DEBUG_MODE:
-        logging.warning(
-            "CDA: In DEBUG mode, not rebooting down for real, only ending program."
-        )
-        App.get_running_app().stop()
-    else:
-        os.system("sudo reboot --poweroff now")
-
-
-# ---------------- MAIN ---------------- #
-
-logging.info("CDA: Starting main script.")
-
-
-nano = Nano(8, 7) if device.DEVICE_TYPE == "V0" else None
-
-# TODO why are magic numbers being defined mid initialization?
-progressbar_update_interval = 0.5
-switch_update_interval = 0.1
-grab_overrun_check_interval = 20
 
 
 class ProcessScreenManager(ScreenManager):
@@ -265,17 +119,27 @@ class MachineActionScreen(ChipFlowScreen):
                 eq_time = params.get("eq_time", 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
-                self._extracted_from_start_13('Addr = ', addr, rate_mh, vol_ml)
-                scheduled_events.append(Clock.schedule_interval(self.set_progress, progressbar_update_interval))
+                self._extracted_from_start_13("Addr = ", addr, rate_mh, vol_ml)
+                scheduled_events.append(
+                    Clock.schedule_interval(
+                        self.set_progress, progressbar_update_interval
+                    )
+                )
 
             if action == "INCUBATE":
                 self.time_total = params["time"]
                 self.time_elapsed = 0
-                scheduled_events.append(Clock.schedule_interval(self.set_progress, progressbar_update_interval))
+                scheduled_events.append(
+                    Clock.schedule_interval(
+                        self.set_progress, progressbar_update_interval
+                    )
+                )
 
             if action == "RESET":
                 if device.DEVICE_TYPE == "R0":
-                    logging.info("No RESET work to be done on the R0, passing to end of program")
+                    logging.info(
+                        "No RESET work to be done on the R0, passing to end of program"
+                    )
                     return
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     pumps.purge(1, addr)
@@ -284,13 +148,29 @@ class MachineActionScreen(ChipFlowScreen):
                     pumps.stop(addr)
                     pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
-                scheduled_events.append(Clock.schedule_interval(partial(self.switched_reset, "d2", WASTE_ADDR, 2, self.next_step), switch_update_interval))
+                scheduled_events.append(
+                    Clock.schedule_interval(
+                        partial(
+                            self.switched_reset, "d2", WASTE_ADDR, 2, self.next_step
+                        ),
+                        switch_update_interval,
+                    )
+                )
 
-                scheduled_events.append(Clock.schedule_interval(partial(self.switched_reset, "d3", LYSATE_ADDR, 2, self.next_step), switch_update_interval))
+                scheduled_events.append(
+                    Clock.schedule_interval(
+                        partial(
+                            self.switched_reset, "d3", LYSATE_ADDR, 2, self.next_step
+                        ),
+                        switch_update_interval,
+                    )
+                )
 
             if action == "RESET_WASTE":
                 if device.DEVICE_TYPE == "R0":
-                    logging.info("No RESET work to be done on the R0, passing to end of program")
+                    logging.info(
+                        "No RESET work to be done on the R0, passing to end of program"
+                    )
                     return
                 for addr in [WASTE_ADDR]:
                     pumps.purge(1, addr)
@@ -299,7 +179,14 @@ class MachineActionScreen(ChipFlowScreen):
                     pumps.stop(addr)
                     pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
-                scheduled_events.append(Clock.schedule_interval(partial(self.switched_reset, "d2", WASTE_ADDR, 1, self.next_step), switch_update_interval))
+                scheduled_events.append(
+                    Clock.schedule_interval(
+                        partial(
+                            self.switched_reset, "d2", WASTE_ADDR, 1, self.next_step
+                        ),
+                        switch_update_interval,
+                    )
+                )
 
             if action == "GRAB":
                 if POST_RUN_RATE_MM_CALIBRATION:
@@ -312,19 +199,46 @@ class MachineActionScreen(ChipFlowScreen):
                     post_run_vol_ml = POST_RUN_VOL_ML_CALIBRATION
                 else:
                     post_run_vol_ml = params["post_run_vol_ml"]
-                logging.debug(f"Using Post Run Rate MM: {post_run_rate_mm}, ML : {post_run_vol_ml}")
+                logging.debug(
+                    f"Using Post Run Rate MM: {post_run_rate_mm}, ML : {post_run_vol_ml}"
+                )
 
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
                     pumps.purge(1, addr)
                 self.grab_stop_counter = 0
-                swg1 = Clock.schedule_interval(partial(self.switched_grab, "d4", WASTE_ADDR, 2, self.next_step, post_run_rate_mm, post_run_vol_ml), switch_update_interval)
+                swg1 = Clock.schedule_interval(
+                    partial(
+                        self.switched_grab,
+                        "d4",
+                        WASTE_ADDR,
+                        2,
+                        self.next_step,
+                        post_run_rate_mm,
+                        post_run_vol_ml,
+                    ),
+                    switch_update_interval,
+                )
 
                 scheduled_events.append(swg1)
-                swg2 = Clock.schedule_interval(partial(self.switched_grab, "d5", LYSATE_ADDR, 2, self.next_step, post_run_rate_mm, post_run_vol_ml), switch_update_interval)
+                swg2 = Clock.schedule_interval(
+                    partial(
+                        self.switched_grab,
+                        "d5",
+                        LYSATE_ADDR,
+                        2,
+                        self.next_step,
+                        post_run_rate_mm,
+                        post_run_vol_ml,
+                    ),
+                    switch_update_interval,
+                )
 
                 scheduled_events.append(swg2)
-                self.grab_overrun_check_schedule = Clock.schedule_once(partial(self.grab_overrun_check, [swg1, swg2]), grab_overrun_check_interval)
+                self.grab_overrun_check_schedule = Clock.schedule_once(
+                    partial(self.grab_overrun_check, [swg1, swg2]),
+                    grab_overrun_check_interval,
+                )
 
                 scheduled_events.append(self.grab_overrun_check_schedule)
             if action == "GRAB_WASTE":
@@ -334,17 +248,33 @@ class MachineActionScreen(ChipFlowScreen):
                     logging.debug(f"CDA: Grabbing pump {addr}")
                     pumps.purge(1, addr)
                 self.grab_stop_counter = 0
-                swg1 = Clock.schedule_interval(partial(self.switched_grab, "d4", WASTE_ADDR, 1, self.next_step, post_run_rate_mm, post_run_vol_ml), switch_update_interval)
+                swg1 = Clock.schedule_interval(
+                    partial(
+                        self.switched_grab,
+                        "d4",
+                        WASTE_ADDR,
+                        1,
+                        self.next_step,
+                        post_run_rate_mm,
+                        post_run_vol_ml,
+                    ),
+                    switch_update_interval,
+                )
 
                 scheduled_events.append(swg1)
-                self.grab_overrun_check_schedule = Clock.schedule_once(partial(self.grab_overrun_check, [swg1]), grab_overrun_check_interval)
+                self.grab_overrun_check_schedule = Clock.schedule_once(
+                    partial(self.grab_overrun_check, [swg1]),
+                    grab_overrun_check_interval,
+                )
 
                 scheduled_events.append(self.grab_overrun_check_schedule)
             if action == "CHANGE_SYRINGE":
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
                 pumps.set_diameter(diameter, pump_addr)
-                logging.debug(f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}")
+                logging.debug(
+                    f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}"
+                )
 
             if action == "RELEASE":
                 if params["target"] == "waste":
@@ -354,7 +284,9 @@ class MachineActionScreen(ChipFlowScreen):
                 rate_mh = params["rate_mh"]
                 vol_ml = params["vol_ml"]
                 eq_time = params.get("eq_time", 0)
-                self._extracted_from_start_13('SENDING RELEASE COMMAND TO: Addr = ', addr, rate_mh, vol_ml)
+                self._extracted_from_start_13(
+                    "SENDING RELEASE COMMAND TO: Addr = ", addr, rate_mh, vol_ml
+                )
 
     # TODO Rename this here and in `start`
     def _extracted_from_start_13(self, arg0, addr, rate_mh, vol_ml):
@@ -376,13 +308,24 @@ class MachineActionScreen(ChipFlowScreen):
                 final_action()
             return False
 
-    def switched_grab(self, switch, addr, max_count, final_action, post_run_rate_mm, post_run_vol_ml, dt):
+    def switched_grab(
+        self,
+        switch,
+        addr,
+        max_count,
+        final_action,
+        post_run_rate_mm,
+        post_run_vol_ml,
+        dt,
+    ):
         if nano is None:
             raise IOError("No switches on the R0 should not be calling switch grab!")
         nano.update()
         if not getattr(nano, switch):
             logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
-            logging.debug(f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly.")
+            logging.debug(
+                f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly."
+            )
 
             pumps.stop(addr)
             pumps.set_rate(post_run_rate_mm, "MM", addr)
@@ -397,7 +340,9 @@ class MachineActionScreen(ChipFlowScreen):
 
     def grab_overrun_check(self, swgs, dt):
         if nano is None:
-            raise IOError("No switches on the R0, should not be calling grab_overrrun_check!")
+            raise IOError(
+                "No switches on the R0, should not be calling grab_overrrun_check!"
+            )
 
         nano.update()
         overruns = []
@@ -412,7 +357,13 @@ class MachineActionScreen(ChipFlowScreen):
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
-            self.show_fatal_error(title=f"Syringe{plural} not detected", description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.", confirm_text="Start over", confirm_action="abort", primary_color=(1, 0.33, 0.33, 1))
+            self.show_fatal_error(
+                title=f"Syringe{plural} not detected",
+                description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.",
+                confirm_text="Start over",
+                confirm_action="abort",
+                primary_color=(1, 0.33, 0.33, 1),
+            )
 
     def set_progress(self, dt):
         self.time_elapsed += dt
@@ -483,7 +434,9 @@ class ProgressDot(Widget):
 class SteppedProgressBar(GridLayout):
     def __init__(self, *args, **kwargs):
         noof_steps = kwargs.pop("steps")
-        super().__init__(*args, cols=noof_steps, padding=kwargs.pop("padding", 5), **kwargs)
+        super().__init__(
+            *args, cols=noof_steps, padding=kwargs.pop("padding", 5), **kwargs
+        )
 
         self.steps = [ProgressDot() for _ in range(noof_steps)]
         for s in self.steps:
@@ -910,6 +863,126 @@ class ProcessWindow(BoxLayout):
 
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
+        kivy.require("2.0.0")
+
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/roundedbutton.kv")
+        )
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortbutton.kv"))
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/useractionscreen.kv")
+        )
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/machineactionscreen.kv")
+        )
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv")
+        )
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/processwindow.kv")
+        )
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/circlebutton.kv"))
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/errorpopup.kv"))
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortpopup.kv"))
+        Builder.load_file(resource_filename("cd_alpha", "gui-elements/homescreen.kv"))
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/summaryscreen.kv")
+        )
+        Builder.load_file(
+            resource_filename("cd_alpha", "gui-elements/protocolchooser.kv")
+        )
+
+        device = Device(resource_filename("cd_alpha", "device_config.json"))
+        # Change the value in the config file to change which protocol is in use
+        PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+        PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
+        DEBUG_MODE = device.DEBUG_MODE
+        SERIAL_PATH = device.PUMP_SERIAL_ADDR
+        DEV_MACHINE = device.DEV_MACHINE
+        START_STEP = device.START_STEP
+        POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
+        POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
+
+        # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
+
+        # TODO fix these logic blocks using kivy built in OS testing
+        # TODO fix file path issues using resource_filename() as seen above
+        if DEV_MACHINE:
+            LOCAL_TESTING = True
+            time_now_str = (
+                datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":", ";")
+            )
+            logging.basicConfig(
+                filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
+                filemode="w",
+                datefmt="%Y-%m-%d_%H:%M:%S",
+                level=logging.DEBUG,
+            )
+            logging.info("Logging started")
+            from cd_alpha.software_testing.NanoControllerTestStub import Nano
+            from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
+            from cd_alpha.software_testing.SerialStub import SerialStub
+
+            SPLIT_CHAR = "\\"
+        else:
+            # Normal production mode
+            from NanoController import Nano
+            from NewEraPumps import PumpNetwork
+
+            # For R0 debug
+            Window.fullscreen = "auto"
+            LOCAL_TESTING = False
+            time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            logging.basicConfig(
+                filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
+                filemode="w",
+                datefmt="%Y-%m-%d_%H:%M:%S",
+                level=logging.DEBUG,
+            )
+            logging.info("Logging started")
+            SPLIT_CHAR = "/"
+
+        # Establish serial connection to the pump controllers
+        # TODO should be handled in an object not in a top level namespace
+        if not LOCAL_TESTING:
+            ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+        else:
+            ser = SerialStub()
+        pumps = PumpNetwork(ser)
+
+        # TODO move out of __main__ namespace
+        if DEBUG_MODE:
+            logging.warning("CDA: *** DEBUG MODE ***")
+            logging.warning("CDA: System will not reboot after exiting program.")
+
+        logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+
+        # Set constants
+        if device.DEVICE_TYPE == "R0":
+            WASTE_ADDR = device.PUMP_ADDR[0]
+            WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+        else:
+            WASTE_ADDR = device.PUMP_ADDR[0]
+            LYSATE_ADDR = device.PUMP_ADDR[1]
+            WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+            LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
+
+        scheduled_events = []
+        list_of_pumps = device.PUMP_ADDR
+
+        # ---------------- MAIN ---------------- #
+
+        logging.info("CDA: Starting main script.")
+
+        nano = Nano(8, 7) if device.DEVICE_TYPE == "V0" else None
+
+        # TODO why are magic numbers being defined mid initialization?
+        progressbar_update_interval = 0.5
+        switch_update_interval = 0.1
+        grab_overrun_check_interval = 20
+
         super().__init__(**kwargs)
 
     def build(self):
@@ -917,11 +990,43 @@ class ChipFlowApp(App):
         return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
 
     def on_close(self):
-        cleanup()
+        self.cleanup()
         if not DEBUG_MODE:
-            reboot()
+            self.reboot()
         else:
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
+
+    def cleanup(self):
+        logging.debug("CDA: Cleaning upp")
+        global scheduled_events
+        logging.debug("CDA: Unscheduling events")
+        for se in scheduled_events:
+            with contextlib.suppress(AttributeError):
+                se.cancel()
+        scheduled_events = []
+        pumps.stop_all_pumps(list_of_pumps)
+
+    def shutdown(self):
+        logging.info("Shutting down...")
+        self.cleanup()
+        if DEBUG_MODE:
+            logging.warning(
+                "CDA: In DEBUG mode, not shutting down for real, only ending program."
+            )
+            App.get_running_app().stop()
+        else:
+            os.system("sudo shutdown --poweroff now")
+
+    def reboot(self):
+        self.cleanup()
+        logging.info("CDA: Rebooting...")
+        if DEBUG_MODE:
+            logging.warning(
+                "CDA: In DEBUG mode, not rebooting down for real, only ending program."
+            )
+            App.get_running_app().stop()
+        else:
+            os.system("sudo reboot --poweroff now")
 
 
 def main():
