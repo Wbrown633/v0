@@ -665,7 +665,7 @@ class ProtocolChooser(Screen):
             logging.error(f"Unexpected Error: {err}, {type(err)}")
         logging.info(f"Filename: {filename}  was chosen. Path: {path}")
         try:
-            App.get_running_app().protocol_name = Path(filename).name
+            App.get_running_app().protocol_name = Path(filename)
             App.get_running_app().protocol_path = Path(path)
             self.manager.main_window.load_protocol(filename)
 
@@ -688,7 +688,7 @@ class SummaryScreen(Screen):
         self.path = App.get_running_app().protocol_path
         logging.info(f"Summary screen path {self.path} and protocol {self.protocol}")
         self.next_text = kwargs.pop("next_text", "Next")
-        self.header_text = App.get_running_app().protocol_name
+        self.header_text = App.get_running_app().protocol_name.stem
         self.protocol_process = ProcessProtocol(self.path / self.protocol)
         super().__init__(*args, **kwargs)
         self.add_rows()
@@ -735,7 +735,9 @@ class ProcessWindow(BoxLayout):
 
         # TODO: break protocol loading into its own method
         # Load protocol and add screens accordingly
-        with open(device.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
+        app_copy = App.get_running_app()
+        file_path = app_copy.protocol_path / app_copy.protocol_name
+        with open(file_path, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         if START_STEP not in protocol.keys():
@@ -1038,7 +1040,7 @@ class ProcessWindow(BoxLayout):
 
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
-        self.protocol_name = device.DEFAULT_PROTOCOL
+        self.protocol_name = Path(device.DEFAULT_PROTOCOL)
         self.protocol_path = Path(device.PATH_TO_PROTOCOLS)
         super().__init__(**kwargs)
 
