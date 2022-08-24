@@ -6,7 +6,7 @@
 import contextlib
 from collections import OrderedDict
 import json
-from msilib.schema import AppId
+from pathlib import Path
 import os
 from functools import partial
 import serial
@@ -665,8 +665,8 @@ class ProtocolChooser(Screen):
             logging.error(f"Unexpected Error: {err}, {type(err)}")
         logging.info(f"Filename: {filename}  was chosen. Path: {path}")
         try:
-            App.get_running_app().protocol_name = filename
-            App.get_running_app().protocol_path = path
+            App.get_running_app().protocol_name = Path(filename).name
+            App.get_running_app().protocol_path = Path(path)
             self.manager.main_window.load_protocol(filename)
 
         except BaseException as err:
@@ -689,7 +689,7 @@ class SummaryScreen(Screen):
         logging.info(f"Summary screen path {self.path} and protocol {self.protocol}")
         self.next_text = kwargs.pop("next_text", "Next")
         self.header_text = App.get_running_app().protocol_name
-        self.protocol_process = ProcessProtocol(self.protocol)
+        self.protocol_process = ProcessProtocol(self.path / self.protocol)
         super().__init__(*args, **kwargs)
         self.add_rows()
 
@@ -1039,7 +1039,7 @@ class ProcessWindow(BoxLayout):
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
         self.protocol_name = device.DEFAULT_PROTOCOL
-        self.protocol_path = device.PATH_TO_PROTOCOLS
+        self.protocol_path = Path(device.PATH_TO_PROTOCOLS)
         super().__init__(**kwargs)
 
     def build(self):
