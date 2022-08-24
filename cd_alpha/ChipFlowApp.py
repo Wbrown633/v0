@@ -6,6 +6,7 @@
 import contextlib
 from collections import OrderedDict
 import json
+from msilib.schema import AppId
 import os
 from functools import partial
 import serial
@@ -49,8 +50,8 @@ Builder.load_file(resource_filename("cd_alpha", "gui-elements/protocolchooser.kv
 device = Device(resource_filename("cd_alpha", "device_config.json"))
 
 # Change the value in the config file to change which protocol is in use
-PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
+# device.DEFAULT_PROTOCOL
+# resource_filename("cd_alpha", "protocols/")
 DEBUG_MODE = device.DEBUG_MODE
 SERIAL_PATH = device.PUMP_SERIAL_ADDR
 DEV_MACHINE = device.DEV_MACHINE
@@ -110,7 +111,7 @@ if DEBUG_MODE:
     logging.warning("CDA: *** DEBUG MODE ***")
     logging.warning("CDA: System will not reboot after exiting program.")
 
-logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+logging.info(f"CDA: Using protocol: '{device.DEFAULT_PROTOCOL}''")
 
 # Set constants
 if device.DEVICE_TYPE == "R0":
@@ -458,7 +459,7 @@ class MachineActionScreen(ChipFlowScreen):
             pumps.stop(addr)
             self.reset_stop_counter += 1
             if self.reset_stop_counter == max_count:
-                logging.debug(f"CDA: Both pumps homed")
+                logging.debug("CDA: Both pumps homed")
                 final_action()
             return False
 
@@ -659,16 +660,18 @@ class ProtocolChooser(Screen):
     def load(self, path, filename):
         try:
             filename = filename[0]
-            logging.info("Filename List: {}".format(filename))
-        except:
-            return
-
-        logging.info("Filename: {}  was chosen. Path: {}".format(filename, path))
+            logging.info(f"Filename List: {filename}")
+        except Exception as err:
+            logging.error(f"Unexpected Error: {err}, {type(err)}")
+        logging.info(f"Filename: {filename}  was chosen. Path: {path}")
         try:
+            App.get_running_app().protocol_name = filename
+            App.get_running_app().protocol_path = path
             self.manager.main_window.load_protocol(filename)
+
         except BaseException as err:
-            logging.error("Invalid Protocol: {}".format(filename))
-            logging.error("Unexpected Error: {}, {}".format(err, type(err)))
+            logging.error(f"Invalid Protocol: {filename}")
+            logging.error(f"Unexpected Error: {err}, {type(err)}")
 
     def get_file_path(self):
         return device.PATH_TO_PROTOCOLS
@@ -680,9 +683,13 @@ class ProtocolChooser(Screen):
 
 class SummaryScreen(Screen):
     def __init__(self, *args, **kwargs):
+        # on windows this is the entire path
+        self.protocol = App.get_running_app().protocol_name
+        self.path = App.get_running_app().protocol_path
+        logging.info(f"Summary screen path {self.path} and protocol {self.protocol}")
         self.next_text = kwargs.pop("next_text", "Next")
-        self.header_text = kwargs.pop("header_text", "Summary")
-        self.protocol_process = ProcessProtocol(PATH_TO_PROTOCOLS + PROTOCOL_FILE_NAME)
+        self.header_text = App.get_running_app().protocol_name
+        self.protocol_process = ProcessProtocol(self.protocol)
         super().__init__(*args, **kwargs)
         self.add_rows()
 
@@ -728,7 +735,7 @@ class ProcessWindow(BoxLayout):
 
         # TODO: break protocol loading into its own method
         # Load protocol and add screens accordingly
-        with open(PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
+        with open(device.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         if START_STEP not in protocol.keys():
@@ -1031,11 +1038,13 @@ class ProcessWindow(BoxLayout):
 
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
+        self.protocol_name = device.DEFAULT_PROTOCOL
+        self.protocol_path = device.PATH_TO_PROTOCOLS
         super().__init__(**kwargs)
 
     def build(self):
         logging.debug("CDA: Creating main window")
-        return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
+        return ProcessWindow(protocol_file_name=self.protocol_name)
 
     def on_close(self):
         cleanup()

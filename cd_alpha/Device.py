@@ -1,11 +1,8 @@
 import json
 import logging
-from operator import truediv
 from git import Repo
 import cd_alpha
 import os
-
-
 from pkg_resources import resource_filename
 
 
@@ -81,7 +78,7 @@ class Device:
                     if req not in config_file_dict.keys():
                         print(config_file_dict.keys())
                         raise KeyError(
-                            "Required value {} was not found in config file".format(req)
+                            f"Required value {req} was not found in config file"
                         )
                 for key in config_file_dict.keys():
                     self.__setattr__(key, config_file_dict[key])
