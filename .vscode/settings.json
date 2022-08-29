@@ -1,0 +1,12 @@
+{
+    "python.linting.enabled": true,
+    "mypy.runUsingActiveInterpreter": true,
+
+    "python.linting.flake8Args": ["--ignore=E203", "--max-line-length=88"],
+
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+      },
+      "python.formatting.provider": "black"
+}
