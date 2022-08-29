@@ -737,11 +737,12 @@ class ProcessWindow(BoxLayout):
         # Load protocol and add screens accordingly
         app_copy = App.get_running_app()
         file_path = app_copy.protocol_path / app_copy.protocol_name
+
         with open(file_path, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         if START_STEP not in protocol.keys():
-            raise KeyError("{} not a valid step in the protocol.".format(START_STEP))
+            raise KeyError(f"{START_STEP} not a valid step in the protocol.")
 
         # if we're supposed to start at a step other than 'home' remove other steps from the protocol
         protocol_copy = OrderedDict()
@@ -764,6 +765,9 @@ class ProcessWindow(BoxLayout):
                         description=step.get("description", "NO DESCRIPTION"),
                         next_text=step.get("next_text", "Next"),
                     )
+
+                elif name == "summary":
+                    this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
 
                 else:
                     this_screen = UserActionScreen(
