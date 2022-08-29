@@ -738,89 +738,7 @@ class ProcessWindow(BoxLayout):
         app_copy = App.get_running_app()
         file_path = app_copy.protocol_path / app_copy.protocol_name
 
-        with open(file_path, "r") as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
-
-        if START_STEP not in protocol.keys():
-            raise KeyError(f"{START_STEP} not a valid step in the protocol.")
-
-        # if we're supposed to start at a step other than 'home' remove other steps from the protocol
-        protocol_copy = OrderedDict()
-        keep_steps = False
-        for name, step in protocol.items():
-            if name == START_STEP:
-                keep_steps = True
-            if keep_steps:
-                protocol_copy[name] = step
-
-        protocol = protocol_copy
-
-        for name, step in protocol.items():
-            screen_type = step.get("type", None)
-            if screen_type == "UserActionScreen":
-                if name == "home":
-                    this_screen = HomeScreen(
-                        name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-
-                elif name == "summary":
-                    this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
-
-                else:
-                    this_screen = UserActionScreen(
-                        name=name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-            elif screen_type == "MachineActionScreen":
-
-                this_screen = MachineActionScreen(
-                    name=name,
-                    header=step["header"],
-                    description=step.get("description", ""),
-                    action=step["action"],
-                )
-
-                # TODO: clean up how this works
-                if step.get("remove_progress_bar", False):
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.progress_bar_layout
-                    )
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-
-                # Don't offer skip button in production
-                if not DEBUG_MODE:
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-            else:
-                if screen_type is None:
-                    raise TypeError(
-                        "Corrupt protocol. Every protocol step must contain a 'type' key."
-                    )
-                else:
-                    raise TypeError(
-                        "Corrupt protocol. Unrecognized 'type' key: {}".format(
-                            screen_type
-                        )
-                    )
-            self.progress_screen_names.append(this_screen.name)
-            self.process_sm.add_widget(this_screen)
-
-            completion_msg = step.get("completion_msg", None)
-            if completion_msg:
-                self.process_sm.add_widget(
-                    ActionDoneScreen(
-                        name=this_screen.name + "_done", header=completion_msg
-                    )
-                )
-
+        self.load_protocol(file_path)
         self.overall_progress_bar = SteppedProgressBar(
             steps=len(self.progress_screen_names)
         )  # , size_hint_y = 0.15)
@@ -932,6 +850,20 @@ class ProcessWindow(BoxLayout):
         # Load protocol and add screens accordingly
         with open(path_to_protocol, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+
+        if START_STEP not in protocol.keys():
+            raise KeyError(f"{START_STEP} not a valid step in the protocol.")
+
+        # if we're supposed to start at a step other than 'home' remove other steps from the protocol
+        protocol_copy = OrderedDict()
+        keep_steps = False
+        for name, step in protocol.items():
+            if name == START_STEP:
+                keep_steps = True
+            if keep_steps:
+                protocol_copy[name] = step
+
+        protocol = protocol_copy
 
         if self.process_sm.has_screen("protocol_chooser"):
             protocol_chooser = self.process_sm.get_screen("protocol_chooser")
