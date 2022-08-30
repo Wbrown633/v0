@@ -29,9 +29,6 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
-from kivy.config import Config
-Config.set('kivy', 'keyboard_mode', 'systemandmulti')
-
 kivy.require("2.0.0")
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
