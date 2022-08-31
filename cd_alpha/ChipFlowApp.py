@@ -779,6 +779,20 @@ class ProcessWindow(BoxLayout):
                 size_hint=(None, None),
                 size=(800 - popup_outside_padding, 480 - popup_outside_padding),
             )
+        elif self.process_sm.current == "protocol_chooser":
+            abort_poup = AbortPopup(
+                title="Exit device?",
+                description=(
+                    "Do you want to exit the device? This should be used for development only."
+                ),
+                dismiss_text="Cancel",
+                confirm_text="Exit",
+                confirm_action=self.exit,
+                primary_color=(1, 0.66, 0, 1),
+                size_hint=(None, None),
+                size=(800 - popup_outside_padding, 480 - popup_outside_padding),
+            )
+
         else:
             abort_poup = AbortPopup(
                 title="Abort entire test?",
@@ -804,6 +818,10 @@ class ProcessWindow(BoxLayout):
     def reboot(self):
         self.cleanup()
         reboot()
+
+    def exit(self):
+        self.cleanup()
+        App.get_running_app().stop()
 
     def show_fatal_error(self, *args, **kwargs):
         logging.debug("CDA: Showing fatal error popup")
