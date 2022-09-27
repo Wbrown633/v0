@@ -29,8 +29,6 @@ from kivy.core.window import Window
 from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
-
-
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
     resource_filename("cd_alpha", "gui-elements/roundedbutton.kv")
