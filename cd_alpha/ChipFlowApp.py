@@ -134,10 +134,13 @@ class MachineActionScreen(ChipFlowScreen):
         self.action = kwargs.pop("action")
         self.time_total = 0
         self.time_elapsed = 0
+        self.app = App.get_running_app()
         super().__init__(*args, **kwargs)
 
     # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
     def start(self):
+        WASTE_ADDR = self.app.WASTE_ADDR
+        LYSATE_ADDR = self.app.LYSATE_ADDR
         for action, params in self.action.items():
             if action == "PUMP":
                 if params["target"] == "waste":
@@ -166,17 +169,17 @@ class MachineActionScreen(ChipFlowScreen):
                 )
 
             if action == "RESET":
-                if device.DEVICE_TYPE == "R0":
+                if self.app.DEVICE_TYPE == "R0":
                     logging.info(
                         "No RESET work to be done on the R0, passing to end of program"
                     )
                     return
-                for addr in [WASTE_ADDR, LYSATE_ADDR]:
-                    pumps.purge(1, addr)
+                for addr in [self.app.WASTE_ADDR, self.app.LYSATE_ADDR]:
+                    self.app.pumps.purge(1, addr)
                 time.sleep(1)
-                for addr in [WASTE_ADDR, LYSATE_ADDR]:
-                    pumps.stop(addr)
-                    pumps.purge(-1, addr)
+                for addr in [self.app.WASTE_ADDR, self.app.LYSATE_ADDR]:
+                    self.app.pumps.stop(addr)
+                    self.app.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
                 scheduled_events.append(
                     Clock.schedule_interval(
@@ -197,17 +200,17 @@ class MachineActionScreen(ChipFlowScreen):
                 )
 
             if action == "RESET_WASTE":
-                if device.DEVICE_TYPE == "R0":
+                if self.app.device.DEVICE_TYPE == "R0":
                     logging.info(
                         "No RESET work to be done on the R0, passing to end of program"
                     )
                     return
                 for addr in [WASTE_ADDR]:
-                    pumps.purge(1, addr)
+                    self.app.pumps.purge(1, addr)
                 time.sleep(1)
                 for addr in [WASTE_ADDR]:
-                    pumps.stop(addr)
-                    pumps.purge(-1, addr)
+                    self.app.pumps.stop(addr)
+                    self.app.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
                 scheduled_events.append(
                     Clock.schedule_interval(
@@ -219,14 +222,14 @@ class MachineActionScreen(ChipFlowScreen):
                 )
 
             if action == "GRAB":
-                if POST_RUN_RATE_MM_CALIBRATION:
+                if self.app.POST_RUN_RATE_MM_CALIBRATION:
                     logging.debug("Using calibration post run rate values")
-                    post_run_rate_mm = POST_RUN_RATE_MM_CALIBRATION
+                    post_run_rate_mm = self.app.POST_RUN_RATE_MM_CALIBRATION
                 else:
                     post_run_rate_mm = params["post_run_rate_mm"]
-                if POST_RUN_VOL_ML_CALIBRATION:
+                if self.app.POST_RUN_VOL_ML_CALIBRATION:
                     logging.debug("Using calibration post run volume values")
-                    post_run_vol_ml = POST_RUN_VOL_ML_CALIBRATION
+                    post_run_vol_ml = self.app.POST_RUN_VOL_ML_CALIBRATION
                 else:
                     post_run_vol_ml = params["post_run_vol_ml"]
                 logging.debug(
@@ -904,16 +907,16 @@ class ChipFlowApp(App):
         kivy.require("2.0.0")
 
 
-        device = Device(resource_filename("cd_alpha", "device_config.json"))
+        self.device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
-        self.PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+        self.PROTOCOL_FILE_NAME = self.device.DEFAULT_PROTOCOL
         self.PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
-        self.DEBUG_MODE = device.DEBUG_MODE
-        self.SERIAL_PATH = device.PUMP_SERIAL_ADDR
-        self.DEV_MACHINE = device.DEV_MACHINE
-        self.START_STEP = device.START_STEP
-        self.POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
-        self.POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
+        self.DEBUG_MODE = self.device.DEBUG_MODE
+        self.SERIAL_PATH = self.device.PUMP_SERIAL_ADDR
+        self.DEV_MACHINE = self.device.DEV_MACHINE
+        self.START_STEP = self.device.START_STEP
+        self.POST_RUN_RATE_MM_CALIBRATION = self.device.POST_RUN_RATE_MM
+        self.POST_RUN_VOL_ML_CALIBRATION = self.device.POST_RUN_VOL_ML
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 
@@ -969,23 +972,23 @@ class ChipFlowApp(App):
         logging.info(f"CDA: Using protocol: '{self.PROTOCOL_FILE_NAME}''")
 
         # Set constants
-        if device.DEVICE_TYPE == "R0":
-            WASTE_ADDR = device.PUMP_ADDR[0]
-            WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
+        if self.device.DEVICE_TYPE == "R0":
+            WASTE_ADDR = self.device.PUMP_ADDR[0]
+            WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
         else:
-            WASTE_ADDR = device.PUMP_ADDR[0]
-            LYSATE_ADDR = device.PUMP_ADDR[1]
-            WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
-            LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
+            WASTE_ADDR = self.device.PUMP_ADDR[0]
+            LYSATE_ADDR = self.device.PUMP_ADDR[1]
+            WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
+            LYSATE_DIAMETER_mm = self.device.PUMP_DIAMETER[1]
 
         self.scheduled_events = []
-        self.list_of_pumps = device.PUMP_ADDR
+        self.list_of_pumps = self.device.PUMP_ADDR
 
         # ---------------- MAIN ---------------- #
 
         logging.info("CDA: Starting main script.")
 
-        nano = Nano(8, 7) if device.DEVICE_TYPE == "V0" else None
+        nano = Nano(8, 7) if self.device.DEVICE_TYPE == "V0" else None
 
         # TODO why are magic numbers being defined mid initialization?
         self.progressbar_update_interval = 0.5
