@@ -169,7 +169,7 @@ class MachineActionScreen(ChipFlowScreen):
                 )
 
             if action == "RESET":
-                if self.app.DEVICE_TYPE == "R0":
+                if self.app.device.DEVICE_TYPE == "R0":
                     logging.info(
                         "No RESET work to be done on the R0, passing to end of program"
                     )
@@ -906,7 +906,6 @@ class ChipFlowApp(App):
     def __init__(self, **kwargs):
         kivy.require("2.0.0")
 
-
         self.device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
         self.PROTOCOL_FILE_NAME = self.device.DEFAULT_PROTOCOL
@@ -973,13 +972,13 @@ class ChipFlowApp(App):
 
         # Set constants
         if self.device.DEVICE_TYPE == "R0":
-            WASTE_ADDR = self.device.PUMP_ADDR[0]
-            WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
+            self.WASTE_ADDR = self.device.PUMP_ADDR[0]
+            self.WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
         else:
-            WASTE_ADDR = self.device.PUMP_ADDR[0]
-            LYSATE_ADDR = self.device.PUMP_ADDR[1]
-            WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
-            LYSATE_DIAMETER_mm = self.device.PUMP_DIAMETER[1]
+            self.WASTE_ADDR = self.device.PUMP_ADDR[0]
+            self.LYSATE_ADDR = self.device.PUMP_ADDR[1]
+            self.WASTE_DIAMETER_mm = self.device.PUMP_DIAMETER[0]
+            self.LYSATE_DIAMETER_mm = self.device.PUMP_DIAMETER[1]
 
         self.scheduled_events = []
         self.list_of_pumps = self.device.PUMP_ADDR
