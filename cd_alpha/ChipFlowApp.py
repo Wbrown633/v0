@@ -568,19 +568,21 @@ class ProcessWindow(BoxLayout):
         self.process_sm = ProcessScreenManager(main_window=self)
         self.progress_screen_names = []
 
+        self.app = App.get_running_app()
+
         # TODO: break protocol loading into its own method
         # Load protocol and add screens accordingly
-        with open(PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
+        with open(self.app.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
-        if START_STEP not in protocol.keys():
-            raise KeyError("{} not a valid step in the protocol.".format(START_STEP))
+        if self.app.START_STEP not in protocol.keys():
+            raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))
 
         # if we're supposed to start at a step other than 'home' remove other steps from the protocol
         protocol_copy = OrderedDict()
         keep_steps = False
         for name, step in protocol.items():
-            if name == START_STEP:
+            if name == self.app.START_STEP:
                 keep_steps = True
             if keep_steps:
                 protocol_copy[name] = step
@@ -626,7 +628,7 @@ class ProcessWindow(BoxLayout):
                     )
 
                 # Don't offer skip button in production
-                if not DEBUG_MODE:
+                if not app.DEBUG_MODE:
                     this_screen.children[0].remove_widget(
                         this_screen.ids.skip_button_layout
                     )
@@ -701,11 +703,11 @@ class ProcessWindow(BoxLayout):
 
     def shutdown(self):
         self.cleanup()
-        shutdown()
+        self.app.shutdown()
 
     def reboot(self):
         self.cleanup()
-        reboot()
+        self.app.reboot()
 
     def show_fatal_error(self, *args, **kwargs):
         logging.debug("CDA: Showing fatal error popup")
@@ -896,20 +898,20 @@ class ChipFlowApp(App):
 
         device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
-        PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
-        PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
-        DEBUG_MODE = device.DEBUG_MODE
-        SERIAL_PATH = device.PUMP_SERIAL_ADDR
-        DEV_MACHINE = device.DEV_MACHINE
-        START_STEP = device.START_STEP
-        POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
-        POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
+        self.PROTOCOL_FILE_NAME = device.DEFAULT_PROTOCOL
+        self.PATH_TO_PROTOCOLS = resource_filename("cd_alpha", "protocols/")
+        self.DEBUG_MODE = device.DEBUG_MODE
+        self.SERIAL_PATH = device.PUMP_SERIAL_ADDR
+        self.DEV_MACHINE = device.DEV_MACHINE
+        self.START_STEP = device.START_STEP
+        self.POST_RUN_RATE_MM_CALIBRATION = device.POST_RUN_RATE_MM
+        self.POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 
         # TODO fix these logic blocks using kivy built in OS testing
         # TODO fix file path issues using resource_filename() as seen above
-        if DEV_MACHINE:
+        if self.DEV_MACHINE:
             LOCAL_TESTING = True
             time_now_str = (
                 datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":", ";")
@@ -947,17 +949,16 @@ class ChipFlowApp(App):
         # Establish serial connection to the pump controllers
         # TODO should be handled in an object not in a top level namespace
         if not LOCAL_TESTING:
-            ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+            self.ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
         else:
-            ser = SerialStub()
-        pumps = PumpNetwork(ser)
+            self.ser = SerialStub()
+        self.pumps = PumpNetwork(self.ser)
 
-        # TODO move out of __main__ namespace
-        if DEBUG_MODE:
+        if self.DEBUG_MODE:
             logging.warning("CDA: *** DEBUG MODE ***")
             logging.warning("CDA: System will not reboot after exiting program.")
 
-        logging.info(f"CDA: Using protocol: '{PROTOCOL_FILE_NAME}''")
+        logging.info(f"CDA: Using protocol: '{self.PROTOCOL_FILE_NAME}''")
 
         # Set constants
         if device.DEVICE_TYPE == "R0":
@@ -969,8 +970,8 @@ class ChipFlowApp(App):
             WASTE_DIAMETER_mm = device.PUMP_DIAMETER[0]
             LYSATE_DIAMETER_mm = device.PUMP_DIAMETER[1]
 
-        scheduled_events = []
-        list_of_pumps = device.PUMP_ADDR
+        self.scheduled_events = []
+        self.list_of_pumps = device.PUMP_ADDR
 
         # ---------------- MAIN ---------------- #
 
@@ -979,37 +980,36 @@ class ChipFlowApp(App):
         nano = Nano(8, 7) if device.DEVICE_TYPE == "V0" else None
 
         # TODO why are magic numbers being defined mid initialization?
-        progressbar_update_interval = 0.5
-        switch_update_interval = 0.1
-        grab_overrun_check_interval = 20
+        self.progressbar_update_interval = 0.5
+        self.switch_update_interval = 0.1
+        self.grab_overrun_check_interval = 20
 
         super().__init__(**kwargs)
 
     def build(self):
         logging.debug("CDA: Creating main window")
-        return ProcessWindow(protocol_file_name=PROTOCOL_FILE_NAME)
+        return ProcessWindow(protocol_file_name=self.PROTOCOL_FILE_NAME)
 
     def on_close(self):
         self.cleanup()
-        if not DEBUG_MODE:
+        if not self.DEBUG_MODE:
             self.reboot()
         else:
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
 
     def cleanup(self):
         logging.debug("CDA: Cleaning upp")
-        global scheduled_events
         logging.debug("CDA: Unscheduling events")
-        for se in scheduled_events:
+        for se in self.scheduled_events:
             with contextlib.suppress(AttributeError):
                 se.cancel()
-        scheduled_events = []
-        pumps.stop_all_pumps(list_of_pumps)
+        self.scheduled_events = []
+        self.pumps.stop_all_pumps(self.list_of_pumps)
 
     def shutdown(self):
         logging.info("Shutting down...")
         self.cleanup()
-        if DEBUG_MODE:
+        if self.DEBUG_MODE:
             logging.warning(
                 "CDA: In DEBUG mode, not shutting down for real, only ending program."
             )
@@ -1017,10 +1017,11 @@ class ChipFlowApp(App):
         else:
             os.system("sudo shutdown --poweroff now")
 
+    @staticmethod
     def reboot(self):
         self.cleanup()
         logging.info("CDA: Rebooting...")
-        if DEBUG_MODE:
+        if self.DEBUG_MODE:
             logging.warning(
                 "CDA: In DEBUG mode, not rebooting down for real, only ending program."
             )
@@ -1031,12 +1032,12 @@ class ChipFlowApp(App):
 
 def main():
     try:
-        ChipFlowApp().run()
+        chip_app = ChipFlowApp()
+        chip_app.run()
     except Exception:
-        pumps.stop_all_pumps(list_of_pumps)
-        ser.close()
-        if not DEBUG_MODE:
-            reboot()
+        chip_app.cleanup()
+        if not chip_app.DEBUG_MODE:
+            ChipFlowApp.reboot()
         else:
             logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
