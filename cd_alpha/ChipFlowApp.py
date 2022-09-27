@@ -909,6 +909,7 @@ class ProcessWindow(BoxLayout):
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
         kivy.require("2.0.0")
+        
 
         self.device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
