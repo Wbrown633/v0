@@ -539,9 +539,9 @@ class AbortPopup(Popup):
 class ProtocolChooser(Screen):
 
     def __init__(self, **kw):
-        super().__init__(**kw)
         self.app = App.get_running_app()
-        
+        super().__init__(**kw)
+
     def load(self, path, filename):
         try:
             filename = filename[0]
@@ -556,7 +556,7 @@ class ProtocolChooser(Screen):
             logging.error(f"Unexpected Error: {err}, {type(err)}")
 
     def get_file_path(self):
-        return self.app.device.PATH_TO_PROTOCOLS
+        return self.app.PATH_TO_PROTOCOLS
 
     def cancel(self):
         logging.info("Cancel")
