@@ -30,6 +30,36 @@ from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 
+
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/roundedbutton.kv")
+)
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortbutton.kv"))
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/useractionscreen.kv")
+)
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/machineactionscreen.kv")
+)
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv")
+)
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/processwindow.kv")
+)
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/circlebutton.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/errorpopup.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortpopup.kv"))
+Builder.load_file(resource_filename("cd_alpha", "gui-elements/homescreen.kv"))
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/summaryscreen.kv")
+)
+Builder.load_file(
+    resource_filename("cd_alpha", "gui-elements/protocolchooser.kv")
+)
+
 ### UTIL FUNCTIONS ###
 
 
@@ -867,34 +897,6 @@ class ChipFlowApp(App):
     def __init__(self, **kwargs):
         kivy.require("2.0.0")
 
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/roundedbutton.kv")
-        )
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortbutton.kv"))
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/useractionscreen.kv")
-        )
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/machineactionscreen.kv")
-        )
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/actiondonescreen.kv")
-        )
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/processwindow.kv")
-        )
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/progressdot.kv"))
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/circlebutton.kv"))
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/errorpopup.kv"))
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/abortpopup.kv"))
-        Builder.load_file(resource_filename("cd_alpha", "gui-elements/homescreen.kv"))
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/summaryscreen.kv")
-        )
-        Builder.load_file(
-            resource_filename("cd_alpha", "gui-elements/protocolchooser.kv")
-        )
 
         device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
