@@ -562,7 +562,8 @@ class SummaryScreen(Screen):
     def __init__(self, *args, **kwargs):
         self.next_text = kwargs.pop("next_text", "Next")
         self.header_text = kwargs.pop("header_text", "Summary")
-        self.protocol_process = ProcessProtocol(PATH_TO_PROTOCOLS + PROTOCOL_FILE_NAME)
+        self.app = App.get_running_app()
+        self.protocol_process = ProcessProtocol(self.app.PATH_TO_PROTOCOLS + self.app.PROTOCOL_FILE_NAME)
         super().__init__(*args, **kwargs)
         self.add_rows()
 
@@ -658,7 +659,7 @@ class ProcessWindow(BoxLayout):
                     )
 
                 # Don't offer skip button in production
-                if not app.DEBUG_MODE:
+                if not self.app.DEBUG_MODE:
                     this_screen.children[0].remove_widget(
                         this_screen.ids.skip_button_layout
                     )
@@ -762,7 +763,7 @@ class ProcessWindow(BoxLayout):
             primary_color=kwargs.pop("primary_color", (0.33, 0.66, 1, 1)),
         )
         error_window.open()
-        pumps.buzz(addr=WASTE_ADDR, repetitions=5)
+        self.app.pumps.buzz(addr=self.app.WASTE_ADDR, repetitions=5)
 
     def start_over(self):
         logging.info("Sending Program to home screen")
@@ -776,7 +777,7 @@ class ProcessWindow(BoxLayout):
 
     def cleanup(self):
         # Global cleanup
-        cleanup()
+        self.app.cleanup()
         # TODO: Any local cleanup?
 
     def load_protocol(self, path_to_protocol):
@@ -844,7 +845,7 @@ class ProcessWindow(BoxLayout):
                     )
 
                 # Don't offer skip button in production
-                if not DEBUG_MODE:
+                if not self.app.DEBUG_MODE:
                     this_screen.children[0].remove_widget(
                         this_screen.ids.skip_button_layout
                     )
