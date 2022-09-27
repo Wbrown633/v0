@@ -1017,7 +1017,6 @@ class ChipFlowApp(App):
         else:
             os.system("sudo shutdown --poweroff now")
 
-    @staticmethod
     def reboot(self):
         self.cleanup()
         logging.info("CDA: Rebooting...")
