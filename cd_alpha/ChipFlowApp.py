@@ -153,18 +153,18 @@ class MachineActionScreen(ChipFlowScreen):
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
                 self._extracted_from_start_13("Addr = ", addr, rate_mh, vol_ml)
-                scheduled_events.append(
+                self.app.scheduled_events.append(
                     Clock.schedule_interval(
-                        self.set_progress, progressbar_update_interval
+                        self.set_progress, self.app.progressbar_update_interval
                     )
                 )
 
             if action == "INCUBATE":
                 self.time_total = params["time"]
                 self.time_elapsed = 0
-                scheduled_events.append(
+                self.app.scheduled_events.append(
                     Clock.schedule_interval(
-                        self.set_progress, progressbar_update_interval
+                        self.set_progress, self.app.progressbar_update_interval
                     )
                 )
 
@@ -181,21 +181,21 @@ class MachineActionScreen(ChipFlowScreen):
                     self.app.pumps.stop(addr)
                     self.app.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
-                scheduled_events.append(
+                self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
                             self.switched_reset, "d2", WASTE_ADDR, 2, self.next_step
                         ),
-                        switch_update_interval,
+                        self.app.switch_update_interval,
                     )
                 )
 
-                scheduled_events.append(
+                self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
                             self.switched_reset, "d3", LYSATE_ADDR, 2, self.next_step
                         ),
-                        switch_update_interval,
+                        self.app.switch_update_interval,
                     )
                 )
 
@@ -212,12 +212,12 @@ class MachineActionScreen(ChipFlowScreen):
                     self.app.pumps.stop(addr)
                     self.app.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
-                scheduled_events.append(
+                self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
                             self.switched_reset, "d2", WASTE_ADDR, 1, self.next_step
                         ),
-                        switch_update_interval,
+                        self.app.switch_update_interval,
                     )
                 )
 
@@ -238,7 +238,7 @@ class MachineActionScreen(ChipFlowScreen):
 
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
-                    pumps.purge(1, addr)
+                    self.app.pumps.purge(1, addr)
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
                     partial(
@@ -250,10 +250,10 @@ class MachineActionScreen(ChipFlowScreen):
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
-                    switch_update_interval,
+                    self.app.switch_update_interval,
                 )
 
-                scheduled_events.append(swg1)
+                self.app.scheduled_events.append(swg1)
                 swg2 = Clock.schedule_interval(
                     partial(
                         self.switched_grab,
@@ -264,22 +264,22 @@ class MachineActionScreen(ChipFlowScreen):
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
-                    switch_update_interval,
+                    self.app.switch_update_interval,
                 )
 
-                scheduled_events.append(swg2)
+                self.app.scheduled_events.append(swg2)
                 self.grab_overrun_check_schedule = Clock.schedule_once(
                     partial(self.grab_overrun_check, [swg1, swg2]),
-                    grab_overrun_check_interval,
+                    self.app.grab_overrun_check_interval,
                 )
 
-                scheduled_events.append(self.grab_overrun_check_schedule)
+                self.app.scheduled_events.append(self.grab_overrun_check_schedule)
             if action == "GRAB_WASTE":
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
                 for addr in [WASTE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
-                    pumps.purge(1, addr)
+                    self.app.pumps.purge(1, addr)
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
                     partial(
@@ -291,20 +291,20 @@ class MachineActionScreen(ChipFlowScreen):
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
-                    switch_update_interval,
+                    self.app.switch_update_interval,
                 )
 
-                scheduled_events.append(swg1)
+                self.app.scheduled_events.append(swg1)
                 self.grab_overrun_check_schedule = Clock.schedule_once(
                     partial(self.grab_overrun_check, [swg1]),
-                    grab_overrun_check_interval,
+                    self.app.grab_overrun_check_interval,
                 )
 
-                scheduled_events.append(self.grab_overrun_check_schedule)
+                self.app.scheduled_events.append(self.grab_overrun_check_schedule)
             if action == "CHANGE_SYRINGE":
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
-                pumps.set_diameter(diameter, pump_addr)
+                self.app.pumps.set_diameter(diameter, pump_addr)
                 logging.debug(
                     f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}"
                 )
@@ -324,17 +324,17 @@ class MachineActionScreen(ChipFlowScreen):
     # TODO Rename this here and in `start`
     def _extracted_from_start_13(self, arg0, addr, rate_mh, vol_ml):
         logging.info(f"{arg0}{addr}")
-        pumps.set_rate(rate_mh, "MH", addr)
-        pumps.set_volume(vol_ml, "ML", addr)
-        pumps.run(addr)
+        self.app.pumps.set_rate(rate_mh, "MH", addr)
+        self.app.pumps.set_volume(vol_ml, "ML", addr)
+        self.app.pumps.run(addr)
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):
-        if nano is None:
+        if self.app.nano is None:
             raise IOError("No switches on the R0 should not be calling a switch reset!")
-        nano.update()
-        if not getattr(nano, switch):
+        self.app.nano.update()
+        if not getattr(self.app.nano, switch):
             logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
-            pumps.stop(addr)
+            self.app.pumps.stop(addr)
             self.reset_stop_counter += 1
             if self.reset_stop_counter == max_count:
                 logging.debug(f"CDA: Both pumps homed")
@@ -351,19 +351,19 @@ class MachineActionScreen(ChipFlowScreen):
         post_run_vol_ml,
         dt,
     ):
-        if nano is None:
+        if self.app.nano is None:
             raise IOError("No switches on the R0 should not be calling switch grab!")
-        nano.update()
-        if not getattr(nano, switch):
+        self.app.nano.update()
+        if not getattr(self.app.nano, switch):
             logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
             logging.debug(
                 f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly."
             )
 
-            pumps.stop(addr)
-            pumps.set_rate(post_run_rate_mm, "MM", addr)
-            pumps.set_volume(post_run_vol_ml, "ML", addr)
-            pumps.run(addr)
+            self.app.pumps.stop(addr)
+            self.app.pumps.set_rate(post_run_rate_mm, "MM", addr)
+            self.app.pumps.set_volume(post_run_vol_ml, "ML", addr)
+            self.app.pumps.run(addr)
             self.grab_stop_counter += 1
             if self.grab_stop_counter == max_count:
                 logging.debug("CDA: Both syringes grabbed")
@@ -372,21 +372,21 @@ class MachineActionScreen(ChipFlowScreen):
             return False
 
     def grab_overrun_check(self, swgs, dt):
-        if nano is None:
+        if self.app.nano is None:
             raise IOError(
                 "No switches on the R0, should not be calling grab_overrrun_check!"
             )
 
-        nano.update()
+        self.app.nano.update()
         overruns = []
-        if getattr(nano, "d4"):
+        if getattr(self.app.nano, "d4"):
             overruns.append("1 (waste)")
             swgs[0].cancel()
-        if getattr(nano, "d5"):
+        if getattr(self.app.nano, "d5"):
             overruns.append("2 (lysate)")
             swgs[1].cancel()
         if overruns:
-            pumps.stop_all_pumps(list_of_pumps)
+            self.app.pumps.stop_all_pumps(self.app.list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
             logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
@@ -416,13 +416,13 @@ class MachineActionScreen(ChipFlowScreen):
         # Check that the motor is not moving
         # TODO make this work for pressure drive by checking if we've finished a step
         number_of_stopped_pumps = 0
-        for pump in list_of_pumps:
-            status = pumps.status(addr=pump)
+        for pump in self.app.list_of_pumps:
+            status = self.app.pumps.status(addr=pump)
             logging.info("Pump number {} status was: {}".format(pump, status))
             if status == "S":
                 number_of_stopped_pumps += 1
 
-        if number_of_stopped_pumps == len(list_of_pumps):
+        if number_of_stopped_pumps == len(self.app.list_of_pumps):
             logging.info("Skip button pressed. Moving to next step. ")
             Clock.unschedule(self.set_progress)
             self.next_step()
@@ -435,14 +435,20 @@ class MachineActionScreen(ChipFlowScreen):
 
 
 class ActionDoneScreen(ChipFlowScreen):
+    def __init__(self, *args, **kwargs):
+        self.app = App.get_running_app()
+        super().__init__(*args, **kwargs)
     def on_enter(self):
-        pumps.buzz(repetitions=3, addr=WASTE_ADDR)
-        scheduled_events.append(Clock.schedule_once(self.next_step, 1))
+        self.app.pumps.buzz(repetitions=3, addr=self.app.WASTE_ADDR)
+        self.app.scheduled_events.append(Clock.schedule_once(self.next_step, 1))
 
 
 class FinishedScreen(ChipFlowScreen):
+    def __init__(self, *args, **kwargs):
+        self.app = App.get_running_app()
+        super().__init__(*args, **kwargs)
     def on_enter(self):
-        scheduled_events.append(Clock.schedule_once(self.start_over, 3))
+        self.app.scheduled_events.append(Clock.schedule_once(self.start_over, 3))
 
 
 class ProgressDot(Widget):
@@ -987,7 +993,7 @@ class ChipFlowApp(App):
 
         logging.info("CDA: Starting main script.")
 
-        nano = Nano(8, 7) if self.device.DEVICE_TYPE == "V0" else None
+        self.nano = Nano(8, 7) if self.device.DEVICE_TYPE == "V0" else None
 
         # TODO why are magic numbers being defined mid initialization?
         self.progressbar_update_interval = 0.5
