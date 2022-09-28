@@ -1,8 +1,15 @@
 {
-    "home": {
-        "type": "UserActionScreen",
-        "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 16v1. Press 'Start' to begin.",
-        "next_text": "Start"
+    "flush_1": {
+        "type": "MachineActionScreen",
+        "header": "PBS pull",
+        "description": "Test PBS steps.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1,
+                "rate_mh": 15,
+                "eq_time": 120
+            }
+        }
     }
 }
