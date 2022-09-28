@@ -136,6 +136,7 @@ class MachineActionScreen(ChipFlowScreen):
         super().__init__(*args, **kwargs)
 
     # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
+    # TODO writing a protocol parser may help both loading and running protocols
     def start(self):
         WASTE_ADDR = self.app.WASTE_ADDR
         LYSATE_ADDR = self.app.LYSATE_ADDR
@@ -614,7 +615,6 @@ class ProcessWindow(BoxLayout):
         self.app = App.get_running_app()
 
         # TODO: break protocol loading into its own method
-        # Load protocol and add screens accordingly
         with open(self.app.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
@@ -705,7 +705,7 @@ class ProcessWindow(BoxLayout):
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
         protocol_chooser = ProtocolChooser(name="protocol_chooser")
-        self.process_sm.add_widget(protocol_chooser)  # add screen for protocol chooser
+        self.process_sm.add_widget(protocol_chooser)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
@@ -792,36 +792,35 @@ class ProcessWindow(BoxLayout):
         self.app.cleanup()
         # TODO: Any local cleanup?
 
-    # for testability instead of mutating the current App, we could return a ScreenManager
-    def load_protocol(self, path_to_protocol):
-        # Load protocol and add screens accordingly
+    # TODO for testability instead of mutating the current App, we could return a ScreenManager
+    def load_protocol(self, path_to_protocol) -> ProcessScreenManager:
+        
+        load_protocol_screenmanager = ProcessScreenManager(main_window=self)
+
         with open(path_to_protocol, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
-        if self.process_sm.has_screen("protocol_chooser"):
-            protocol_chooser = self.process_sm.get_screen("protocol_chooser")
-            self.process_sm.clear_widgets()
-            self.process_sm.add_widget(
-                protocol_chooser
-            )  # add screen for protocol chooser
+        self.progress_screen_names = []
 
-        if len(self.process_sm.screens) > 1:
-            logging.warning(
-                "Screen Removal was not sucessful, remaining screens should be 1"
-            )
-        logging.info(
-            "Number of screens in screen manager after Removal: {}".format(
-                len(self.process_sm.screens)
-            )
-        )
-        logging.info(
-            "Screens in screen manager after Removal: {}".format(
-                self.process_sm.screen_names
-            )
-        )
+        # TODO: break protocol loading into its own method
+        with open(path_to_protocol, "r") as f:
+            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+
+        if self.app.START_STEP not in protocol.keys():
+            raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))
+
+        # if we're supposed to start at a step other than 'home' remove other steps from the protocol
+        protocol_copy = OrderedDict()
+        keep_steps = False
+        for name, step in protocol.items():
+            if name == self.app.START_STEP:
+                keep_steps = True
+            if keep_steps:
+                protocol_copy[name] = step
+
+        protocol = protocol_copy
 
         for name, step in protocol.items():
-
             screen_type = step.get("type", None)
             if screen_type == "UserActionScreen":
                 if name == "home":
@@ -831,9 +830,9 @@ class ProcessWindow(BoxLayout):
                         description=step.get("description", "NO DESCRIPTION"),
                         next_text=step.get("next_text", "Next"),
                     )
+
                 elif name == "summary":
                     this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
-
                 else:
                     this_screen = UserActionScreen(
                         name=name,
@@ -842,12 +841,14 @@ class ProcessWindow(BoxLayout):
                         next_text=step.get("next_text", "Next"),
                     )
             elif screen_type == "MachineActionScreen":
+
                 this_screen = MachineActionScreen(
                     name=name,
                     header=step["header"],
                     description=step.get("description", ""),
                     action=step["action"],
                 )
+
                 # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(
@@ -884,18 +885,22 @@ class ProcessWindow(BoxLayout):
                     )
                 )
 
-        logging.info(
-            "Screens in manager after load: {} ".format(self.process_sm.screen_names)
+        self.overall_progress_bar = SteppedProgressBar(
+            steps=len(self.progress_screen_names)
         )
-        logging.info(
-            "Number of screens after load: {}".format(len(self.process_sm.screen_names))
+
+        self.abort_btn = AbortButton(
+            disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
+        protocol_chooser = ProtocolChooser(name="protocol_chooser")
+        self.process_sm.add_widget(protocol_chooser)
+        self.ids.top_bar.add_widget(self.overall_progress_bar)
+        self.ids.top_bar.add_widget(self.abort_btn)
+        self.ids.main.add_widget(self.process_sm)
         logging.info(
-            "Number of duplicates after load: {}".format(
-                self.screenduplicates(self.process_sm.screen_names)
-            )
+            "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
         )
-        self.process_sm.current = "home"
+        return load_protocol_screenmanager
 
     def screenduplicates(self, screen_names):
         list_of_screen_names = {}

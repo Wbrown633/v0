@@ -79,7 +79,8 @@ class StepBuilder:
         return {self.step_name: self.stepdict}
 
 
-    
+# Remove information thats GUI specific from the protocol steps, only the information needed
+# to run each step.   
 class ProtocolFactory:
 
     '''"type": "MachineActionScreen",
