@@ -3,7 +3,7 @@ from cd_alpha.ChipFlowApp import ProcessWindow
 
 
 class TestProtocolChooserCase:
-    def setUp(self):
+    def setup_method(self, test_method):
         # import class and prepare everything here.
         self.test_window = ProcessWindow(protocol_file_name="v0-protocol-16v1.json")
         self.test_protocol_location = "v0-protocol-16v1.json"
@@ -46,7 +46,7 @@ class TestProtocolChooserCase:
             self.test_window.load_protocol("invalid_protocol.json")
 
     def test_load_from_archive(self):
-        pass
+        assert False
 
     def _find_duplicates(self, list_of_values):
         return any(

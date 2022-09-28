@@ -11,8 +11,6 @@ class ProcessProtocol:
         self.protocol_file = protocol_file
         self.load_protocol()
     
-    #protocol_file = "v0-protocol-16v3.json"
-
     def load_protocol(self):
         with open(self.protocol_file, 'r') as f:
             self.protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
@@ -52,7 +50,6 @@ class ProcessProtocol:
         
         return list_of_table_entries
                             
-
     def calculate_step_time_sec(self, vol: int, flowrate: float, wait: int):
         seconds = (vol/flowrate * 3600 + wait)
         return time.strftime('%H:%M:%S', time.gmtime(seconds))

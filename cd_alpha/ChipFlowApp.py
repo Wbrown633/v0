@@ -699,7 +699,7 @@ class ProcessWindow(BoxLayout):
 
         self.overall_progress_bar = SteppedProgressBar(
             steps=len(self.progress_screen_names)
-        )  # , size_hint_y = 0.15)
+        )
 
         self.abort_btn = AbortButton(
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
@@ -792,6 +792,7 @@ class ProcessWindow(BoxLayout):
         self.app.cleanup()
         # TODO: Any local cleanup?
 
+    # for testability instead of mutating the current App, we could return a ScreenManager
     def load_protocol(self, path_to_protocol):
         # Load protocol and add screens accordingly
         with open(path_to_protocol, "r") as f:
