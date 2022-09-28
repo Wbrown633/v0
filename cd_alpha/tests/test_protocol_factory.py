@@ -5,7 +5,8 @@ import pytest
 from collections import OrderedDict
 
 from pkg_resources import resource_filename
-from cd_alpha.ProtocolFactory import Incubate, ProtocolFactory, Pump, Release, ScreenType, Step, StepBuilder
+from cd_alpha.Step import Incubate, Pump, Release, ScreenType, Step, StepBuilder
+from cd_alpha.ProtocolFactory import ProtocolFactory
 import json
 
 # TODO everything should be using pytest moving forward

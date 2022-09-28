@@ -1,6 +1,6 @@
 import pytest
 from cd_alpha.Protocol import Protocol
-from cd_alpha.ProtocolFactory import Step
+from cd_alpha.Step import Step
 
 
 class TestProtocolParser:
