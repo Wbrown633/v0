@@ -1,7 +1,7 @@
 
 from deepdiff import DeepDiff
 from typing import List
-import unittest
+import pytest
 from collections import OrderedDict
 
 from pkg_resources import resource_filename
@@ -9,7 +9,7 @@ from cd_alpha.ProtocolFactory import Incubate, ProtocolFactory, Pump, Release, S
 import json
 
 # TODO everything should be using pytest moving forward
-class ProtocolFactoryTestCase(unittest.TestCase):
+class TestProtocolFactory():
 
     def setUp(self):
         # import class and prepare everything here.
@@ -79,14 +79,3 @@ class ProtocolFactoryTestCase(unittest.TestCase):
         return [f127, flush_1, incubate_1, pbs_1, flush_2, add_sample, flush_3, pbs_2,
         wash_1, pbs_3, flush_5, flush_6, pbs_4, flush_7, qiazol, extract_1, extract_2, 
         PBSchase, chase_1]
-
-
-
-        
-
-
-
-
-
-if __name__ == '__main__':
-    unittest.main()
