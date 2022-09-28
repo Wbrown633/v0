@@ -3,7 +3,7 @@ from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import Step
 
 
-class TestProtocolParser:
+class TestStep:
     def setUp(self):
         # import class and prepare everything here.
         self.test_protocol_location = "v0-protocol-16v1.json"

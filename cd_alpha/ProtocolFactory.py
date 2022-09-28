@@ -81,29 +81,29 @@ class Step:
         return {f"{self.material}_{str(self.step_number)}": {"type": self.screentype.name, "header": f"{self.material}_{str(self.step_number)}", "description": self.description_text, "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
 
 
-class StepBuilder:
+class StepDictBuilder:
 
     def __init__(self, step_name: str):
         self.step_name = step_name
         self.stepdict = OrderedDict()
 
-    def add_type(self, type: ScreenType) -> StepBuilder:
+    def add_type(self, type: ScreenType) -> StepDictBuilder:
         self.stepdict["type"] = type.name
         return self
 
-    def add_header(self, header: str) -> StepBuilder:
+    def add_header(self, header: str) -> StepDictBuilder:
         self.stepdict["header"] = header
         return self
 
-    def add_description(self, description: str) -> StepBuilder:
+    def add_description(self, description: str) -> StepDictBuilder:
         self.stepdict["description"] = description
         return self
 
-    def add_next_text(self, next_text: str) -> StepBuilder:
+    def add_next_text(self, next_text: str) -> StepDictBuilder:
         self.stepdict["next_text"] = next_text
         return self
 
-    def add_actions(self, action_types: List[ActionType]) -> StepBuilder:
+    def add_actions(self, action_types: List[ActionType]) -> StepDictBuilder:
         
         for act in action_types:
             if "action" in self.stepdict:
@@ -113,31 +113,16 @@ class StepBuilder:
 
         return self
 
-    def remove_progress_bar(self, remove: bool) -> StepBuilder:
+    def remove_progress_bar(self, remove: bool) -> StepDictBuilder:
         self.stepdict["remove_progress_bar"] = remove
         return self
 
-    def add_completion_msg(self, msg: str) -> StepBuilder:
+    def add_completion_msg(self, msg: str) -> StepDictBuilder:
         self.stepdict["completion_msg"] = msg
         return self
 
     def getStep(self) -> OrderedDict:
         return {self.step_name: self.stepdict}
-
-
-class Protocol:
-    def __init__(self, name: str) -> None:
-        self.list_of_steps = []
-        self.name = name
-    
-    def add_step(self):
-        self.list_of_steps.append(Step())
-
-    def remove_step(self):
-        pass
-
-    def edit_step(self):
-        pass
 
 class ProtocolParser:
     pass
