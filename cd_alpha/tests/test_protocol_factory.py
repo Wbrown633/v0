@@ -8,7 +8,7 @@ from pkg_resources import resource_filename
 from cd_alpha.ProtocolFactory import Incubate, ProtocolFactory, Pump, Release, ScreenType, Step, StepBuilder
 import json
 
-
+# TODO everything should be using pytest moving forward
 class ProtocolFactoryTestCase(unittest.TestCase):
 
     def setUp(self):
