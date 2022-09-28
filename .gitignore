@@ -1,4 +1,3 @@
-# Ignore the virtual environment
 cd-alpha/logs/**
 cd_alpha/device_config.json
 cd-alpha/device_config.json
