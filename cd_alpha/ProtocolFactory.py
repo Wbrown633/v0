@@ -125,6 +125,22 @@ class StepBuilder:
         return {self.step_name: self.stepdict}
 
 
+class Protocol:
+    def __init__(self, name: str) -> None:
+        self.list_of_steps = []
+        self.name = name
+    
+    def add_step(self):
+        self.list_of_steps.append(Step())
+
+    def remove_step(self):
+        pass
+
+    def edit_step(self):
+        pass
+
+class ProtocolParser:
+    pass
     
 class ProtocolFactory:
 
