@@ -9,8 +9,10 @@ class TestProtocol:
         self.test_protocol_location = "v0-protocol-16v1.json"
 
     
-    def test_home_step(self):
-        assert False
+    def test_PBS_only_step(self):
+        p = Protocol("test_protocol")
+        s = Step("PBS", "Test PBS steps.")
+        p.add_step(s)
 
 
 

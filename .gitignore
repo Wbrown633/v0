@@ -12,3 +12,5 @@ cd_alpha.egg-info/**
 .vscode/**
 __pycache__/**
 cd_alpha/tests/__pycache__/**
+cd_alpha/Protocol.py
+.DS_Store
