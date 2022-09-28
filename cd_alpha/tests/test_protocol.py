@@ -1,6 +1,7 @@
 import pytest
 from cd_alpha.Protocol import Protocol
-from cd_alpha.Step import Step, ScreenType
+from cd_alpha.ProtocolFactory import JSONProtocolParser
+from cd_alpha.Step import Pump, Step, ScreenType, Action
 
 
 class TestProtocol:
@@ -11,8 +12,14 @@ class TestProtocol:
     
     def test_PBS_only_step(self):
         p = Protocol("test_protocol")
-        s = Step("PBS", "Test PBS steps.")
-        p.add_step(s)
+        a = Pump("waste", 1.0, 15.0, 120)
+        s = Step("PBS", "Test PBS steps.", [a])
+        p.add_steps([s])
+
+        protocol_from_json = JSONProtocolParser("pbs_step_test.json").make_protocol()
+
+        assert p == protocol_from_json
+
 
 
 

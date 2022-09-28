@@ -2,9 +2,15 @@
 from __future__ import annotations
 import json
 from typing import Dict, List
+from cd_alpha.Protocol import Protocol
 
-class ProtocolParser:
-    pass
+class JSONProtocolParser:
+    """Given json representation of a chipdx protocol, return a protocol object."""
+    def __init__(self, json_filename: str) -> None:
+        self.json_filename = json_filename
+
+    def make_protocol(self) -> Protocol:
+        return Protocol("foo")
     
 class ProtocolFactory:
 
