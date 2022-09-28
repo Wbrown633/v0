@@ -109,7 +109,7 @@
     "pbs_2": {
         "type": "UserActionScreen",
         "header": "PBS Wash 1",
-        "description": "Add 400 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 400 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
     },
     "wash_1": {
         "type": "MachineActionScreen",
@@ -128,7 +128,7 @@
     "pbs_3": {
         "type": "UserActionScreen",
         "header": "PBS Wash 2",
-        "description": "Add 800 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 800 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
     },
     "flush_5": {
         "type": "MachineActionScreen",
@@ -161,7 +161,7 @@
     "pbs_4": {
         "type": "UserActionScreen",
         "header": "PBS Wash 3",
-        "description": "Add 1000 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 1000 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
     },
     "flush_7": {
         "type": "MachineActionScreen",
@@ -180,7 +180,7 @@
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
-        "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
+        "description": "Add 700 \u00b5L Qiazol to reservoir. Press 'Next' to start."
     },
     "extract_1": {
         "type": "MachineActionScreen",
@@ -213,7 +213,6 @@
                 "rate_mh": -50,
                 "eq_time": 0
             }
-            
         },
         "completion_msg": "Qiazol pull and incubation complete"
     },

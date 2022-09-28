@@ -848,7 +848,6 @@ class ProcessWindow(BoxLayout):
                     description=step.get("description", ""),
                     action=step["action"],
                 )
-
                 # TODO: clean up how this works
                 if step.get("remove_progress_bar", False):
                     this_screen.children[0].remove_widget(

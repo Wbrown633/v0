@@ -5,39 +5,17 @@
         "description": "Ready for a new test with protocol 20v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
-    "reset_start": {
-        "type": "MachineActionScreen",
-        "header": "Initialization",
-        "description": "Initializing device. Resetting syringe positions and checking connections.",
-        "action": {
-            "RESET": {}
-        },
-        "remove_progress_bar": true,
-        "completion_msg": "Machine has been homed"
-    },
-    "insert_syringes": {
-        "type": "UserActionScreen",
-        "header": "Insert syringes",
-        "description": "Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.",
-        "next_text": "Start initialization"
-    },
-    "grab_syringes": {
-        "type": "MachineActionScreen",
-        "header": "Grabbing syringes",
-        "description": "The device is now grabbing hold of the syringes to secure a precise operation.",
-        "action": {
-            "GRAB": {
-                "post_run_rate_mm": 5,
-                "post_run_vol_ml": 0.3
-            }
-        },
-        "remove_progress_bar": true,
-        "completion_msg": "Syringes ready"
-    },
     "insert_chip": {
         "type": "UserActionScreen",
         "header": "Insert Kit",
-        "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
+        "description": "Insert the chip into the holder. Press 'Next' to proceed."
+    },
+
+    "insert_syringes": {
+        "type": "UserActionScreen",
+        "header": "Connect Tubing",
+        "description": "Connect tubing to the waste and lysate syringe. Press 'Start initialization' to initialize when ready.",
+        "next_text": "Start initialization"
     },
     "f127": {
         "type": "UserActionScreen",
@@ -144,6 +122,7 @@
         },
         "completion_msg": "Wash 2 complete"
     },
+
     "flush_6": {
         "type": "MachineActionScreen",
         "header": "PBS Wash 2 Part 2",
@@ -158,6 +137,7 @@
         },
         "completion_msg": "Wash 2 complete"
     },
+
     "pbs_4": {
         "type": "UserActionScreen",
         "header": "PBS Wash 3",
@@ -177,11 +157,13 @@
         },
         "completion_msg": "Wash 3 complete"
     },
+
     "qiazol": {
         "type": "UserActionScreen",
         "header": "Qiazol",
         "description": "Add 700 µL Qiazol to reservoir. Press 'Next' to start."
     },
+
     "extract_1": {
         "type": "MachineActionScreen",
         "header": "Qiazol 1",
@@ -196,6 +178,7 @@
         },
         "completion_msg": "Qiazol pull to waste complete"
     },
+
     "extract_2": {
         "type": "MachineActionScreen",
         "header": "Qiazol 2",
@@ -217,11 +200,14 @@
         },
         "completion_msg": "Qiazol pull and incubation complete"
     },
+
+
     "PBSchase": {
         "type": "UserActionScreen",
         "header": "PBS Chase",
         "description": "Add 1 mL PBS to reservoir. Press 'Next' to start."
     },
+
     "chase_1": {
         "type": "MachineActionScreen",
         "header": "PBS Chase",
@@ -235,6 +221,9 @@
             }
         }
     },
+
+
+
     "remove_kit": {
         "type": "UserActionScreen",
         "header": "Remove kit",

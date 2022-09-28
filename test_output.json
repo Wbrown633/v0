@@ -1,0 +1,31 @@
+{
+    "home": {
+        "type": "UserActionScreen",
+        "header": "Chip Diagnostics",
+        "description": "Ready for a new test",
+        "next_text": "Start"
+    },
+    "reset_start": {
+        "type": "MachineActionScreen",
+        "header": "Initialization",
+        "description": "Init device",
+        "action": {
+            "RESET": {}
+        },
+        "remove_progress_bar": true,
+        "completion_msg": "Machine has been homed"
+    },
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "PBS rinse",
+        "description": "Risning the chip.",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 1.05,
+                "rate_mh": 50,
+                "eq_time": 120
+            }
+        }
+    }
+}

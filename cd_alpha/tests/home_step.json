@@ -1,0 +1,8 @@
+{
+    "home": {
+        "type": "UserActionScreen",
+        "header": "Chip Diagnostics",
+        "description": "Ready for a new test with protocol 16v1. Press 'Start' to begin.",
+        "next_text": "Start"
+    }
+}
