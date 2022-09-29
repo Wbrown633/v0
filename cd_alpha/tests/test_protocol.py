@@ -3,7 +3,7 @@ import pathlib
 import pytest
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser
-from cd_alpha.Step import Grab, Incubate, Pump, Reset, Step, ScreenType, Action
+from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, Action
 
 
 class TestProtocol:
@@ -75,6 +75,24 @@ class TestProtocol:
 
         a7 = Pump("PBS", "waste", 0.7, 15, 0)
         s7 = Step("Washing the chip.", [a7])
+
+        a8 = Pump("PBS", "waste", 0.7, 15, 0)
+        s8 = Step("Washing the chip.", [a8])
+
+        a9 = Pump("PBS", "waste", 0.7, 15, 0)
+        s9 = Step("Washing the chip.", [a9])
+
+        a10 = Pump("RIPA", "lysate", 0.2, 15, 180)
+        a11 = Release("waste", 1.5, -50, 0)
+        s10 = Step("Pulling RIPA into chip.", [a10, a11])
+
+        a12 = Pump("RIPA", "lysate", 1.0, 15, 0)
+        s11 = Step("Extracting lysate from chip.", [a12])
+
+        a13 = Reset()
+        s12 = Step("Resetting syringe pump positions.", [a13])
+
+        p.add_steps([s, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12])
 
         assert v0_22v0_protocol_from_json == p
         
