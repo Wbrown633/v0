@@ -12,6 +12,7 @@ class TestProtocol:
         self.test_protocol_location = "v0-protocol-16v1.json"
         self.path = pathlib.Path.cwd() / 'cd_alpha/tests/pbs_step_test.json'
         self.multi_path = pathlib.Path.cwd() / 'cd_alpha/tests/pbs_multi_step_test.json'
+        self.real_protocol = pathlib.Path.cwd() / 'cd_alpha/tests/v0-protocol-16v1.json'
     
     def test_PBS_only_step(self):
         p = Protocol("pbs_step_test")

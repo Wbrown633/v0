@@ -7,6 +7,7 @@ class Protocol:
     def __init__(self, name: str) -> None:
         self.list_of_steps = []
         self.name = name
+        self.POSSIBLE_MATERIALS = ["PBS", "F-127", "sample", "RIPA", "Qiazol"]
     
     def __eq__(self, __o: object) -> bool:
         return __o.name == self.name and self.list_of_steps == __o.list_of_steps

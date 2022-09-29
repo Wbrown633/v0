@@ -36,17 +36,14 @@ class Reset(ActionType):
         return {"RESET": {}}
 
 
-@dataclass
 class Target(Enum):
     WASTE = 1
     LYSATE = 2
 
-@dataclass
 class ScreenType(Enum):
     MachineActionScreen = 1
     UserActionScreen = 2
 
-@dataclass
 class StepType(Enum):
     PUMP = 1
     INCUBATE = 2
