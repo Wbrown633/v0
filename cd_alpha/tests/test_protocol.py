@@ -12,7 +12,7 @@ class TestProtocol:
         self.test_protocol_location = "v0-protocol-16v1.json"
         self.path = pathlib.Path.cwd() / 'cd_alpha/tests/pbs_step_test.json'
         self.multi_path = pathlib.Path.cwd() / 'cd_alpha/tests/pbs_multi_step_test.json'
-        self.real_protocol = pathlib.Path.cwd() / 'cd_alpha/tests/v0-protocol-16v1.json'
+        self.real_protocol = pathlib.Path.cwd() / 'cd_alpha/tests/v0-protocol-22v0.json'
     
     def test_PBS_only_step(self):
         p = Protocol("pbs_step_test")
@@ -26,8 +26,6 @@ class TestProtocol:
 
     def test_multi_step_protocol(self):
 
-        # How do we fix for protocol? Need a way to get material from a json protocol
-
         p1 = Protocol("pbs_multi_step_test")
         a1 = Pump("waste", 1.0, 15.0, 120)
         s1 = Step("PBS", "Test PBS steps.", [a1])
@@ -36,10 +34,24 @@ class TestProtocol:
         a3 = Pump("waste", 1.2, 10, 120)
         s3 = Step("Sample", "Pulling sample thru chip.", [a3])
 
+        # TODO strings are currently case sensitive, this mostly comes up in material (Sample != sample) as material
+
         p1.add_steps([s1,s2,s3])
         multi_step_protocol_from_json = JSONProtocolParser(self.multi_path).make_protocol()
 
         assert p1 == multi_step_protocol_from_json
 
     def test_real_protocol(self):
+        # PSEUDO CODE FOR TEST 
+        # Construct a list of steps that corresponds with a known valid protocol
+        # Check equality with JSONProtocol Parser
+
+        # Test with v0-protocol-22v0.json 
+
+        # How do we handle steps that we want to ignore in our model? e.g. "home" step and 
+        # other steps that are only GUI screens
+
+        v0_22v0_protocol_from_json = JSONProtocolParser(self.real_protocol).make_protocol()
+
+        
         assert False
