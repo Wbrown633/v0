@@ -64,9 +64,10 @@ class Protocol:
                         else:
                             raise ValueError(f"Invalid Action value in dict {k2}, not one of [PUMP, GRAB, RELEASE, INCUBATE, RESET]")
                         action_list.append(step_action)
-
-            s = Step(step_description, action_list)
-            list_of_steps.append(s)
+            if len(action_list) > 0:
+                s = Step(step_description, action_list)
+                list_of_steps.append(s)
+            action_list = []
         
         return list_of_steps
 

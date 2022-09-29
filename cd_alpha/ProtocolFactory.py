@@ -17,6 +17,10 @@ class JSONProtocolParser:
         p = Protocol(self.json_filepath.stem)
         p.add_steps_from_json(json_dict)
         return p
+
+class JSONProtocolEncoder:
+    """Given a protocol object, return a legacy json representation"""
+    pass
     
 class ProtocolFactory:
 
