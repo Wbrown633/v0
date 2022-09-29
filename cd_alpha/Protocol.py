@@ -48,27 +48,24 @@ class Protocol:
                     for k2 in json_dict[k][k1].keys():
                         action_step_dict = json_dict[k][k1][k2]
                         if k2 == "PUMP":
-                            step_action = Pump(action_step_dict["target"],
+                            material = self._get_material_from_header_or_desc(step_description, step_header)
+                            step_action = Pump(material, action_step_dict["target"],
                             action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
-                            check_material = True
                         elif k2 == "GRAB":
                             step_action = Grab(action_step_dict["post_run_rate_mm"], action_step_dict["post_run_vol_ml"])
                         elif k2 == "RELEASE":
                             step_action = Release(action_step_dict["target"],
                             action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
                         elif k2 == "INCUBATE":
-                            step_action = Incubate(action_step_dict["time"])
-                            check_material = True
+                            material = self._get_material_from_header_or_desc(step_description, step_header)
+                            step_action = Incubate(material, action_step_dict["time"])
                         elif k2 == "RESET":
                             step_action = Reset()
                         else:
                             raise ValueError(f"Invalid Action value in dict {k2}, not one of [PUMP, GRAB, RELEASE, INCUBATE, RESET]")
                         action_list.append(step_action)
 
-            if check_material:
-                material = self._get_material_from_header_or_desc(step_description, step_header)
-                check_material = False
-            s = Step(material, step_description, action_list)
+            s = Step(step_description, action_list)
             list_of_steps.append(s)
         
         return list_of_steps

@@ -3,7 +3,7 @@ import pathlib
 import pytest
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser
-from cd_alpha.Step import Incubate, Pump, Step, ScreenType, Action
+from cd_alpha.Step import Incubate, Pump, Reset, Step, ScreenType, Action
 
 
 class TestProtocol:
@@ -16,8 +16,8 @@ class TestProtocol:
     
     def test_PBS_only_step(self):
         p = Protocol("pbs_step_test")
-        a = Pump("waste", 1.0, 15.0, 120)
-        s = Step("PBS", "Test PBS steps.", [a])
+        a = Pump("PBS", "waste", 1.0, 15.0, 120)
+        s = Step("Test PBS steps.", [a])
         p.add_steps([s])
         
         protocol_from_json = JSONProtocolParser(self.path).make_protocol()
@@ -27,12 +27,12 @@ class TestProtocol:
     def test_multi_step_protocol(self):
 
         p1 = Protocol("pbs_multi_step_test")
-        a1 = Pump("waste", 1.0, 15.0, 120)
-        s1 = Step("PBS", "Test PBS steps.", [a1])
-        a2 = Incubate(3600)
-        s2 = Step("F-127", "Blocking chip with F-127", [a2])
-        a3 = Pump("waste", 1.2, 10, 120)
-        s3 = Step("Sample", "Pulling sample thru chip.", [a3])
+        a1 = Pump("PBS", "waste", 1.0, 15.0, 120)
+        s1 = Step("Test PBS steps.", [a1])
+        a2 = Incubate("F-127", 3600)
+        s2 = Step("Blocking chip with F-127", [a2])
+        a3 = Pump("Sample", "waste", 1.2, 10, 120)
+        s3 = Step("Pulling sample thru chip.", [a3])
 
         # TODO strings are currently case sensitive, this mostly comes up in material (Sample != sample) as material
 
@@ -53,5 +53,13 @@ class TestProtocol:
 
         v0_22v0_protocol_from_json = JSONProtocolParser(self.real_protocol).make_protocol()
 
-        
+        p = Protocol("v0-protocol-22v0")
+        a = Reset()
+        s = Step(None, "Initializing device. Resetting syringe positions and checking connections.", [a])
+        a1 = Pump("waste", 1.0, 15.0, 120)
+        s1 = Step("PBS", "Test PBS steps.", [a1])
+        a2 = Incubate(3600)
+        s2 = Step("F-127", "Blocking chip with F-127", [a2])
+        a3 = Pump("waste", 1.2, 10, 120)
+        s3 = Step("Sample", "Pulling sample thru chip.", [a3])
         assert False

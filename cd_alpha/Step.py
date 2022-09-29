@@ -11,6 +11,7 @@ class ActionType(ABC):
 
 @dataclass
 class Pump(ActionType):
+    material: str
     target:str
     vol_ml: float
     rate_mh: float
@@ -28,6 +29,7 @@ class Release(Pump):
 
 @dataclass
 class Incubate(ActionType):
+    material: str
     time: int
 
 @dataclass
@@ -52,9 +54,10 @@ class StepType(Enum):
 
 @dataclass
 class Step:
-    material: str
     description: str
     list_of_actions: List[Action]
+
+    # Material cannot be required because not all actions have materials
 
     # how do we handle description steps ? 
     def makejson(self):
