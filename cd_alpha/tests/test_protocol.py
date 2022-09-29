@@ -25,6 +25,8 @@ class TestProtocol:
 
     def test_multi_step_protocol(self):
 
+        # How do we fix for protocol? Need a way to get material from a json protocol
+
         p1 = Protocol("pbs_multi_step_test")
         a1 = Pump("waste", 1.0, 15.0, 120)
         s1 = Step("PBS", "Test PBS steps.", [a1])
@@ -38,12 +40,5 @@ class TestProtocol:
 
         assert p1 == multi_step_protocol_from_json
 
-
-#{
-#    "home": {
-#        "type": "UserActionScreen",
-#        "header": "Chip Diagnostics",
-#        "description": "Ready for a new test with protocol 16v1. Press 'Start' to begin.",
-#        "next_text": "Start"
-#    }
-#}
+    def test_real_protocol(self):
+        assert False
