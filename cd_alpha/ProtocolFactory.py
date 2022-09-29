@@ -11,12 +11,11 @@ class JSONProtocolParser:
     def __init__(self, json_filepath: Path) -> None:
         self.json_filepath = json_filepath
 
-    def make_protocol(self) -> Protocol:
+    def make_protocol(self, name=None) -> Protocol:
         with open(self.json_filepath, 'r') as f:
             json_dict = f.read()
-        
-        p = Protocol(self.json_filepath)
-        p.add_step_from_json(json_dict)
+        p = Protocol(self.json_filepath.stem)
+        p.add_steps_from_json(json_dict)
         return p
     
 class ProtocolFactory:

@@ -1,5 +1,5 @@
 {
-    "flush_1": {
+    "PBS": {
         "type": "MachineActionScreen",
         "header": "PBS pull",
         "description": "Test PBS steps.",

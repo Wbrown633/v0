@@ -17,15 +17,19 @@ class Protocol:
     def add_steps(self, list_of_steps: List[Step]):
         self.list_of_steps.extend(list_of_steps)
 
-    def add_step_from_json(self, json_data: str):
-        x = json.loads(json_data, object_hook=self.custom_json_parser) #object_hook=lambda d: SimpleNamespace(**d)
-        self.list_of_steps.extend(x)
+    def add_steps_from_json(self, json_data: str):
+        # Can't figure out how to use the json parser so I'm going to hack it
+        json_data = json.loads(json_data) 
+        list_of_steps_from_json = self.custom_json_parser(json_data)
+        self.list_of_steps.extend(list_of_steps_from_json)
 
     def custom_json_parser(self, json_dict: dict) -> List[Step]:
         # PSEUDO CODE 
         # get json dict and make each sub dict into a Step
         # recursively go into sub dicts and make Lists of Actions as needed
-        print(json_dict)
+
+        # Could almost certainly be done cleaner with an object_hook in the json.loads() method but
+        # I needed to get something working fast
         for k in json_dict.keys():
             list_of_steps = []
             for k1 in json_dict[k].keys():
