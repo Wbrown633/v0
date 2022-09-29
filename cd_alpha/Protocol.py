@@ -30,8 +30,8 @@ class Protocol:
 
         # Could almost certainly be done cleaner with an object_hook in the json.loads() method but
         # I needed to get something working fast
+        list_of_steps = []
         for k in json_dict.keys():
-            list_of_steps = []
             for k1 in json_dict[k].keys():
                 if k1 == "description":
                     step_description = json_dict[k][k1]
