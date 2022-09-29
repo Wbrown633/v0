@@ -13,7 +13,7 @@
         }
     },
 
-    "incubate_1": {
+    "F-127": {
         "type": "MachineActionScreen",
         "header": "Blocking",
         "description": "Blocking chip with F-127",
@@ -25,7 +25,7 @@
         "completion_msg": "F-127 blocking finished."
     },
 
-    "flush_3": {
+    "Sample": {
         "type": "MachineActionScreen",
         "header": "Sample pull",
         "description": "Pulling sample thru chip.",
