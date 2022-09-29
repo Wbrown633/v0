@@ -10,22 +10,20 @@ class ActionType(ABC):
         return {self.__class__.__name__.upper():self.__dict__}
 
 @dataclass
-class Pump(ActionType):
-    material: str
+class Grab(ActionType):
+    post_run_rate_mm: float
+    post_run_vol_ml: float
+
+@dataclass
+class Release(ActionType):
     target:str
     vol_ml: float
     rate_mh: float
     eq_time: int
 
 @dataclass
-class Grab(ActionType):
-    post_run_rate_mm: float
-    post_run_vol_ml: float
-
-@dataclass
-class Release(Pump):
-    pass
-
+class Pump(Release):
+    material: str
 
 @dataclass
 class Incubate(ActionType):

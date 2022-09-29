@@ -3,7 +3,7 @@ import pathlib
 import pytest
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser
-from cd_alpha.Step import Incubate, Pump, Reset, Step, ScreenType, Action
+from cd_alpha.Step import Grab, Incubate, Pump, Reset, Step, ScreenType, Action
 
 
 class TestProtocol:
@@ -34,8 +34,6 @@ class TestProtocol:
         a3 = Pump("Sample", "waste", 1.2, 10, 120)
         s3 = Step("Pulling sample thru chip.", [a3])
 
-        # TODO strings are currently case sensitive, this mostly comes up in material (Sample != sample) as material
-
         p1.add_steps([s1,s2,s3])
         multi_step_protocol_from_json = JSONProtocolParser(self.multi_path).make_protocol()
 
@@ -55,11 +53,29 @@ class TestProtocol:
 
         p = Protocol("v0-protocol-22v0")
         a = Reset()
-        s = Step(None, "Initializing device. Resetting syringe positions and checking connections.", [a])
-        a1 = Pump("waste", 1.0, 15.0, 120)
-        s1 = Step("PBS", "Test PBS steps.", [a1])
-        a2 = Incubate(3600)
-        s2 = Step("F-127", "Blocking chip with F-127", [a2])
-        a3 = Pump("waste", 1.2, 10, 120)
-        s3 = Step("Sample", "Pulling sample thru chip.", [a3])
-        assert False
+        s = Step("Initializing device. Resetting syringe positions and checking connections.", [a])
+        
+        a1 = Grab(5, 0.3)
+        s1 = Step("The device is now grabbing hold of the syringes to secure a precise operation.", [a1])
+        
+        a2 = Pump("F-127", "waste", 0.5, 15, 0)
+        s2 = Step("Wetting the chip with F-127", [a2])
+        
+        a3 = Incubate("F-127", 3600)
+        s3 = Step("Blocking chip with F-127", [a3])
+
+        a4 = Pump("F-127", "waste", 0.5, 15, 0)
+        s4 = Step("Wetting the chip with F-127", [a4])
+
+        a5 = Pump("PBS", "waste", 1.0, 15, 0)
+        s5 = Step("Rinsing the chip.", [a5])
+
+        a6 = Pump("Sample", "waste", 1.0, 1.5, 0)
+        s6 = Step("Pulling sample thru chip.", [a6])
+
+        a7 = Pump("PBS", "waste", 0.7, 15, 0)
+        s7 = Step("Washing the chip.", [a7])
+
+        assert v0_22v0_protocol_from_json == p
+        
+
