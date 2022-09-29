@@ -1,7 +1,7 @@
-from cd_alpha.Step import Step
+from multiprocessing.sharedctypes import Value
+from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step
 import json
-from types import SimpleNamespace
-from typing import List
+from typing import Dict, List
 
 class Protocol:
     def __init__(self, name: str) -> None:
@@ -18,8 +18,42 @@ class Protocol:
         self.list_of_steps.extend(list_of_steps)
 
     def add_step_from_json(self, json_data: str):
-        x = json.loads(json_data, object_hook=lambda d: SimpleNamespace(**d))
-        self.list_of_steps.append(x)
+        x = json.loads(json_data, object_hook=self.custom_json_parser) #object_hook=lambda d: SimpleNamespace(**d)
+        self.list_of_steps.extend(x)
+
+    def custom_json_parser(self, json_dict: dict) -> List[Step]:
+        # PSEUDO CODE 
+        # get json dict and make each sub dict into a Step
+        # recursively go into sub dicts and make Lists of Actions as needed
+        print(json_dict)
+        for k in json_dict.keys():
+            list_of_steps = []
+            for k1 in json_dict[k].keys():
+                if k1 == "description":
+                    step_description = json_dict[k][k1]
+                if k1 == "action":
+                    action_list = []
+                    for k2 in json_dict[k][k1].keys():
+                        action_step_dict = json_dict[k][k1][k2]
+                        if k2 == "PUMP":
+                            step_action = Pump(action_step_dict["target"],
+                            action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
+                        elif k2 == "GRAB":
+                            step_action = Grab(action_step_dict["post_run_rate_mm"], action_step_dict["post_run_vol_ml"])
+                        elif k2 == "RELEASE":
+                            step_action = Release(action_step_dict["target"],
+                            action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
+                        elif k2 == "INCUBATE":
+                            step_action = Incubate(action_step_dict["time"])
+                        elif k2 == "RESET":
+                            step_action = Reset()
+                        else:
+                            raise ValueError(f"Invalid Action value in dict {k2}, not one of [PUMP, GRAB, RELEASE, INCUBATE, RESET]")
+                        action_list.append(step_action)
+            s = Step(k, step_description, action_list)
+            list_of_steps.append(s)
+        
+        return list_of_steps
 
     def remove_step(self):
         pass
