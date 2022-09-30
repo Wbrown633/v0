@@ -25,6 +25,12 @@ class Release(ActionType):
 class Pump(Release):
     material: str
 
+    def make_dict(self) -> Dict:
+        '''Do not include material for json dict, legacy compatability'''
+        dict = super().make_dict()
+        del dict["PUMP"]["material"]
+        return dict
+
 @dataclass
 class Incubate(ActionType):
     material: str

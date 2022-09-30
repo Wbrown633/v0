@@ -1,5 +1,6 @@
 from pathlib import Path
 import pathlib
+from re import M
 import pytest
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser
@@ -16,7 +17,7 @@ class TestProtocol:
     
     def test_PBS_only_step(self):
         p = Protocol("pbs_step_test")
-        a = Pump("PBS", "waste", 1.0, 15.0, 120)
+        a = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15.0, eq_time=120)
         s = Step("Test PBS steps.", [a])
         p.add_steps([s])
         
@@ -27,11 +28,11 @@ class TestProtocol:
     def test_multi_step_protocol(self):
 
         p1 = Protocol("pbs_multi_step_test")
-        a1 = Pump("PBS", "waste", 1.0, 15.0, 120)
+        a1 = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15.0, eq_time=120)
         s1 = Step("Test PBS steps.", [a1])
-        a2 = Incubate("F-127", 3600)
+        a2 = Incubate(material="F-127", time=3600)
         s2 = Step("Blocking chip with F-127", [a2])
-        a3 = Pump("Sample", "waste", 1.2, 10, 120)
+        a3 = Pump(material="Sample", target="waste", vol_ml=1.2, rate_mh=10, eq_time=120)
         s3 = Step("Pulling sample thru chip.", [a3])
 
         p1.add_steps([s1,s2,s3])
@@ -58,35 +59,35 @@ class TestProtocol:
         a1 = Grab(5, 0.3)
         s1 = Step("The device is now grabbing hold of the syringes to secure a precise operation.", [a1])
         
-        a2 = Pump("F-127", "waste", 0.5, 15, 0)
+        a2 = Pump(material="F-127", target="waste", vol_ml=0.5, rate_mh=15, eq_time=0)
         s2 = Step("Wetting the chip with F-127", [a2])
         
         a3 = Incubate("F-127", 3600)
         s3 = Step("Blocking chip with F-127", [a3])
 
-        a4 = Pump("F-127", "waste", 0.5, 15, 0)
+        a4 = Pump(material="F-127", target="waste", vol_ml=0.5, rate_mh=15, eq_time=0)
         s4 = Step("Wetting the chip with F-127", [a4])
 
-        a5 = Pump("PBS", "waste", 1.0, 15, 0)
+        a5 = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15, eq_time=0)
         s5 = Step("Rinsing the chip.", [a5])
 
-        a6 = Pump("Sample", "waste", 1.0, 1.5, 0)
+        a6 = Pump(material="Sample", target="waste", vol_ml=1.0, rate_mh=1.5, eq_time=0)
         s6 = Step("Pulling sample thru chip.", [a6])
 
-        a7 = Pump("PBS", "waste", 0.7, 15, 0)
+        a7 = Pump(material="PBS", target="waste", vol_ml=0.7, rate_mh=15, eq_time=0)
         s7 = Step("Washing the chip.", [a7])
 
-        a8 = Pump("PBS", "waste", 0.7, 15, 0)
+        a8 = Pump(material="PBS", target="waste", vol_ml=0.7, rate_mh=15, eq_time=0)
         s8 = Step("Washing the chip.", [a8])
 
-        a9 = Pump("PBS", "waste", 0.7, 15, 0)
+        a9 = Pump(material="PBS", target="waste", vol_ml=0.7, rate_mh=15, eq_time=0)
         s9 = Step("Washing the chip.", [a9])
 
-        a10 = Pump("RIPA", "lysate", 0.2, 15, 180)
-        a11 = Release("waste", 1.5, -50, 0)
+        a10 = Pump(material="RIPA", target="lysate", vol_ml=0.2, rate_mh=15, eq_time=180)
+        a11 = Release(target="waste", vol_ml=1.5, rate_mh=-50, eq_time=0)
         s10 = Step("Pulling RIPA into chip.", [a10, a11])
 
-        a12 = Pump("RIPA", "lysate", 1.0, 15, 0)
+        a12 = Pump(material="RIPA", target="lysate", vol_ml=1.0, rate_mh=15, eq_time=0)
         s11 = Step("Extracting lysate from chip.", [a12])
 
         a13 = Reset()

@@ -4,7 +4,7 @@ import json
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
-from cd_alpha.Step import ScreenType, ActionType, Step, Reset
+from cd_alpha.Step import ScreenType, ActionType, Step, Reset, Grab
 from collections import OrderedDict
 
 class JSONProtocolParser:
@@ -44,41 +44,32 @@ class JSONScreenBuilder:
         self.step_name = step_name
         self.stepdict = OrderedDict()
 
-    def add_type(self, type: ScreenType):
+    def add_type(self, type: ScreenType) -> JSONScreenBuilder:
         self.stepdict["type"] = type.name
         return self
 
-    def add_header(self, header: str):
+    def add_header(self, header: str) -> JSONScreenBuilder:
         self.stepdict["header"] = header
         return self
 
-    def add_description(self, description: str):
+    def add_description(self, description: str) -> JSONScreenBuilder:
         self.stepdict["description"] = description
         return self
 
-    def add_next_text(self, next_text: str):
+    def add_next_text(self, next_text: str) -> JSONScreenBuilder:
         self.stepdict["next_text"] = next_text
         return self
 
-    def add_actions(self, action_types: List[ActionType]):
+    def add_actions(self, action_types: List[ActionType]) -> JSONScreenBuilder:
+
         for act in action_types:
-            pass
+            self.stepdict["action"] = act.make_dict()
         return self
 
     def getStep(self):
         return {self.step_name: self.stepdict}
     
 class JSONScreenFactory:
-
-    '''"type": "MachineActionScreen",
-        "header": "Initialization",
-        "description": "Initializing device. Resetting syringe positions and checking connections.",
-        "action": {
-            "RESET": {}
-        },
-        "remove_progress_bar": true,
-        "completion_msg": "Machine has been homed"
-        '''
     
     def __init__(self, list_of_steps: List[JSONScreenBuilder]):
         self.list_of_steps = list_of_steps
@@ -136,15 +127,3 @@ class JSONScreenFactory:
                 steps_dictionary.update(s.getStep())  
             json.dump(steps_dictionary, f, indent=4)
             
-
-
-if __name__ == "__main__":
-
-    s1 = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics").add_description("Ready for a new test").add_next_text("Start")
-    s2 = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen).add_header("Initialization").add_description("Init device").add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
-    s3 = JSONScreenBuilder("flush_2").add_type(ScreenType.MachineActionScreen).add_header("PBS rinse").add_description("Risning the chip.").add_actions([Pump("waste", 1.05, 50, 120)])
-
-    list_of_JSONScreenBuilders = [s1, s2, s3]
-
-    JSONScreenFactory(list_of_JSONScreenBuilders).create_protocol("protocol_factory.json")
-    

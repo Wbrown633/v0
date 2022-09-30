@@ -44,16 +44,16 @@ class Protocol:
                         action_step_dict = json_dict[k][k1][k2]
                         if k2 == "PUMP":
                             material = self._get_material_from_header_or_desc(step_description, step_header)
-                            step_action = Pump(material, action_step_dict["target"],
-                            action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
+                            step_action = Pump(material=material, target= action_step_dict["target"],
+                            vol_ml= action_step_dict["vol_ml"], rate_mh= action_step_dict["rate_mh"], eq_time= action_step_dict["eq_time"])
                         elif k2 == "GRAB":
-                            step_action = Grab(action_step_dict["post_run_rate_mm"], action_step_dict["post_run_vol_ml"])
+                            step_action = Grab(post_run_rate_mm= action_step_dict["post_run_rate_mm"], post_run_vol_ml= action_step_dict["post_run_vol_ml"])
                         elif k2 == "RELEASE":
-                            step_action = Release(action_step_dict["target"],
-                            action_step_dict["vol_ml"], action_step_dict["rate_mh"], action_step_dict["eq_time"])
+                            step_action = Release(target= action_step_dict["target"],
+                            vol_ml= action_step_dict["vol_ml"], rate_mh= action_step_dict["rate_mh"], eq_time= action_step_dict["eq_time"])
                         elif k2 == "INCUBATE":
                             material = self._get_material_from_header_or_desc(step_description, step_header)
-                            step_action = Incubate(material, action_step_dict["time"])
+                            step_action = Incubate(material= material, time= action_step_dict["time"])
                         elif k2 == "RESET":
                             step_action = Reset()
                         else:

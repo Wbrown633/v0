@@ -1,4 +1,6 @@
 
+from argparse import Action
+from unittest.result import failfast
 from deepdiff import DeepDiff
 from typing import List
 import pytest
@@ -36,11 +38,23 @@ class TestJSONScreenFactory():
         print(DeepDiff(protocol, test_protocol, ignore_order=False))
         assert protocol == test_protocol
 
+    def test_screen_builder_single_step(self):
+        
+        # test that the screen builder can produce valid json for a single step
+
+        test_file = resource_filename("cd_alpha", "tests/pbs_step_test.json")
+        
+        with open(test_file, "r") as f:
+            expected_json_dict = json.loads(f.read(), object_pairs_hook=OrderedDict)
+        
+        json_from_builder = JSONScreenBuilder("PBS").add_type(ScreenType.MachineActionScreen).add_header("PBS pull").add_description("Test PBS steps.").add_actions([Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15.0, eq_time=120)]).getStep()
+        assert expected_json_dict == json_from_builder
+
     def protocol_factory_make_20v0(self) -> List[JSONScreenBuilder]:
         f127 = JSONScreenBuilder("f127").add_type(ScreenType.UserActionScreen).add_header("Add F-127")\
             .add_description("Add 1.4 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start.")
         
-        flush_1 = JSONScreenBuilder("flush_1").add_type(ScreenType.MachineActionScreen).add_header("F-127 pull").add_description("Wetting the chip with F-127").add_actions([Pump("waste", 1, 50, 1)])
+        flush_1 = JSONScreenBuilder("flush_1").add_type(ScreenType.MachineActionScreen).add_header("F-127 pull").add_description("Wetting the chip with F-127").add_actions([Pump("F-127", "waste", 1, 50, 1)])
 
         incubate_1 = JSONScreenBuilder("incubate_1").add_type(ScreenType.MachineActionScreen).add_header("Blocking").add_description("Blocking chip with F-127").add_actions([Incubate(3600)]).add_completion_msg("F-127 blocking finished.")
 
