@@ -63,7 +63,6 @@
         "description": "Blocking chip with F-127",
         "action": {
             "INCUBATE": {
-                "material": "F-127",
                 "time": 3600
             }
         },
@@ -202,6 +201,12 @@
         "header": "Qiazol 2",
         "description": "Pulling Qiazol into chip.",
         "action": {
+            "PUMP": {
+                "target": "lysate",
+                "vol_ml": 0.2,
+                "rate_mh": 10,
+                "eq_time": 0
+            },
             "RELEASE": {
                 "target": "waste",
                 "vol_ml": 1.5,

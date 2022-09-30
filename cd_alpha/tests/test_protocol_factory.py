@@ -1,7 +1,3 @@
-
-from argparse import Action
-from unittest.result import failfast
-from deepdiff import DeepDiff
 from typing import List
 import pytest
 from collections import OrderedDict
@@ -22,20 +18,16 @@ class TestJSONScreenFactory():
         test_file = resource_filename("cd_alpha", "protocols/v0-protocol-20v0.json")
 
         with open(test_file, 'r') as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
-
-
-        # PSEUDO CODE 
-        # make the list of steps needed to replicate protocol 20v0 using the Protocol factory method
+            protocol_20v0 = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         list_of_steps = self.protocol_factory_make_20v0()
 
         JSONScreenFactory(list_of_steps).create_protocol("test.json")
 
         with open("test.json", 'r') as f:
-            test_protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+            result_from_factory = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
-        assert protocol == test_protocol
+        assert protocol_20v0 == result_from_factory
 
     def test_screen_builder_single_step(self):
         

@@ -1,5 +1,6 @@
 
 from __future__ import annotations
+from asyncio import protocols
 import json
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
@@ -25,7 +26,7 @@ class JSONProtocolEncoder:
         super.__init__(self)
         self.protocol = protocol
 
-    def make_json_protocol(self) -> str:
+    def make_json_protocol_file(self, output_file_path: str):
 
         # Home step (default but needs the protocol number)
 
@@ -34,10 +35,17 @@ class JSONProtocolEncoder:
         # stuff that comes from Protocol 
 
         # default cleanup steps
-        json_string = json.dumps(self.protocol)
+        fac = JSONScreenFactory(screen_builder_from_protocol)
+        fac.create_protocol(output_file=output_file_path)
 
-        return json_string
+    def make_screen_builders_from_protocol(self):
 
+        # TODO need way to add extra screens that aren't captured by the protocol
+        # such as the user instruction screens 
+        # Add all of the steps that are in the protocol
+        for step in self.protocol.list_of_steps:
+            step.make_screenbuilder()
+  
 class JSONScreenBuilder:
 
     def __init__(self, step_name: str) -> None:
@@ -62,9 +70,11 @@ class JSONScreenBuilder:
         return self
 
     def add_actions(self, action_types: List[ActionType]) -> JSONScreenBuilder:
-
+        act_dict = {}
         for act in action_types:
-            self.stepdict["action"] = act.make_dict()
+            act_dict.update(act.make_dict())
+
+        self.stepdict["action"] = act_dict
         return self
 
     def add_completion_msg(self, completion_msg):
@@ -80,8 +90,8 @@ class JSONScreenBuilder:
     
 class JSONScreenFactory:
     
-    def __init__(self, list_of_steps: List[JSONScreenBuilder]):
-        self.list_of_steps = list_of_steps
+    def __init__(self, list_of_screen_builder: List[JSONScreenBuilder]):
+        self.list_of_screenbuilder = list_of_screen_builder
 
     def create_protocol(self, output_file: str):
         '''Creates and exports a json protocol at the givent file location.'''
@@ -92,9 +102,9 @@ class JSONScreenFactory:
 
     def _add_default_steps(self):
         for step in self._define_setup_steps():
-            self.list_of_steps.insert(0,step)
+            self.list_of_screenbuilder.insert(0,step)
         for s in self._define_teardown_steps():
-            self.list_of_steps.append(s)
+            self.list_of_screenbuilder.append(s)
 
     def _define_setup_steps(self) -> List[Step]:
    
@@ -129,10 +139,16 @@ class JSONScreenFactory:
 
         return [remove_kit_step, reset_end_step]
 
+    def json_to_str(self) -> str:
+        steps_dictionary = {}
+        for s in self.list_of_screenbuilder:
+                steps_dictionary.update(s.getStep())  
+        json.dumps(steps_dictionary, indent=4)
+
     def json_dump(self, file_location: str):
         with open(file_location, 'w') as f:
             steps_dictionary = {}
-            for s in self.list_of_steps:
+            for s in self.list_of_screenbuilder:
                 steps_dictionary.update(s.getStep())  
             json.dump(steps_dictionary, f, indent=4)
             
