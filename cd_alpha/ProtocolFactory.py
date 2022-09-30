@@ -44,6 +44,7 @@ class JSONScreenBuilder:
         self.step_name = step_name
         self.stepdict = OrderedDict()
 
+    # TODO can add methods be programatically created? they all are basically the same 
     def add_type(self, type: ScreenType) -> JSONScreenBuilder:
         self.stepdict["type"] = type.name
         return self
@@ -64,6 +65,14 @@ class JSONScreenBuilder:
 
         for act in action_types:
             self.stepdict["action"] = act.make_dict()
+        return self
+
+    def add_completion_msg(self, completion_msg):
+        self.stepdict["completion_msg"] = completion_msg
+        return self
+
+    def remove_progress_bar(self, bool):
+        self.stepdict["remove_progress_bar"] = bool
         return self
 
     def getStep(self):
