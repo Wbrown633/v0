@@ -20,16 +20,11 @@ class Protocol:
         self.list_of_steps.extend(list_of_steps)
 
     def add_steps_from_json(self, json_data: str):
-        # Can't figure out how to use the json parser so I'm going to hack it
         json_data = json.loads(json_data) 
         list_of_steps_from_json = self.custom_json_parser(json_data)
         self.list_of_steps.extend(list_of_steps_from_json)
 
     def custom_json_parser(self, json_dict: dict) -> List[Step]:
-        # PSEUDO CODE 
-        # get json dict and make each sub dict into a Step
-        # recursively go into sub dicts and make Lists of Actions as needed
-
         # Could almost certainly be done cleaner with an object_hook in the json.loads() method but
         # I needed to get something working fast
         list_of_steps = []

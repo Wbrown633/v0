@@ -1,11 +1,11 @@
 
 from __future__ import annotations
-from asyncio import protocols
 import json
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
-from types import SimpleNamespace
 from pathlib import Path
+from cd_alpha.Step import ScreenType, ActionType, Step, Reset
+from collections import OrderedDict
 
 class JSONProtocolParser:
     """Given json representation of a chipdx protocol, return a protocol object."""
@@ -37,6 +37,36 @@ class JSONProtocolEncoder:
         json_string = json.dumps(self.protocol)
 
         return json_string
+
+class JSONScreenBuilder:
+
+    def __init__(self, step_name: str) -> None:
+        self.step_name = step_name
+        self.stepdict = OrderedDict()
+
+    def add_type(self, type: ScreenType):
+        self.stepdict["type"] = type.name
+        return self
+
+    def add_header(self, header: str):
+        self.stepdict["header"] = header
+        return self
+
+    def add_description(self, description: str):
+        self.stepdict["description"] = description
+        return self
+
+    def add_next_text(self, next_text: str):
+        self.stepdict["next_text"] = next_text
+        return self
+
+    def add_actions(self, action_types: List[ActionType]):
+        for act in action_types:
+            pass
+        return self
+
+    def getStep(self):
+        return {self.step_name: self.stepdict}
     
 class JSONScreenFactory:
 
