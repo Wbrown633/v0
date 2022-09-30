@@ -1,7 +1,7 @@
 from argparse import Action
 from dataclasses import dataclass
 from email import header
-from typing import Dict, List
+from typing import Dict, List, Type
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -61,3 +61,12 @@ class Step:
     def makejson(self):
         return {f"{self.material}_{str(self.step_number)}": {"type": self.screentype.name, "header": f"{self.material}_{str(self.step_number)}", "description": self.description_text, "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
 
+@dataclass
+class HomeScren:
+    type: ScreenType
+    header: str
+    description: str
+    next_text: str
+
+    def make_json_dict(self):
+        return {"home": {"type" : self.type, "header" : self.header, "description": self.description, "next_text": self.next_text}}

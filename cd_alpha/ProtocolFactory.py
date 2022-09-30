@@ -1,5 +1,6 @@
 
 from __future__ import annotations
+from asyncio import protocols
 import json
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
@@ -19,10 +20,25 @@ class JSONProtocolParser:
         return p
 
 class JSONProtocolEncoder:
-    """Given a protocol object, return a legacy json representation"""
-    pass
+    """Given a protocol object, return a legacy json representation as a string"""
+    def __init__(self, protocol: Protocol) -> str:
+        super.__init__(self)
+        self.protocol = protocol
+
+    def make_json_protocol(self) -> str:
+
+        # Home step (default but needs the protocol number)
+
+        # default init steps 
+
+        # stuff that comes from Protocol 
+
+        # default cleanup steps
+        json_string = json.dumps(self.protocol)
+
+        return json_string
     
-class ProtocolFactory:
+class JSONScreenFactory:
 
     '''"type": "MachineActionScreen",
         "header": "Initialization",
@@ -34,7 +50,7 @@ class ProtocolFactory:
         "completion_msg": "Machine has been homed"
         '''
     
-    def __init__(self, list_of_steps: List[StepBuilder]):
+    def __init__(self, list_of_steps: List[JSONScreenBuilder]):
         self.list_of_steps = list_of_steps
 
     def create_protocol(self, output_file: str):
@@ -52,22 +68,22 @@ class ProtocolFactory:
 
     def _define_setup_steps(self) -> List[Step]:
    
-        home_step = StepBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
+        home_step = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
             .add_description("Ready for a new test with protocol 20v0. Press 'Start' to begin.").add_next_text("Start")
 
-        reset_start_step = StepBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
+        reset_start_step = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
             .add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.")\
                 .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
 
-        insert_syringes_step = StepBuilder("insert_syringes").add_type(ScreenType.UserActionScreen).add_header("Insert syringes")\
+        insert_syringes_step = JSONScreenBuilder("insert_syringes").add_type(ScreenType.UserActionScreen).add_header("Insert syringes")\
             .add_description("Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.").add_next_text("Start initialization")
 
 
-        grab_syringes_step = StepBuilder("grab_syringes").add_type(ScreenType.MachineActionScreen).add_header("Grabbing syringes")\
+        grab_syringes_step = JSONScreenBuilder("grab_syringes").add_type(ScreenType.MachineActionScreen).add_header("Grabbing syringes")\
             .add_description("The device is now grabbing hold of the syringes to secure a precise operation.").add_actions([Grab(5,0.3)]).remove_progress_bar(True).add_completion_msg("Syringes ready")
 
 
-        insert_chip_step = StepBuilder("insert_chip").add_type(ScreenType.UserActionScreen).add_header("Insert Kit").add_description("Insert the chip and inlet reservoir. Press 'Next' to proceed.")
+        insert_chip_step = JSONScreenBuilder("insert_chip").add_type(ScreenType.UserActionScreen).add_header("Insert Kit").add_description("Insert the chip and inlet reservoir. Press 'Next' to proceed.")
     
         step_list = [home_step, reset_start_step, insert_syringes_step, grab_syringes_step, insert_chip_step]
         step_list.reverse()
@@ -76,9 +92,9 @@ class ProtocolFactory:
     
     def _define_teardown_steps(self) -> List[Step]:
         
-        remove_kit_step = StepBuilder("remove_kit").add_type(ScreenType.UserActionScreen).add_header("Remove kit").add_description("Remove used kit from machine.")
+        remove_kit_step = JSONScreenBuilder("remove_kit").add_type(ScreenType.UserActionScreen).add_header("Remove kit").add_description("Remove used kit from machine.")
 
-        reset_end_step = StepBuilder("reset_end").add_type(ScreenType.MachineActionScreen).add_header("Homing device").add_description("Resetting syringe pump positions.")\
+        reset_end_step = JSONScreenBuilder("reset_end").add_type(ScreenType.MachineActionScreen).add_header("Homing device").add_description("Resetting syringe pump positions.")\
             .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("App will restart so a new test may begin.")
 
         return [remove_kit_step, reset_end_step]
@@ -94,11 +110,11 @@ class ProtocolFactory:
 
 if __name__ == "__main__":
 
-    s1 = StepBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics").add_description("Ready for a new test").add_next_text("Start")
-    s2 = StepBuilder("reset_start").add_type(ScreenType.MachineActionScreen).add_header("Initialization").add_description("Init device").add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
-    s3 = StepBuilder("flush_2").add_type(ScreenType.MachineActionScreen).add_header("PBS rinse").add_description("Risning the chip.").add_actions([Pump("waste", 1.05, 50, 120)])
+    s1 = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics").add_description("Ready for a new test").add_next_text("Start")
+    s2 = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen).add_header("Initialization").add_description("Init device").add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
+    s3 = JSONScreenBuilder("flush_2").add_type(ScreenType.MachineActionScreen).add_header("PBS rinse").add_description("Risning the chip.").add_actions([Pump("waste", 1.05, 50, 120)])
 
-    list_of_stepbuilders = [s1, s2, s3]
+    list_of_JSONScreenBuilders = [s1, s2, s3]
 
-    ProtocolFactory(list_of_stepbuilders).create_protocol("protocol_factory.json")
+    JSONScreenFactory(list_of_JSONScreenBuilders).create_protocol("protocol_factory.json")
     
