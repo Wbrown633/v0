@@ -35,10 +35,11 @@ class JSONProtocolEncoder:
         # stuff that comes from Protocol 
 
         # default cleanup steps
+        screen_builder_from_protocol = self.make_screen_builders_from_protocol()
         fac = JSONScreenFactory(screen_builder_from_protocol)
         fac.create_protocol(output_file=output_file_path)
 
-    def make_screen_builders_from_protocol(self):
+    def make_screen_builders_from_protocol(self) -> List[JSONScreenBuilder]:
 
         # TODO need way to add extra screens that aren't captured by the protocol
         # such as the user instruction screens 
