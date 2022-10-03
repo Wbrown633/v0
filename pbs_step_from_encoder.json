@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 22v0. Press 'Start' to begin.",
+        "description": "Ready for a new test with protocol 100v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
     "reset_start": {
@@ -38,6 +38,11 @@
         "type": "UserActionScreen",
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
+    },
+    "Test PBS steps._1": {
+        "type": "UserActionScreen",
+        "header": "",
+        "description": ""
     },
     "Test PBS steps.": {
         "type": "MachineActionScreen",

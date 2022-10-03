@@ -23,7 +23,7 @@ class TestProtocolEncoder:
         p.add_steps([s])
         encoder = JSONProtocolEncoder(p)
 
-        encoder.make_json_protocol_file("pbs_step_from_encoder.json")
+        encoder.make_json_protocol_file("100v0", "pbs_step_from_encoder.json")
 
         with open(pathlib.Path("pbs_step_from_encoder.json"), "r") as f: 
             json_string = json.load(f)

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 from tkinter import Scrollbar
+from turtle import st
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
@@ -33,6 +34,9 @@ class JSONProtocolEncoder:
         # default init steps 
 
         # stuff that comes from Protocol 
+        
+
+        # how do we handle User action screens?? 
 
         # default cleanup steps
         screen_builder_from_protocol = self.make_screen_builders_from_protocol()
@@ -46,6 +50,12 @@ class JSONProtocolEncoder:
         # Add all of the steps that are in the protocol
         list_of_screen_builders = []
         for step in self.protocol.list_of_steps:
+            # If the ActionType is PUMP, add a user action screen, except for some cases
+            # For legacy protocols we never have a situation where PUMP isn't first in the action list 
+            first_action_in_list = step.list_of_actions[0]
+            if type(first_action_in_list).__name__ == "Pump":
+                s = JSONScreenBuilder(step.description + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
+                list_of_screen_builders.append(s)
             screen = JSONScreenBuilder(step.description).add_type(ScreenType.MachineActionScreen).add_description(step.description).add_actions(step.list_of_actions)
             list_of_screen_builders.append(screen)
 
@@ -82,15 +92,15 @@ class JSONScreenBuilder:
         self.stepdict["action"] = act_dict
         return self
 
-    def add_completion_msg(self, completion_msg):
+    def add_completion_msg(self, completion_msg) -> JSONScreenBuilder:
         self.stepdict["completion_msg"] = completion_msg
         return self
 
-    def remove_progress_bar(self, bool):
+    def remove_progress_bar(self, bool) -> JSONScreenBuilder:
         self.stepdict["remove_progress_bar"] = bool
         return self
 
-    def getStep(self):
+    def getStep(self) -> JSONScreenBuilder:
         return {self.step_name: self.stepdict}
 
   

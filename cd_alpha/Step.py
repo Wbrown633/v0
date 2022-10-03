@@ -32,6 +32,12 @@ class Pump(Release):
         del dict["PUMP"]["material"]
         return dict
 
+    def make_header(self) -> str:
+        return ""
+
+    def make_user_description(self) -> str:
+        return ""
+        
 @dataclass
 class Incubate(ActionType):
     material: str
