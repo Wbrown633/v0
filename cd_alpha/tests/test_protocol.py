@@ -4,7 +4,7 @@ from re import M
 import pytest
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser
-from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, Action
+from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, ActionType
 
 
 class TestProtocol:

@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 import json
+from tkinter import Scrollbar
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
@@ -25,7 +26,7 @@ class JSONProtocolEncoder:
         super().__init__()
         self.protocol = protocol
 
-    def make_json_protocol_file(self, output_file_path: str):
+    def make_json_protocol_file(self, protocol_number: str, output_file_path: str):
 
         # Home step (default but needs the protocol number)
 
@@ -35,7 +36,7 @@ class JSONProtocolEncoder:
 
         # default cleanup steps
         screen_builder_from_protocol = self.make_screen_builders_from_protocol()
-        fac = JSONScreenFactory(screen_builder_from_protocol)
+        fac = JSONScreenFactory(protocol_number=protocol_number,list_of_screen_builder=screen_builder_from_protocol)
         fac.create_protocol(output_file=output_file_path)
 
     def make_screen_builders_from_protocol(self) -> List[JSONScreenBuilder]:
@@ -45,7 +46,7 @@ class JSONProtocolEncoder:
         # Add all of the steps that are in the protocol
         list_of_screen_builders = []
         for step in self.protocol.list_of_steps:
-            screen = JSONScreenBuilder(step.description).add_actions(step.list_of_actions)
+            screen = JSONScreenBuilder(step.description).add_type(ScreenType.MachineActionScreen).add_description(step.description).add_actions(step.list_of_actions)
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders
@@ -95,7 +96,8 @@ class JSONScreenBuilder:
   
 class JSONScreenFactory:
     
-    def __init__(self, list_of_screen_builder: List[JSONScreenBuilder]):
+    def __init__(self, protocol_number: str, list_of_screen_builder: List[JSONScreenBuilder]):
+        self.protocol_number = protocol_number
         self.list_of_screenbuilder = list_of_screen_builder
 
     def create_protocol(self, output_file: str):
@@ -114,7 +116,7 @@ class JSONScreenFactory:
     def _define_setup_steps(self) -> List[Step]:
    
         home_step = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
-            .add_description("Ready for a new test with protocol 20v0. Press 'Start' to begin.").add_next_text("Start")
+            .add_description(f"Ready for a new test with protocol {self.protocol_number}. Press 'Start' to begin.").add_next_text("Start")
 
         reset_start_step = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
             .add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.")\

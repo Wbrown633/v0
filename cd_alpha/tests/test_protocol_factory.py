@@ -22,9 +22,13 @@ class TestJSONScreenFactory():
 
         list_of_steps = self.protocol_factory_make_20v0()
 
-        JSONScreenFactory(list_of_steps).create_protocol("test.json")
+        protocol_number = "20v0"
 
-        with open("test.json", 'r') as f:
+        test_output_location = f"test_{protocol_number}.json"
+
+        JSONScreenFactory(protocol_number=protocol_number,list_of_screen_builder=list_of_steps).create_protocol(test_output_location)
+
+        with open(test_output_location, 'r') as f:
             result_from_factory = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         assert protocol_20v0 == result_from_factory
