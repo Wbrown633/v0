@@ -33,11 +33,11 @@ class Pump(Release):
         return dict
 
     def make_header(self) -> str:
-        return ""
+        return f"Add {self.material}"
 
     def make_user_description(self) -> str:
-        return ""
-        
+        return f"Add {self.vol_ml} ml of {self.material}"
+
 @dataclass
 class Incubate(ActionType):
     material: str
@@ -48,6 +48,9 @@ class Incubate(ActionType):
         dict = super().make_dict()
         del dict["INCUBATE"]["material"]
         return dict
+
+    def make_header(self) -> str:
+        return f"Add {self.material}"
 
 @dataclass
 class Reset(ActionType):
@@ -75,6 +78,9 @@ class Step:
     list_of_actions: List[ActionType]
 
     # how do we handle description steps ? 
+    def make_step_name(self) -> str:
+        return f"{type(self.list_of_actions[0]).__name__}"
+
     def makejson(self):
         return {f"{self.material}_{str(self.step_number)}": {"type": self.screentype.name, "header": f"{self.material}_{str(self.step_number)}", "description": self.description_text, "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
 

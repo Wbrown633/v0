@@ -39,14 +39,15 @@
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
     },
-    "Test PBS steps._1": {
+    "PBS_1": {
         "type": "UserActionScreen",
-        "header": "",
-        "description": ""
+        "header": "Add PBS",
+        "description": "Add 1.0 ml of PBS"
     },
-    "Test PBS steps.": {
+    "PBS": {
         "type": "MachineActionScreen",
-        "description": "Test PBS steps.",
+        "header": "Add PBS",
+        "description": "PBS",
         "action": {
             "PUMP": {
                 "target": "waste",

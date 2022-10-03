@@ -54,9 +54,9 @@ class JSONProtocolEncoder:
             # For legacy protocols we never have a situation where PUMP isn't first in the action list 
             first_action_in_list = step.list_of_actions[0]
             if type(first_action_in_list).__name__ == "Pump":
-                s = JSONScreenBuilder(step.description + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
+                s = JSONScreenBuilder(step.material + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
                 list_of_screen_builders.append(s)
-            screen = JSONScreenBuilder(step.description).add_type(ScreenType.MachineActionScreen).add_description(step.description).add_actions(step.list_of_actions)
+            screen = JSONScreenBuilder(step.make_step_name()).add_type(ScreenType.MachineActionScreen).add_header(first_action_in_list.make_header()).add_description(step.description).add_actions(step.list_of_actions)
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders
@@ -100,7 +100,7 @@ class JSONScreenBuilder:
         self.stepdict["remove_progress_bar"] = bool
         return self
 
-    def getStep(self) -> JSONScreenBuilder:
+    def getStep(self) -> Dict:
         return {self.step_name: self.stepdict}
 
   
@@ -165,7 +165,9 @@ class JSONScreenFactory:
     def json_dump(self, file_location: str):
         with open(file_location, 'w') as f:
             steps_dictionary = {}
-            for s in self.list_of_screenbuilder:
-                steps_dictionary.update(s.getStep())  
+            repeat_steps = 1
+            for screen in self.list_of_screenbuilder:
+                screen_step_dict = screen.getStep() # don't overwrite value 
+                steps_dictionary.update(screen.getStep())  
             json.dump(steps_dictionary, f, indent=4)
             
