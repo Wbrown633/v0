@@ -28,17 +28,8 @@ class JSONProtocolEncoder:
         self.protocol = protocol
 
     def make_json_protocol_file(self, protocol_number: str, output_file_path: str):
-
-        # Home step (default but needs the protocol number)
-
-        # default init steps 
-
-        # stuff that comes from Protocol 
-        
-
-        # how do we handle User action screens?? 
-
-        # default cleanup steps
+        #TODO how to handle GUI specific settings/logic
+        # such as user instructions and completion messages? 
         screen_builder_from_protocol = self.make_screen_builders_from_protocol()
         fac = JSONScreenFactory(protocol_number=protocol_number,list_of_screen_builder=screen_builder_from_protocol)
         fac.create_protocol(output_file=output_file_path)
