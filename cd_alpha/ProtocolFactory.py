@@ -54,9 +54,9 @@ class JSONProtocolEncoder:
             # For legacy protocols we never have a situation where PUMP isn't first in the action list 
             first_action_in_list = step.list_of_actions[0]
             if type(first_action_in_list).__name__ == "Pump":
-                s = JSONScreenBuilder(step.material + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
+                s = JSONScreenBuilder(step.name + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
                 list_of_screen_builders.append(s)
-            screen = JSONScreenBuilder(step.make_step_name()).add_type(ScreenType.MachineActionScreen).add_header(first_action_in_list.make_header()).add_description(step.description).add_actions(step.list_of_actions)
+            screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description()).add_actions(step.list_of_actions).add_completion_msg("Step Complete!")
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders
@@ -167,7 +167,7 @@ class JSONScreenFactory:
             steps_dictionary = {}
             repeat_steps = 1
             for screen in self.list_of_screenbuilder:
-                screen_step_dict = screen.getStep() # don't overwrite value 
+                screen_step_dict = screen.getStep() # don't overwrite value TODO FIX
                 steps_dictionary.update(screen.getStep())  
             json.dump(steps_dictionary, f, indent=4)
             

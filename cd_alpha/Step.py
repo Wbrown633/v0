@@ -10,6 +10,14 @@ class ActionType(ABC):
     def make_dict(self) -> Dict:
         return {self.__class__.__name__.upper():self.__dict__}
 
+    def make_header(self) -> str:
+        return "Add header here."
+
+    def make_user_description(self) -> str:
+        return "Type description here."
+
+    
+
 @dataclass
 class Grab(ActionType):
     post_run_rate_mm: float
@@ -74,7 +82,7 @@ class StepType(Enum):
 
 @dataclass
 class Step:
-    description: str
+    name: str
     list_of_actions: List[ActionType]
 
     # how do we handle description steps ? 

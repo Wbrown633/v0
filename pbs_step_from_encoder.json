@@ -47,7 +47,7 @@
     "PBS": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
-        "description": "PBS",
+        "description": "Add 1.0 ml of PBS",
         "action": {
             "PUMP": {
                 "target": "waste",
@@ -55,7 +55,8 @@
                 "rate_mh": 15,
                 "eq_time": 120
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
     "remove_kit": {
         "type": "UserActionScreen",

@@ -39,15 +39,15 @@
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
     },
-    "Wetting the chip with F-127_1": {
+    "f127_1": {
         "type": "UserActionScreen",
         "header": "Add F-127",
         "description": "Add 0.5 ml of F-127"
     },
-    "Wetting the chip with F-127": {
+    "f127": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
-        "description": "Wetting the chip with F-127",
+        "description": "Add 0.5 ml of F-127",
         "action": {
             "PUMP": {
                 "target": "waste",
@@ -55,27 +55,48 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Blocking chip with F-127": {
+    "Incubate": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
-        "description": "Blocking chip with F-127",
+        "description": "Type description here.",
         "action": {
             "INCUBATE": {
                 "time": 3600
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Rinsing the chip._1": {
+    "flush_2_1": {
+        "type": "UserActionScreen",
+        "header": "Add F-127",
+        "description": "Add 0.5 ml of F-127"
+    },
+    "flush_2": {
+        "type": "MachineActionScreen",
+        "header": "Add F-127",
+        "description": "Add 0.5 ml of F-127",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.5,
+                "rate_mh": 15,
+                "eq_time": 0
+            }
+        },
+        "completion_msg": "Step Complete!"
+    },
+    "pbs_1_1": {
         "type": "UserActionScreen",
         "header": "Add PBS",
         "description": "Add 1.0 ml of PBS"
     },
-    "Rinsing the chip.": {
+    "pbs_1": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
-        "description": "Rinsing the chip.",
+        "description": "Add 1.0 ml of PBS",
         "action": {
             "PUMP": {
                 "target": "waste",
@@ -83,17 +104,18 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Pulling sample thru chip._1": {
+    "add_sample_1": {
         "type": "UserActionScreen",
         "header": "Add Sample",
         "description": "Add 0.5 ml of Sample"
     },
-    "Pulling sample thru chip.": {
+    "add_sample": {
         "type": "MachineActionScreen",
         "header": "Add Sample",
-        "description": "Pulling sample thru chip.",
+        "description": "Add 0.5 ml of Sample",
         "action": {
             "PUMP": {
                 "target": "waste",
@@ -101,17 +123,18 @@
                 "rate_mh": 1.0,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Washing the chip._1": {
+    "pbs_2._1": {
         "type": "UserActionScreen",
         "header": "Add PBS",
         "description": "Add 0.7 ml of PBS"
     },
-    "Washing the chip.": {
+    "pbs_2.": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
-        "description": "Washing the chip.",
+        "description": "Add 0.7 ml of PBS",
         "action": {
             "PUMP": {
                 "target": "waste",
@@ -119,17 +142,56 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Pulling Qiazol into chip._1": {
+    "pbs_3_1": {
+        "type": "UserActionScreen",
+        "header": "Add PBS",
+        "description": "Add 0.7 ml of PBS"
+    },
+    "pbs_3": {
+        "type": "MachineActionScreen",
+        "header": "Add PBS",
+        "description": "Add 0.7 ml of PBS",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.7,
+                "rate_mh": 15.0,
+                "eq_time": 0
+            }
+        },
+        "completion_msg": "Step Complete!"
+    },
+    "pbs_4_1": {
+        "type": "UserActionScreen",
+        "header": "Add PBS",
+        "description": "Add 0.7 ml of PBS"
+    },
+    "pbs_4": {
+        "type": "MachineActionScreen",
+        "header": "Add PBS",
+        "description": "Add 0.7 ml of PBS",
+        "action": {
+            "PUMP": {
+                "target": "waste",
+                "vol_ml": 0.7,
+                "rate_mh": 15.0,
+                "eq_time": 0
+            }
+        },
+        "completion_msg": "Step Complete!"
+    },
+    "qiazol_1": {
         "type": "UserActionScreen",
         "header": "Add Qiazol",
         "description": "Add 0.2 ml of Qiazol"
     },
-    "Pulling Qiazol into chip.": {
+    "qiazol": {
         "type": "MachineActionScreen",
         "header": "Add Qiazol",
-        "description": "Pulling Qiazol into chip.",
+        "description": "Add 0.2 ml of Qiazol",
         "action": {
             "PUMP": {
                 "target": "lysate",
@@ -143,17 +205,18 @@
                 "rate_mh": -50,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
-    "Extracting lysate from chip._1": {
+    "extract_1": {
         "type": "UserActionScreen",
         "header": "Add Qiazol",
         "description": "Add 1.0 ml of Qiazol"
     },
-    "Extracting lysate from chip.": {
+    "extract": {
         "type": "MachineActionScreen",
         "header": "Add Qiazol",
-        "description": "Extracting lysate from chip.",
+        "description": "Add 1.0 ml of Qiazol",
         "action": {
             "PUMP": {
                 "target": "lysate",
@@ -161,7 +224,8 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        }
+        },
+        "completion_msg": "Step Complete!"
     },
     "remove_kit": {
         "type": "UserActionScreen",
