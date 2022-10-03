@@ -4,7 +4,7 @@ import pytest
 import json
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolParser, JSONProtocolEncoder
-from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, Action
+from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, ActionType
 
 
 class TestProtocolEncoder:
@@ -18,10 +18,18 @@ class TestProtocolEncoder:
     def test_one_step_json_encoder(self):
         p = Protocol("PBS_step")
 
-        a = Pump()
+        a = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15, eq_time=120)
+        s = Step("Test PBS steps.", [a])
+        p.add_steps([s])
         encoder = JSONProtocolEncoder(p)
 
-        json_string = encoder.make_json_protocol()
+        encoder.make_json_protocol_file("pbs_step_from_encoder.json")
 
-        expected_string = json.load()
-        assert False
+        with open(pathlib.Path("pbs_step_from_encoder.json"), "r") as f: 
+            json_string = json.load(f)
+
+        with open(self.path, 'r') as f:
+            expected_string = json.load(f)
+
+        
+        assert json_string == expected_string

@@ -1,6 +1,5 @@
 
 from __future__ import annotations
-from asyncio import protocols
 import json
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
@@ -23,7 +22,7 @@ class JSONProtocolParser:
 class JSONProtocolEncoder:
     """Given a protocol object, return a legacy json representation as a string"""
     def __init__(self, protocol: Protocol) -> str:
-        super.__init__(self)
+        super().__init__()
         self.protocol = protocol
 
     def make_json_protocol_file(self, output_file_path: str):
@@ -44,9 +43,13 @@ class JSONProtocolEncoder:
         # TODO need way to add extra screens that aren't captured by the protocol
         # such as the user instruction screens 
         # Add all of the steps that are in the protocol
+        list_of_screen_builders = []
         for step in self.protocol.list_of_steps:
-            step.make_screenbuilder()
-  
+            screen = JSONScreenBuilder(step.description).add_actions(step.list_of_actions)
+            list_of_screen_builders.append(screen)
+
+        return list_of_screen_builders
+
 class JSONScreenBuilder:
 
     def __init__(self, step_name: str) -> None:
@@ -88,7 +91,8 @@ class JSONScreenBuilder:
 
     def getStep(self):
         return {self.step_name: self.stepdict}
-    
+
+  
 class JSONScreenFactory:
     
     def __init__(self, list_of_screen_builder: List[JSONScreenBuilder]):

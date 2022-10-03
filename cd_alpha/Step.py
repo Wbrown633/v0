@@ -1,11 +1,10 @@
-from argparse import Action
 from dataclasses import dataclass
-from email import header
-from typing import Dict, List, Type
-from abc import ABC, abstractmethod
+from typing import Dict, List
+from abc import ABC
 from enum import Enum
 
-from cd_alpha.ProtocolFactory import JSONScreenBuilder
+# TODO importing JSONScreenBuilder makes a circular import 
+# from cd_alpha.ScreenBuilder import JSONScreenBuilder
 
 class ActionType(ABC):
     def make_dict(self) -> Dict:
@@ -67,11 +66,8 @@ class StepType(Enum):
 @dataclass
 class Step:
     description: str
-    list_of_actions: List[Action]
+    list_of_actions: List[ActionType]
 
-    # Material cannot be required because not all actions have materials
-    def make_screenbuilder(self, step_name:str):
-        return JSONScreenBuilder(step_name).add_description(self.description).add_actions(self.list_of_actions)
     # how do we handle description steps ? 
     def makejson(self):
         return {f"{self.material}_{str(self.step_number)}": {"type": self.screentype.name, "header": f"{self.material}_{str(self.step_number)}", "description": self.description_text, "action": {self.steptype.name: {"target": self.target.name, "vol_ml": self.volume, "rate_mh": self.flowrate, "eq_time": self.wait_time}}}}
