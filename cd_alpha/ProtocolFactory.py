@@ -104,7 +104,7 @@ class JSONProtocolEncoder:
             step_completion = "Step complete!"
 
             updates_dict = self.guimodel.step_updates_dict
-            if step.name in updates_dict:
+            if updates_dict is not None and step.name in updates_dict:
                 if "header" in updates_dict[step.name]:
                     step_header = updates_dict[step.name]["header"]
                 if "description" in updates_dict[step.name]:
@@ -112,7 +112,7 @@ class JSONProtocolEncoder:
                 if "completion_msg" in updates_dict[step.name]:
                     step_completion = updates_dict[step.name]["completion_msg"]
             
-            screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(step_header).add_description(step_description).add_actions(step.list_of_actions).add_completion_msg(step_completion)
+            screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(step_header).add_description(step_description).add_actions(step.list_of_actions)
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders

@@ -55,7 +55,7 @@
                 "eq_time": 120
             }
         },
-        "completion_msg": "Step Complete!"
+        "completion_msg": "Step complete!"
     },
     "remove_kit": {
         "type": "UserActionScreen",

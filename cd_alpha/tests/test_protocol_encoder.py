@@ -88,6 +88,8 @@ class TestProtocolEncoder:
         
         gui_dict = {"flush_1" : flush_1, "flush_3": flush_3, "flush_4": flush_4, "wash_1": wash_1,
         "flush_5": flush_5, "flush_6": flush_6, "extract_1": extract_1}
+
+        # make step updates needed, which for now is mostly just fixing header, description, and completion
         g = GUIModel("21v3", gui_dict)
         encoder = JSONProtocolEncoder(protocol=p,guimodel=g)
 
