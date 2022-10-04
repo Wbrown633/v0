@@ -1,5 +1,6 @@
 
 from __future__ import annotations
+from dataclasses import dataclass
 import json
 from tkinter import Scrollbar
 from turtle import st
@@ -8,7 +9,42 @@ from cd_alpha.Protocol import Protocol
 from pathlib import Path
 from cd_alpha.Step import ScreenType, ActionType, Step, Reset, Grab
 from collections import OrderedDict
+from collections.abc import Sequence
 
+def define_setup_steps(protocol_number:str) -> list[JSONScreenBuilder]:
+
+    home_step = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
+        .add_description(f"Ready for a new test with protocol {protocol_number}. Press 'Start' to begin.").add_next_text("Start")
+
+    summary_screen = JSONScreenBuilder("summary").add_type(ScreenType.UserActionScreen).add_next_text("Start experiment")
+
+    reset_start_step = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
+        .add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.")\
+            .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
+
+    insert_syringes_step = JSONScreenBuilder("insert_syringes").add_type(ScreenType.UserActionScreen).add_header("Insert syringes")\
+        .add_description("Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.").add_next_text("Start initialization")
+
+
+    grab_syringes_step = JSONScreenBuilder("grab_syringes").add_type(ScreenType.MachineActionScreen).add_header("Grabbing syringes")\
+        .add_description("The device is now grabbing hold of the syringes to secure a precise operation.").add_actions([Grab(5,0.3)]).remove_progress_bar(True).add_completion_msg("Syringes ready")
+
+
+    insert_chip_step = JSONScreenBuilder("insert_chip").add_type(ScreenType.UserActionScreen).add_header("Insert Kit").add_description("Insert the chip and inlet reservoir. Press 'Next' to proceed.")
+
+    step_list = [home_step, summary_screen, reset_start_step, insert_syringes_step, grab_syringes_step, insert_chip_step]
+    step_list.reverse()
+    return step_list
+
+def define_teardown_steps() -> list[JSONScreenBuilder]:
+    
+    remove_kit_step = JSONScreenBuilder("remove_kit").add_type(ScreenType.UserActionScreen).add_header("Remove kit").add_description("Remove used kit from machine.")
+
+    reset_end_step = JSONScreenBuilder("reset_end").add_type(ScreenType.MachineActionScreen).add_header("Homing device").add_description("Resetting syringe pump positions.")\
+        .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("App will restart so a new test may begin.")
+
+    return [remove_kit_step, reset_end_step]
+   
 class JSONProtocolParser:
     """Given json representation of a chipdx protocol, return a protocol object."""
     def __init__(self, json_filepath: Path) -> None:
@@ -21,32 +57,49 @@ class JSONProtocolParser:
         p.add_steps_from_json(json_dict)
         return p
 
+@dataclass
+class GUIModel:
+    protocol_number: str
+    instruction_screens_dict: dict[str, JSONScreenBuilder]
+    start_steps: list[JSONScreenBuilder] = None
+    shutdown_steps: list[JSONScreenBuilder] = None
+
+    def __post_init__(self):
+        if self.start_steps == None:
+            self.start_steps = define_setup_steps(self.protocol_number)
+
+        if self.shutdown_steps == None:
+            self.shutdown_steps = define_teardown_steps
+
 class JSONProtocolEncoder:
     """Given a protocol object, return a legacy json representation as a string"""
-    def __init__(self, protocol: Protocol) -> str:
+    def __init__(self, protocol: Protocol, guimodel: GUIModel) -> str:
         super().__init__()
         self.protocol = protocol
+        self.guimodel = guimodel
 
     def make_json_protocol_file(self, protocol_number: str, output_file_path: str):
         #TODO how to handle GUI specific settings/logic
         # such as user instructions and completion messages? 
+
+        # Also pass in logic for how we construct GUI specific information
         screen_builder_from_protocol = self.make_screen_builders_from_protocol()
         fac = JSONScreenFactory(protocol_number=protocol_number,list_of_screen_builder=screen_builder_from_protocol)
         fac.create_protocol(output_file=output_file_path)
 
-    def make_screen_builders_from_protocol(self) -> List[JSONScreenBuilder]:
+    def make_screen_builders_from_protocol(self) -> list[JSONScreenBuilder]:
 
-        # TODO need way to add extra screens that aren't captured by the protocol
-        # such as the user instruction screens 
-        # Add all of the steps that are in the protocol
         list_of_screen_builders = []
         for step in self.protocol.list_of_steps:
             # If the ActionType is PUMP, add a user action screen, except for some cases
             # For legacy protocols we never have a situation where PUMP isn't first in the action list 
             first_action_in_list = step.list_of_actions[0]
-            if type(first_action_in_list).__name__ == "Pump":
-                s = JSONScreenBuilder(step.name + "_1").add_type(ScreenType.UserActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description())
-                list_of_screen_builders.append(s)
+
+            # Check if this step needs an instruction screen
+            # if it does, put it in before we add the model step
+            if step.name in self.guimodel.instruction_screens_dict:
+                list_of_screen_builders.append(self.guimodel.instruction_screens_dict[step.name])
+            
             screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description()).add_actions(step.list_of_actions).add_completion_msg("Step Complete!")
             list_of_screen_builders.append(screen)
 
@@ -109,43 +162,12 @@ class JSONScreenFactory:
         self.json_dump(output_file)
 
     def _add_default_steps(self):
-        for step in self._define_setup_steps():
+        for step in define_setup_steps(self.protocol_number):
             self.list_of_screenbuilder.insert(0,step)
-        for s in self._define_teardown_steps():
+        for s in define_teardown_steps():
             self.list_of_screenbuilder.append(s)
-
-    def _define_setup_steps(self) -> List[Step]:
-   
-        home_step = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
-            .add_description(f"Ready for a new test with protocol {self.protocol_number}. Press 'Start' to begin.").add_next_text("Start")
-
-        reset_start_step = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen)\
-            .add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.")\
-                .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("Machine has been homed")
-
-        insert_syringes_step = JSONScreenBuilder("insert_syringes").add_type(ScreenType.UserActionScreen).add_header("Insert syringes")\
-            .add_description("Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.").add_next_text("Start initialization")
-
-
-        grab_syringes_step = JSONScreenBuilder("grab_syringes").add_type(ScreenType.MachineActionScreen).add_header("Grabbing syringes")\
-            .add_description("The device is now grabbing hold of the syringes to secure a precise operation.").add_actions([Grab(5,0.3)]).remove_progress_bar(True).add_completion_msg("Syringes ready")
-
-
-        insert_chip_step = JSONScreenBuilder("insert_chip").add_type(ScreenType.UserActionScreen).add_header("Insert Kit").add_description("Insert the chip and inlet reservoir. Press 'Next' to proceed.")
     
-        step_list = [home_step, reset_start_step, insert_syringes_step, grab_syringes_step, insert_chip_step]
-        step_list.reverse()
-        return step_list
-    
-    
-    def _define_teardown_steps(self) -> List[Step]:
-        
-        remove_kit_step = JSONScreenBuilder("remove_kit").add_type(ScreenType.UserActionScreen).add_header("Remove kit").add_description("Remove used kit from machine.")
 
-        reset_end_step = JSONScreenBuilder("reset_end").add_type(ScreenType.MachineActionScreen).add_header("Homing device").add_description("Resetting syringe pump positions.")\
-            .add_actions([Reset()]).remove_progress_bar(True).add_completion_msg("App will restart so a new test may begin.")
-
-        return [remove_kit_step, reset_end_step]
 
     def json_to_str(self) -> str:
         steps_dictionary = {}
@@ -161,4 +183,5 @@ class JSONScreenFactory:
                 screen_step_dict = screen.getStep() # don't overwrite value TODO FIX
                 steps_dictionary.update(screen.getStep())  
             json.dump(steps_dictionary, f, indent=4)
+
             

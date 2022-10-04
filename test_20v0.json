@@ -5,6 +5,10 @@
         "description": "Ready for a new test with protocol 20v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
+    "summary": {
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
+    },
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",

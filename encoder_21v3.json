@@ -5,6 +5,10 @@
         "description": "Ready for a new test with protocol 200v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
+    "summary": {
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
+    },
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",
@@ -39,11 +43,6 @@
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
     },
-    "f127_1": {
-        "type": "UserActionScreen",
-        "header": "Add F-127",
-        "description": "Add 0.5 ml of F-127"
-    },
     "f127": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
@@ -69,11 +68,6 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "flush_2_1": {
-        "type": "UserActionScreen",
-        "header": "Add F-127",
-        "description": "Add 0.5 ml of F-127"
-    },
     "flush_2": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
@@ -87,11 +81,6 @@
             }
         },
         "completion_msg": "Step Complete!"
-    },
-    "pbs_1_1": {
-        "type": "UserActionScreen",
-        "header": "Add PBS",
-        "description": "Add 1.0 ml of PBS"
     },
     "pbs_1": {
         "type": "MachineActionScreen",
@@ -107,11 +96,6 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "add_sample_1": {
-        "type": "UserActionScreen",
-        "header": "Add Sample",
-        "description": "Add 0.5 ml of Sample"
-    },
     "add_sample": {
         "type": "MachineActionScreen",
         "header": "Add Sample",
@@ -126,12 +110,7 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "pbs_2._1": {
-        "type": "UserActionScreen",
-        "header": "Add PBS",
-        "description": "Add 0.7 ml of PBS"
-    },
-    "pbs_2.": {
+    "pbs_2": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
         "description": "Add 0.7 ml of PBS",
@@ -144,11 +123,6 @@
             }
         },
         "completion_msg": "Step Complete!"
-    },
-    "pbs_3_1": {
-        "type": "UserActionScreen",
-        "header": "Add PBS",
-        "description": "Add 0.7 ml of PBS"
     },
     "pbs_3": {
         "type": "MachineActionScreen",
@@ -164,11 +138,6 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "pbs_4_1": {
-        "type": "UserActionScreen",
-        "header": "Add PBS",
-        "description": "Add 0.7 ml of PBS"
-    },
     "pbs_4": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
@@ -182,11 +151,6 @@
             }
         },
         "completion_msg": "Step Complete!"
-    },
-    "qiazol_1": {
-        "type": "UserActionScreen",
-        "header": "Add Qiazol",
-        "description": "Add 0.2 ml of Qiazol"
     },
     "qiazol": {
         "type": "MachineActionScreen",
@@ -207,11 +171,6 @@
             }
         },
         "completion_msg": "Step Complete!"
-    },
-    "extract_1": {
-        "type": "UserActionScreen",
-        "header": "Add Qiazol",
-        "description": "Add 1.0 ml of Qiazol"
     },
     "extract": {
         "type": "MachineActionScreen",

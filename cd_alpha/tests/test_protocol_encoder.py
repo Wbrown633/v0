@@ -7,7 +7,7 @@ from tkinter import E
 import pytest
 import json
 from cd_alpha.Protocol import Protocol
-from cd_alpha.ProtocolFactory import JSONProtocolParser, JSONProtocolEncoder
+from cd_alpha.ProtocolFactory import GUIModel, JSONProtocolParser, JSONProtocolEncoder
 from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, ActionType
 
 
@@ -26,7 +26,8 @@ class TestProtocolEncoder:
         a = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15, eq_time=120)
         s = Step("PBS", [a])
         p.add_steps([s])
-        encoder = JSONProtocolEncoder(p)
+        g = GUIModel("100v0", {})
+        encoder = JSONProtocolEncoder(protocol=p, guimodel=g)
 
         encoder.make_json_protocol_file("100v0", "pbs_step_from_encoder.json")
 
@@ -78,7 +79,8 @@ class TestProtocolEncoder:
 
         p.add_steps([s, s1, s2, s3, s4, s5, s6, s7, s8, s9])
 
-        encoder = JSONProtocolEncoder(p)
+        g = GUIModel("21v3", {})
+        encoder = JSONProtocolEncoder(protocol=p,guimodel=g)
 
         output_file = "encoder_21v3.json"
 

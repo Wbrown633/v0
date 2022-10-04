@@ -5,6 +5,10 @@
         "description": "Ready for a new test with protocol 100v0. Press 'Start' to begin.",
         "next_text": "Start"
     },
+    "summary": {
+        "type": "UserActionScreen",
+        "next_text": "Start experiment"
+    },
     "reset_start": {
         "type": "MachineActionScreen",
         "header": "Initialization",
@@ -38,11 +42,6 @@
         "type": "UserActionScreen",
         "header": "Insert Kit",
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
-    },
-    "PBS_1": {
-        "type": "UserActionScreen",
-        "header": "Add PBS",
-        "description": "Add 1.0 ml of PBS"
     },
     "PBS": {
         "type": "MachineActionScreen",
