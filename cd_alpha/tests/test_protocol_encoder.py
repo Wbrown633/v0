@@ -7,7 +7,7 @@ from tkinter import E
 import pytest
 import json
 from cd_alpha.Protocol import Protocol
-from cd_alpha.ProtocolFactory import GUIModel, JSONProtocolParser, JSONProtocolEncoder
+from cd_alpha.ProtocolFactory import GUIModel, JSONProtocolParser, JSONProtocolEncoder, JSONScreenBuilder
 from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step, ScreenType, ActionType
 
 
@@ -47,7 +47,7 @@ class TestProtocolEncoder:
         p = Protocol("json_encoder_21v3.json")
 
         a = Pump(material="F-127", target="waste", vol_ml=0.5, rate_mh=15, eq_time=0)
-        s = Step("f127", [a])
+        s = Step("flush_1", [a])
 
         a1 = Incubate("F-127", 3600)
         s1 = Step("Incubate", [a1])
@@ -79,7 +79,17 @@ class TestProtocolEncoder:
 
         p.add_steps([s, s1, s2, s3, s4, s5, s6, s7, s8, s9])
 
-        g = GUIModel("21v3", {})
+        flush_1 = JSONScreenBuilder("f127").add_type(ScreenType.UserActionScreen).add_header("Add F-127").add_description("Add 1.0 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start.")
+        flush_3 = JSONScreenBuilder("pbs_1").add_type(ScreenType.UserActionScreen).add_header("PBS rinse").add_description("Add 1 mL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_4 = JSONScreenBuilder("add_sample").add_type(ScreenType.UserActionScreen).add_header("Add sample").add_description("Add 0.5 mL sample to reservoir. Press 'Next' to start")
+        wash_1 = JSONScreenBuilder("pbs_2").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 1").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_5 = JSONScreenBuilder("pbs_3").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 2").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_6 = JSONScreenBuilder("pbs_4").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 3").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        extract_1 = JSONScreenBuilder("qiazol").add_type(ScreenType.UserActionScreen).add_header("Qiazol").add_description("Add 700 µL Qiazol to reservoir. Press 'Next' to start.")
+        
+        gui_dict = {"flush_1" : flush_1, "flush_3": flush_3, "flush_4": flush_4, "wash_1": wash_1,
+        "flush_5": flush_5, "flush_6": flush_6, "extract_1": extract_1}
+        g = GUIModel("21v3", gui_dict)
         encoder = JSONProtocolEncoder(protocol=p,guimodel=g)
 
         output_file = "encoder_21v3.json"

@@ -2,8 +2,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 import json
-from tkinter import Scrollbar
-from turtle import st
 from typing import Dict, List
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
