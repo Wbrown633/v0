@@ -63,6 +63,7 @@ class GUIModel:
     start_steps: list[JSONScreenBuilder] = None
     shutdown_steps: list[JSONScreenBuilder] = None
 
+    # TODO need to be able to change header and description, along with completion msg
     def __post_init__(self):
         if self.start_steps == None:
             self.start_steps = define_setup_steps(self.protocol_number)
