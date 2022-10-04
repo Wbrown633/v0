@@ -15,6 +15,7 @@ class TestJSONScreenFactory():
         
 
     def test_protocol_factory_20v0(self):
+        # TODO tests should probably be updated to make use of guimodels for default steps
         test_file = resource_filename("cd_alpha", "protocols/v0-protocol-20v0.json")
 
         with open(test_file, 'r') as f:

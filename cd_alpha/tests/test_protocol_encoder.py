@@ -26,7 +26,7 @@ class TestProtocolEncoder:
         a = Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15, eq_time=120)
         s = Step("PBS", [a])
         p.add_steps([s])
-        g = GUIModel("100v0", {})
+        g = GUIModel("100v0", {}) # for this test we don't need any gui logic
         encoder = JSONProtocolEncoder(protocol=p, guimodel=g)
 
         encoder.make_json_protocol_file("100v0", "pbs_step_from_encoder.json")

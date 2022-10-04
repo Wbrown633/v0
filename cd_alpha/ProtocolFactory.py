@@ -59,6 +59,7 @@ class JSONProtocolParser:
 
 @dataclass
 class GUIModel:
+    """Class to contain all GUI specific logic. Including user instruction screens"""
     protocol_number: str
     instruction_screens_dict: dict[str, JSONScreenBuilder]
     start_steps: list[JSONScreenBuilder] = None
@@ -106,6 +107,7 @@ class JSONProtocolEncoder:
         return list_of_screen_builders
 
 class JSONScreenBuilder:
+    """Utility class to make construction legacy JSON protocols easier."""
 
     def __init__(self, step_name: str) -> None:
         self.step_name = step_name
@@ -149,8 +151,9 @@ class JSONScreenBuilder:
 
   
 class JSONScreenFactory:
+    """Given a list of JSONScreenBuilders, construct a legacy JSON protocol."""
     
-    def __init__(self, protocol_number: str, list_of_screen_builder: List[JSONScreenBuilder]):
+    def __init__(self, protocol_number: str, list_of_screen_builder: List[JSONScreenBuilder], guimodel: GUIModel = None):
         self.protocol_number = protocol_number
         self.list_of_screenbuilder = list_of_screen_builder
 
