@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with protocol 200v0. Press 'Start' to begin.",
+        "description": "Ready for a new test with protocol 21v3. Press 'Start' to begin.",
         "next_text": "Start"
     },
     "summary": {

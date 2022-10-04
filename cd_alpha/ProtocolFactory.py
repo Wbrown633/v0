@@ -12,7 +12,7 @@ from collections.abc import Sequence
 def define_setup_steps(protocol_number:str) -> list[JSONScreenBuilder]:
 
     home_step = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics")\
-        .add_description(f"Ready for a new test with protocol {protocol_number}. Press 'Start' to begin.").add_next_text("Start")
+        .add_description(f"Ready for a new test with Small TENPO protocol {protocol_number}. Press 'Start' to begin.").add_next_text("Start")
 
     summary_screen = JSONScreenBuilder("summary").add_type(ScreenType.UserActionScreen).add_next_text("Start experiment")
 
@@ -179,9 +179,7 @@ class JSONScreenFactory:
     def json_dump(self, file_location: str):
         with open(file_location, 'w') as f:
             steps_dictionary = {}
-            repeat_steps = 1
             for screen in self.list_of_screenbuilder:
-                screen_step_dict = screen.getStep() # don't overwrite value TODO FIX
                 steps_dictionary.update(screen.getStep())  
             json.dump(steps_dictionary, f, indent=4)
 
