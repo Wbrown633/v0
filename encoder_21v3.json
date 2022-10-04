@@ -44,6 +44,11 @@
         "description": "Insert the chip and inlet reservoir. Press 'Next' to proceed."
     },
     "f127": {
+        "type": "UserActionScreen",
+        "header": "Add F-127",
+        "description": "Add 1.0 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start."
+    },
+    "flush_1": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
         "description": "Add 0.5 ml of F-127",
@@ -57,7 +62,7 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "Incubate": {
+    "incubate_1": {
         "type": "MachineActionScreen",
         "header": "Add F-127",
         "description": "Type description here.",
@@ -83,6 +88,11 @@
         "completion_msg": "Step Complete!"
     },
     "pbs_1": {
+        "type": "UserActionScreen",
+        "header": "PBS rinse",
+        "description": "Add 1 mL 1xPBS to reservoir. Press 'Next' to start."
+    },
+    "flush_3": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
         "description": "Add 1.0 ml of PBS",
@@ -97,6 +107,11 @@
         "completion_msg": "Step Complete!"
     },
     "add_sample": {
+        "type": "UserActionScreen",
+        "header": "Add sample",
+        "description": "Add 0.5 mL sample to reservoir. Press 'Next' to start"
+    },
+    "flush_4": {
         "type": "MachineActionScreen",
         "header": "Add Sample",
         "description": "Add 0.5 ml of Sample",
@@ -111,6 +126,11 @@
         "completion_msg": "Step Complete!"
     },
     "pbs_2": {
+        "type": "UserActionScreen",
+        "header": "PBS Wash 1",
+        "description": "Add 700 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
+    },
+    "wash_1": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
         "description": "Add 0.7 ml of PBS",
@@ -125,6 +145,11 @@
         "completion_msg": "Step Complete!"
     },
     "pbs_3": {
+        "type": "UserActionScreen",
+        "header": "PBS Wash 2",
+        "description": "Add 700 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
+    },
+    "flush_5": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
         "description": "Add 0.7 ml of PBS",
@@ -139,6 +164,11 @@
         "completion_msg": "Step Complete!"
     },
     "pbs_4": {
+        "type": "UserActionScreen",
+        "header": "PBS Wash 3",
+        "description": "Add 700 \u00b5L 1xPBS to reservoir. Press 'Next' to start."
+    },
+    "flush_6": {
         "type": "MachineActionScreen",
         "header": "Add PBS",
         "description": "Add 0.7 ml of PBS",
@@ -153,6 +183,11 @@
         "completion_msg": "Step Complete!"
     },
     "qiazol": {
+        "type": "UserActionScreen",
+        "header": "Qiazol",
+        "description": "Add 700 \u00b5L Qiazol to reservoir. Press 'Next' to start."
+    },
+    "extract_1": {
         "type": "MachineActionScreen",
         "header": "Add Qiazol",
         "description": "Add 0.2 ml of Qiazol",
@@ -172,7 +207,7 @@
         },
         "completion_msg": "Step Complete!"
     },
-    "extract": {
+    "chase_1": {
         "type": "MachineActionScreen",
         "header": "Add Qiazol",
         "description": "Add 1.0 ml of Qiazol",
