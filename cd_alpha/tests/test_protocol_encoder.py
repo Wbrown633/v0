@@ -89,7 +89,16 @@ class TestProtocolEncoder:
         gui_dict = {"flush_1" : flush_1, "flush_3": flush_3, "flush_4": flush_4, "wash_1": wash_1,
         "flush_5": flush_5, "flush_6": flush_6, "extract_1": extract_1}
 
-        step_updates_dict = {"insert_chip": JSONScreenBuilder("insert_chip").add_description("Insert the chip. Press 'Next' to proceed.")}
+        step_updates_dict = {"flush_1": JSONScreenBuilder("flush_1").add_header("F-127 pull").add_description("Wetting the chip with F-127"),
+                                "incubate_1": JSONScreenBuilder("incubate_1").add_header("Blocking").add_description("Blocking chip with F-127").add_completion_msg("F-127 blocking finished."),\
+                                "flush_2": JSONScreenBuilder("flush_2").add_header("F-127 pull").add_description("Wetting the chip with F-127").add_completion_msg("F-127 Pull Finished."),
+                                "flush_3": JSONScreenBuilder("flush_3").add_header("PBS rinse").add_description("Rinsing the chip.").add_completion_msg("PBS rinse complete"),
+                                "flush_4": JSONScreenBuilder("flush_4").add_header("Sample pull").add_description("Pulling sample thru chip.").add_completion_msg("Sample pull completed"),
+                                "wash_1": JSONScreenBuilder("wash_1").add_header("PBS Wash 1").add_description("Washing the chip.").add_completion_msg("Wash 1 complete"),
+                                "flush_5": JSONScreenBuilder("flush_5").add_header("PBS Wash 2").add_description("Washing the chip.").add_completion_msg("Wash 2 complete"),
+                                "flush_6": JSONScreenBuilder("flush_6").add_header("PBS Wash 3").add_description("Washing the chip.").add_completion_msg("Wash 3 complete"),
+                                "extract_1": JSONScreenBuilder("extract_1").add_header("Qiazol 1").add_description("Pulling Qiazol into chip."),
+                                "chase_1": JSONScreenBuilder("chase_1").add_header("Qiazol 2").add_description("Extracting lysate from chip.").add_completion_msg("Qiazol pull and incubation complete")}
         # make step updates needed, which for now is mostly just fixing header, description, and completion
         g = GUIModel(protocol_number="21v3", instruction_screens_dict=gui_dict, step_updates_dict=step_updates_dict)
         encoder = JSONProtocolEncoder(protocol=p,guimodel=g)

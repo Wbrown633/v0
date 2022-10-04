@@ -60,6 +60,8 @@ class GUIModel:
     """Class to contain all GUI specific logic. Including user instruction screens"""
     protocol_number: str
     instruction_screens_dict: dict[str, JSONScreenBuilder]
+    # TODO could just update this to be its own class of JSONScreenbuilder called UpdateJSONScreenBuilder
+    # that inherits from screenbuilder and takes in the name of the step to update
     step_updates_dict: dict[str, JSONScreenBuilder] = None
     start_steps: list[JSONScreenBuilder] = None
     shutdown_steps: list[JSONScreenBuilder] = None
@@ -101,18 +103,21 @@ class JSONProtocolEncoder:
 
             step_header = first_action_in_list.make_header()
             step_description = first_action_in_list.make_user_description()
-            step_completion = "Step complete!"
+            step_completion = None
 
             updates_dict = self.guimodel.step_updates_dict
             if updates_dict is not None and step.name in updates_dict:
-                if "header" in updates_dict[step.name]:
-                    step_header = updates_dict[step.name]["header"]
-                if "description" in updates_dict[step.name]:
-                    step_description = updates_dict[step.name]["description"]
-                if "completion_msg" in updates_dict[step.name]:
-                    step_completion = updates_dict[step.name]["completion_msg"]
+                if "header" in updates_dict[step.name].stepdict:
+                    step_header = updates_dict[step.name].stepdict["header"]
+                if "description" in updates_dict[step.name].stepdict:
+                    step_description = updates_dict[step.name].stepdict["description"]
+                if "completion_msg" in updates_dict[step.name].stepdict:
+                    step_completion = updates_dict[step.name].stepdict["completion_msg"]
             
             screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(step_header).add_description(step_description).add_actions(step.list_of_actions)
+            if step_completion is not None:
+                screen.add_completion_msg(step_completion)
+                
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders
