@@ -54,8 +54,7 @@
                 "rate_mh": 15,
                 "eq_time": 120
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "remove_kit": {
         "type": "UserActionScreen",

@@ -59,8 +59,7 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "incubate_1": {
         "type": "MachineActionScreen",
@@ -70,8 +69,7 @@
             "INCUBATE": {
                 "time": 3600
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "flush_2": {
         "type": "MachineActionScreen",
@@ -84,8 +82,7 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "pbs_1": {
         "type": "UserActionScreen",
@@ -103,8 +100,7 @@
                 "rate_mh": 15,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "add_sample": {
         "type": "UserActionScreen",
@@ -122,8 +118,7 @@
                 "rate_mh": 1.0,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "pbs_2": {
         "type": "UserActionScreen",
@@ -141,8 +136,7 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "pbs_3": {
         "type": "UserActionScreen",
@@ -160,8 +154,7 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "pbs_4": {
         "type": "UserActionScreen",
@@ -179,8 +172,7 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "qiazol": {
         "type": "UserActionScreen",
@@ -204,8 +196,7 @@
                 "rate_mh": -50,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "chase_1": {
         "type": "MachineActionScreen",
@@ -218,8 +209,7 @@
                 "rate_mh": 15.0,
                 "eq_time": 0
             }
-        },
-        "completion_msg": "Step complete!"
+        }
     },
     "remove_kit": {
         "type": "UserActionScreen",

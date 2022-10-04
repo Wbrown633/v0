@@ -89,8 +89,9 @@ class TestProtocolEncoder:
         gui_dict = {"flush_1" : flush_1, "flush_3": flush_3, "flush_4": flush_4, "wash_1": wash_1,
         "flush_5": flush_5, "flush_6": flush_6, "extract_1": extract_1}
 
+        step_updates_dict = {"insert_chip": JSONScreenBuilder("insert_chip").add_description("Insert the chip. Press 'Next' to proceed.")}
         # make step updates needed, which for now is mostly just fixing header, description, and completion
-        g = GUIModel("21v3", gui_dict)
+        g = GUIModel(protocol_number="21v3", instruction_screens_dict=gui_dict, step_updates_dict=step_updates_dict)
         encoder = JSONProtocolEncoder(protocol=p,guimodel=g)
 
         output_file = "encoder_21v3.json"
