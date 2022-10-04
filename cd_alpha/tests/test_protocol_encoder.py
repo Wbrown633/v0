@@ -42,7 +42,6 @@ class TestProtocolEncoder:
 
     def test_21v3_json_encoder(self):
 
-        #TODO need a way to avoid making user screen when making pump step
         #TODO need to be able to add completion message
         p = Protocol("json_encoder_21v3.json")
 

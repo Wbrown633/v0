@@ -60,6 +60,7 @@ class GUIModel:
     """Class to contain all GUI specific logic. Including user instruction screens"""
     protocol_number: str
     instruction_screens_dict: dict[str, JSONScreenBuilder]
+    step_updates_dict: dict[str, JSONScreenBuilder] = None
     start_steps: list[JSONScreenBuilder] = None
     shutdown_steps: list[JSONScreenBuilder] = None
 
@@ -81,8 +82,6 @@ class JSONProtocolEncoder:
     def make_json_protocol_file(self, protocol_number: str, output_file_path: str):
         #TODO how to handle GUI specific settings/logic
         # such as user instructions and completion messages? 
-
-        # Also pass in logic for how we construct GUI specific information
         screen_builder_from_protocol = self.make_screen_builders_from_protocol()
         fac = JSONScreenFactory(protocol_number=protocol_number,list_of_screen_builder=screen_builder_from_protocol)
         fac.create_protocol(output_file=output_file_path)
@@ -91,16 +90,29 @@ class JSONProtocolEncoder:
 
         list_of_screen_builders = []
         for step in self.protocol.list_of_steps:
-            # If the ActionType is PUMP, add a user action screen, except for some cases
-            # For legacy protocols we never have a situation where PUMP isn't first in the action list 
             first_action_in_list = step.list_of_actions[0]
 
             # Check if this step needs an instruction screen
             # if it does, put it in before we add the model step
+            # also check if we need to update the default settings for 
+            # each model step
             if step.name in self.guimodel.instruction_screens_dict:
                 list_of_screen_builders.append(self.guimodel.instruction_screens_dict[step.name])
+
+            step_header = first_action_in_list.make_header()
+            step_description = first_action_in_list.make_user_description()
+            step_completion = "Step complete!"
+
+            updates_dict = self.guimodel.step_updates_dict
+            if step.name in updates_dict:
+                if "header" in updates_dict[step.name]:
+                    step_header = updates_dict[step.name]["header"]
+                if "description" in updates_dict[step.name]:
+                    step_description = updates_dict[step.name]["description"]
+                if "completion_msg" in updates_dict[step.name]:
+                    step_completion = updates_dict[step.name]["completion_msg"]
             
-            screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(first_action_in_list.make_header()).add_description(first_action_in_list.make_header()).add_description(first_action_in_list.make_user_description()).add_actions(step.list_of_actions).add_completion_msg("Step Complete!")
+            screen = JSONScreenBuilder(step.name).add_type(ScreenType.MachineActionScreen).add_header(step_header).add_description(step_description).add_actions(step.list_of_actions).add_completion_msg(step_completion)
             list_of_screen_builders.append(screen)
 
         return list_of_screen_builders
