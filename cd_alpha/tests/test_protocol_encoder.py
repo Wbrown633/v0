@@ -37,7 +37,6 @@ class TestProtocolEncoder:
 
     def test_21v3_json_encoder(self):
 
-        #TODO need to be able to add completion message
         p = Protocol("json_encoder_21v3.json")
 
         a = Pump(material="F-127", target="waste", vol_ml=0.5, rate_mh=15, eq_time=0)
