@@ -110,7 +110,6 @@ class GUIModel:
         if self.shutdown_steps == None:
             self.shutdown_steps = define_teardown_steps
 
- 
 
 class JSONProtocolEncoder:
     """Given a protocol object, return a legacy json representation as a string"""
