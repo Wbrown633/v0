@@ -9,7 +9,7 @@ from pathlib import Path
 
 class TestJSONScreenFactory():
 
-    def setUp(self, testmethod):
+    def setup_method(self, test_method):
         # import class and prepare everything here.
         self.gui_file_path = Path.cwd() / 'cd_alpha/tests/v0-protocol-22v0.json'
         

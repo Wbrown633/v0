@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from typing import Dict, List
-from cd_alpha.ChipFlowApp import UserActionScreen
+from cd_alpha.Step import ScreenType
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
 from cd_alpha.Step import ScreenType, ActionType, Step, Reset, Grab
