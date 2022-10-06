@@ -623,7 +623,9 @@ class ProcessWindow(BoxLayout):
 
         protocol_obj = JSONProtocolParser(Path(protocol_location)).make_protocol()
 
+        gui_screens = JSONProtocolParser(Path(protocol_location)).json_to_gui_model()
         logging.info(protocol_obj)
+        logging.info(gui_screens)
 
         if self.app.START_STEP not in protocol.keys():
             raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))

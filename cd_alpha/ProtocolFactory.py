@@ -68,23 +68,23 @@ class JSONProtocolParser:
         for step in json_dict:
             j = JSONScreenBuilder(step)
 
-            if "type" in step.keys():
-                if step["type"] == "UserActionScreen":
+            if "type" in json_dict[step]:
+                if json_dict[step]["type"] == "UserActionScreen":
                     screen_type = ScreenType.UserActionScreen
-                elif step["type"] == "MachineActionScreen":
+                elif json_dict[step]["type"] == "MachineActionScreen":
                     screen_type = ScreenType.MachineActionScreen
                 else:
                     raise KeyError(f"Invalid screen type in {step}")
                 j.add_type(screen_type)
 
-            elif "header" in step.keys():
-                j.add_header(step["header"])
+            if "header" in json_dict[step]:
+                j.add_header(json_dict[step]["header"])
 
-            elif "description" in step.keys():
-                j.add_description(step["description"])
+            if "description" in json_dict[step]:
+                j.add_description(json_dict[step]["description"])
 
-            elif "completion_msg" in step.keys():
-                j.add_completion_msg(step["completion_msg"])
+            if "completion_msg" in json_dict[step]:
+                j.add_completion_msg(json_dict[step]["completion_msg"])
 
             list_of_builders.append(j)
 
@@ -166,6 +166,9 @@ class JSONScreenBuilder:
     def __init__(self, step_name: str) -> None:
         self.step_name = step_name
         self.stepdict = OrderedDict()
+
+    def __eq__(self, __o: object) -> bool:
+        return __o.step_name == self.step_name and __o.stepdict == self.stepdict
 
     # TODO can add methods be programatically created? they all are basically the same 
     def add_type(self, type: ScreenType) -> JSONScreenBuilder:

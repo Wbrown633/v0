@@ -46,10 +46,40 @@ class TestJSONScreenFactory():
         json_from_builder = JSONScreenBuilder("PBS").add_type(ScreenType.MachineActionScreen).add_header("PBS pull").add_description("Test PBS steps.").add_actions([Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15.0, eq_time=120)]).getStep()
         assert expected_json_dict == json_from_builder
 
-    def test_gui_screenbuilder_list(self):
+    def test_gui_screenbuilder_list_22v0(self):
         list_of_screenbuilder = JSONProtocolParser(self.gui_file_path).json_to_gui_model()
-        print(list_of_screenbuilder)
-        assert False
+        
+        home = JSONScreenBuilder("home").add_type(ScreenType.UserActionScreen).add_header("Chip Diagnostics").add_description("Ready for a new test with Small TENPO protocol 22v0. Press 'Start' to begin.")
+        reset_start = JSONScreenBuilder("reset_start").add_type(ScreenType.MachineActionScreen).add_header("Initialization").add_description("Initializing device. Resetting syringe positions and checking connections.").add_completion_msg("Machine has been homed")
+        insert_syringes = JSONScreenBuilder("insert_syringes").add_type(ScreenType.UserActionScreen).add_header("Insert syringes").add_description("Insert the waste and lysate syringe. Press 'Start initialization' to initialize when ready.")
+        grab_syringes = JSONScreenBuilder("grab_syringes").add_type(ScreenType.MachineActionScreen).add_header("Grabbing syringes").add_description("The device is now grabbing hold of the syringes to secure a precise operation.").add_completion_msg("Syringes ready")
+        insert_chip = JSONScreenBuilder("insert_chip").add_type(ScreenType.UserActionScreen).add_header("Insert Kit").add_description("Insert the chip. Press 'Next' to proceed.")
+        f127 = JSONScreenBuilder("f127").add_type(ScreenType.UserActionScreen).add_header("Add F-127").add_description("Add 1.0 mL 1% F-127 in 1xPBS to reservoir. Press 'Next' to start.")
+        flush_1 = JSONScreenBuilder("flush_1").add_type(ScreenType.MachineActionScreen).add_header("F-127 pull").add_description("Wetting the chip with F-127")
+        incubate_1 = JSONScreenBuilder("incubate_1").add_type(ScreenType.MachineActionScreen).add_header("Blocking").add_description("Blocking chip with F-127").add_completion_msg("F-127 blocking finished.")
+        flush_2 = JSONScreenBuilder("flush_2").add_type(ScreenType.MachineActionScreen).add_header("F-127 pull").add_description("Wetting the chip with F-127").add_completion_msg("F-127 Pull Finished.")
+        pbs_1 = JSONScreenBuilder("pbs_1").add_type(ScreenType.UserActionScreen).add_header("PBS rinse").add_description("Add 1 mL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_3 = JSONScreenBuilder("flush_3").add_type(ScreenType.MachineActionScreen).add_header("PBS rinse").add_description("Rinsing the chip.").add_completion_msg("PBS rinse complete")
+        add_sample = JSONScreenBuilder("add_sample").add_type(ScreenType.UserActionScreen).add_header("Add sample").add_description("Add 1.0 mL sample to reservoir. Press 'Next' to start")
+        flush_4 = JSONScreenBuilder("flush_4").add_type(ScreenType.MachineActionScreen).add_header("Sample pull").add_description("Pulling sample thru chip.").add_completion_msg("Sample pull completed")
+        pbs_2 = JSONScreenBuilder("pbs_2").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 1").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        wash_1 = JSONScreenBuilder("wash_1").add_type(ScreenType.MachineActionScreen).add_header("PBS Wash 1").add_description("Washing the chip.").add_completion_msg("Wash 1 complete")
+        pbs_3 = JSONScreenBuilder("pbs_3").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 2").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_5 = JSONScreenBuilder("flush_5").add_type(ScreenType.MachineActionScreen).add_header("PBS Wash 2").add_description("Washing the chip.").add_completion_msg("Wash 2 complete")
+        pbs_4 = JSONScreenBuilder("pbs_4").add_type(ScreenType.UserActionScreen).add_header("PBS Wash 3").add_description("Add 700 µL 1xPBS to reservoir. Press 'Next' to start.")
+        flush_6 = JSONScreenBuilder("flush_6").add_type(ScreenType.MachineActionScreen).add_header("PBS Wash 3").add_description("Washing the chip.").add_completion_msg("Wash 3 complete")
+        qiazol = JSONScreenBuilder("qiazol").add_type(ScreenType.UserActionScreen).add_header("RIPA").add_description("Add 600 µL RIPA to reservoir. Press 'Next' to start.")
+        extract_1 = JSONScreenBuilder("extract_1").add_type(ScreenType.MachineActionScreen).add_header("RIPA 1").add_description("Pulling RIPA into chip.")
+        chase_1 = JSONScreenBuilder("chase_1").add_type(ScreenType.MachineActionScreen).add_header("RIPA 2").add_description("Extracting lysate from chip.").add_completion_msg("RIPA pull and incubation complete").add_completion_msg("RIPA pull and incubation complete")
+        remove_kit = JSONScreenBuilder("remove_kit").add_type(ScreenType.UserActionScreen).add_header("Remove kit").add_description("Remove used kit from machine.")
+        reset_end = JSONScreenBuilder("reset_end").add_type(ScreenType.MachineActionScreen).add_header("Homing device").add_description("Resetting syringe pump positions.").add_completion_msg("App will restart so a new test may begin.")
+
+        list_of_screenbuilder_expected = [home, reset_start, insert_syringes, grab_syringes, insert_chip, f127, flush_1, incubate_1,
+        flush_2, pbs_1, flush_3, add_sample, flush_4, pbs_2, wash_1, pbs_3, flush_5, pbs_4, flush_6,
+        qiazol, extract_1, chase_1, remove_kit, reset_end]
+
+        
+        assert list_of_screenbuilder == list_of_screenbuilder_expected
 
     def protocol_factory_make_20v0(self) -> List[JSONScreenBuilder]:
         f127 = JSONScreenBuilder("f127").add_type(ScreenType.UserActionScreen).add_header("Add F-127")\
