@@ -1,9 +1,4 @@
-from cmath import exp
-from locale import ABDAY_3
-from operator import eq
-from pathlib import Path
 import pathlib
-from tkinter import E
 import pytest
 import json
 from cd_alpha.Protocol import Protocol
@@ -57,23 +52,23 @@ class TestProtocolEncoder:
         a3 = Pump(material="PBS", target="waste", vol_ml= 1.0, rate_mh= 15, eq_time=0)
         s3 = Step("flush_3", [a3])
 
-        a4 = Pump(material="Sample", target="waste", vol_ml= 0.5, rate_mh= 1.0, eq_time=0)
+        a4 = Pump(material="Sample", target="waste", vol_ml= 0.50, rate_mh= 1.0, eq_time=0)
         s4 = Step("flush_4", [a4])
 
-        a5 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15.0, eq_time=0)
+        a5 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15, eq_time=0)
         s5 = Step("wash_1", [a5])
 
-        a6 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15.0, eq_time=0)
+        a6 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15, eq_time=0)
         s6 = Step("flush_5", [a6])
 
-        a7 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15.0, eq_time=0)
+        a7 = Pump(material="PBS", target="waste", vol_ml= 0.7, rate_mh= 15, eq_time=0)
         s7 = Step("flush_6", [a7])
 
-        a8 = Pump(material="Qiazol", target="lysate", vol_ml= 0.2, rate_mh= 15.0, eq_time=150)
+        a8 = Pump(material="Qiazol", target="lysate", vol_ml= 0.2, rate_mh= 15, eq_time=150)
         a9 = Release(target="waste", vol_ml=1.5, rate_mh=-50, eq_time=0)
         s8 = Step("extract_1", [a8, a9])
 
-        a10 = Pump(material="Qiazol", target="lysate", vol_ml= 1.0, rate_mh= 15.0, eq_time=0)
+        a10 = Pump(material="Qiazol", target="lysate", vol_ml= 1.0, rate_mh= 15, eq_time=0)
         s9 = Step("chase_1", [a10])
 
         p.add_steps([s, s1, s2, s3, s4, s5, s6, s7, s8, s9])

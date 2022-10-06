@@ -137,7 +137,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.7,
-                "rate_mh": 15.0,
+                "rate_mh": 15,
                 "eq_time": 0
             }
         },
@@ -156,7 +156,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.7,
-                "rate_mh": 15.0,
+                "rate_mh": 15,
                 "eq_time": 0
             }
         },
@@ -175,7 +175,7 @@
             "PUMP": {
                 "target": "waste",
                 "vol_ml": 0.7,
-                "rate_mh": 15.0,
+                "rate_mh": 15,
                 "eq_time": 0
             }
         },
@@ -194,7 +194,7 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 0.2,
-                "rate_mh": 15.0,
+                "rate_mh": 15,
                 "eq_time": 150
             },
             "RELEASE": {
@@ -213,7 +213,7 @@
             "PUMP": {
                 "target": "lysate",
                 "vol_ml": 1.0,
-                "rate_mh": 15.0,
+                "rate_mh": 15,
                 "eq_time": 0
             }
         },
