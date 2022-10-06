@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from typing import Dict, List
+from cd_alpha.ChipFlowApp import UserActionScreen
 from cd_alpha.Protocol import Protocol
 from pathlib import Path
 from cd_alpha.Step import ScreenType, ActionType, Step, Reset, Grab
@@ -54,6 +55,41 @@ class JSONProtocolParser:
         p = Protocol(self.json_filepath.stem)
         p.add_steps_from_json(json_dict)
         return p
+    
+    def json_to_gui_model(self) -> list[JSONScreenBuilder]:
+        # given a path obj to a legacy json protocol, make the gui model needed to run this protocol
+        # Only care about type, header, description, and completion msg
+
+        list_of_builders = []
+
+        with open(self.json_filepath) as f:
+            json_dict = json.load(f)
+        
+        for step in json_dict:
+            j = JSONScreenBuilder(step)
+
+            if "type" in step.keys():
+                if step["type"] == "UserActionScreen":
+                    screen_type = ScreenType.UserActionScreen
+                elif step["type"] == "MachineActionScreen":
+                    screen_type = ScreenType.MachineActionScreen
+                else:
+                    raise KeyError(f"Invalid screen type in {step}")
+                j.add_type(screen_type)
+
+            elif "header" in step.keys():
+                j.add_header(step["header"])
+
+            elif "description" in step.keys():
+                j.add_description(step["description"])
+
+            elif "completion_msg" in step.keys():
+                j.add_completion_msg(step["completion_msg"])
+
+            list_of_builders.append(j)
+
+        return list_of_builders   
+            
 
 @dataclass
 class GUIModel:
@@ -74,24 +110,7 @@ class GUIModel:
         if self.shutdown_steps == None:
             self.shutdown_steps = define_teardown_steps
 
-    def json_to_gui_model(self, json_path:Path):
-        # given a path obj to a legacy json protocol, make the gui model needed to run this protocol
-        # Only care about type, header, description, and completion msg
-        
-        for step in json_dict:
-            j = JSONScreenBuilder(step)
-            # type
-            if "type" in step.keys():
-                j.add_type()
-
-            elif "header" in step.keys():
-                j.add_header()
-
-            elif "description" in step.keys():
-                j.add_description
-
-            elif "completion_msg" in steps.keys():
-                j.add_completion_msg()
+ 
 
 class JSONProtocolEncoder:
     """Given a protocol object, return a legacy json representation as a string"""
@@ -220,4 +239,4 @@ class JSONScreenFactory:
                 steps_dictionary.update(screen.getStep())  
             json.dump(steps_dictionary, f, indent=4)
 
-            
+   

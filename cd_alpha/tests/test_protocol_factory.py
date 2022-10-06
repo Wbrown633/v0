@@ -2,16 +2,16 @@ from typing import List
 import pytest
 from collections import OrderedDict
 from cd_alpha.Step import ScreenType, Pump, Incubate, Release, Reset
-from cd_alpha.ProtocolFactory import JSONScreenFactory, JSONScreenBuilder
+from cd_alpha.ProtocolFactory import JSONProtocolParser, JSONScreenFactory, JSONScreenBuilder
 from pkg_resources import resource_filename
 import json
-
+from pathlib import Path
 
 class TestJSONScreenFactory():
 
     def setUp(self, testmethod):
         # import class and prepare everything here.
-        pass
+        self.gui_file_path = Path.cwd() / 'cd_alpha/tests/v0-protocol-22v0.json'
         
 
     def test_protocol_factory_20v0(self):
@@ -45,6 +45,11 @@ class TestJSONScreenFactory():
         
         json_from_builder = JSONScreenBuilder("PBS").add_type(ScreenType.MachineActionScreen).add_header("PBS pull").add_description("Test PBS steps.").add_actions([Pump(material="PBS", target="waste", vol_ml=1.0, rate_mh=15.0, eq_time=120)]).getStep()
         assert expected_json_dict == json_from_builder
+
+    def test_gui_screenbuilder_list(self):
+        list_of_screenbuilder = JSONProtocolParser(self.gui_file_path).json_to_gui_model()
+        print(list_of_screenbuilder)
+        assert False
 
     def protocol_factory_make_20v0(self) -> List[JSONScreenBuilder]:
         f127 = JSONScreenBuilder("f127").add_type(ScreenType.UserActionScreen).add_header("Add F-127")\
