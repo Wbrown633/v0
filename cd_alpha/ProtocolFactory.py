@@ -74,6 +74,25 @@ class GUIModel:
         if self.shutdown_steps == None:
             self.shutdown_steps = define_teardown_steps
 
+    def json_to_gui_model(self, json_path:Path):
+        # given a path obj to a legacy json protocol, make the gui model needed to run this protocol
+        # Only care about type, header, description, and completion msg
+        
+        for step in json_dict:
+            j = JSONScreenBuilder(step)
+            # type
+            if "type" in step.keys():
+                j.add_type()
+
+            elif "header" in step.keys():
+                j.add_header()
+
+            elif "description" in step.keys():
+                j.add_description
+
+            elif "completion_msg" in steps.keys():
+                j.add_completion_msg()
+
 class JSONProtocolEncoder:
     """Given a protocol object, return a legacy json representation as a string"""
     def __init__(self, protocol: Protocol, guimodel: GUIModel) -> str:

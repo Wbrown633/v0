@@ -27,6 +27,8 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
 from pkg_resources import resource_filename
+from pathlib import Path
+from cd_alpha.ProtocolFactory import JSONProtocolParser
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
@@ -615,8 +617,13 @@ class ProcessWindow(BoxLayout):
         self.app = App.get_running_app()
 
         # TODO: break protocol loading into its own method
-        with open(self.app.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
+        protocol_location = self.app.PATH_TO_PROTOCOLS + self.protocol_file_name
+        with open(protocol_location, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
+
+        protocol_obj = JSONProtocolParser(Path(protocol_location)).make_protocol()
+
+        logging.info(protocol_obj)
 
         if self.app.START_STEP not in protocol.keys():
             raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))
@@ -792,7 +799,7 @@ class ProcessWindow(BoxLayout):
         self.app.cleanup()
         # TODO: Any local cleanup?
 
-    # TODO for testability instead of mutating the current App, we could return a ScreenManager
+    # TODO for testability instead of mutating the current App, we could return a Protocol object
     def load_protocol(self, path_to_protocol) -> ProcessScreenManager:
         
         load_protocol_screenmanager = ProcessScreenManager(main_window=self)
