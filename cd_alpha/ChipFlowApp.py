@@ -26,6 +26,7 @@ from pkg_resources import resource_filename
 from pathlib import Path
 from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolChooser, SummaryScreen, UserActionScreen, MachineActionScreen, ActionDoneScreen, ChipFlowScreen
 from cd_alpha.ProtocolFactory import JSONProtocolParser
+from cd_alpha.Step import Step
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
@@ -258,6 +259,7 @@ class ProcessWindow(BoxLayout):
             elif screen_type == "MachineActionScreen":
 
                 this_screen = MachineActionScreen(
+                    Step(None, None),
                     name=name,
                     header=step["header"],
                     description=step.get("description", ""),
