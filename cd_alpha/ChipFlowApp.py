@@ -25,7 +25,8 @@ from kivy.core.window import Window
 from pkg_resources import resource_filename
 from pathlib import Path
 from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolChooser, SummaryScreen, UserActionScreen, MachineActionScreen, ActionDoneScreen, ChipFlowScreen
-from cd_alpha.ProtocolFactory import JSONProtocolParser
+from cd_alpha.Protocol import Protocol
+from cd_alpha.ProtocolFactory import JSONProtocolEncoder, JSONProtocolParser
 from cd_alpha.Step import Step
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
@@ -530,6 +531,8 @@ class ChipFlowApp(App):
         self.START_STEP = self.device.START_STEP
         self.POST_RUN_RATE_MM_CALIBRATION = self.device.POST_RUN_RATE_MM
         self.POST_RUN_VOL_ML_CALIBRATION = self.device.POST_RUN_VOL_ML
+        self.protocol = JSONProtocolParser(Path(self.PATH_TO_PROTOCOLS + self.PROTOCOL_FILE_NAME)).make_protocol(self.PROTOCOL_FILE_NAME)
+        self.chip_controller = ChipController(self.protocol)
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 

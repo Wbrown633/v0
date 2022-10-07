@@ -105,8 +105,7 @@ class MachineActionScreen(ChipFlowScreen):
     time_remaining_sec = NumericProperty(0)
     progress = NumericProperty(0.0)
 
-    def __init__(self, step:Step, *args, **kwargs):
-        self.step = step
+    def __init__(self, *args, **kwargs):
         self.time_total = 0
         self.time_elapsed = 0
         self.app = App.get_running_app()
@@ -121,23 +120,7 @@ class MachineActionScreen(ChipFlowScreen):
         # TODO should this be done with a controller?
         # how do we keep all of these classes testable
         # prevent App from leaking into classes where possible
-        for action in self.step.list_of_actions:
-            if type(action).__name__ == "Pump":
-                if action.target == "waste":
-                    addr = WASTE_ADDR
-                if action.target == "lysate":
-                    addr = LYSATE_ADDR
-                rate_mh = action.rate_mh
-                vol_ml = action.vol_ml
-                eq_time = action.eq_time
-                self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
-                self.time_elapsed = 0
-                self._extracted_from_start_13("Addr = ", addr, rate_mh, vol_ml)
-                self.app.scheduled_events.append(
-                    Clock.schedule_interval(
-                        self.set_progress, self.app.progressbar_update_interval
-                    )
-                )
+        self.app.chip_controller.next()
 
         for action, params in self.action.items():
             if action == "PUMP":
@@ -474,7 +457,6 @@ class KivyScreenFactory:
             elif screen_type == "MachineActionScreen":
 
                 this_screen = MachineActionScreen(
-                    step=step,
                     name=name,
                     header=step["header"],
                     description=step.get("description", ""),
