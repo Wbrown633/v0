@@ -58,8 +58,6 @@ Builder.load_file(
     resource_filename("cd_alpha", "gui-elements/protocolchooser.kv")
 )
 
-### UTIL FUNCTIONS ###
-
 
 class ProcessScreenManager(ScreenManager):
     def __init__(self, *args, **kwargs):
@@ -87,6 +85,7 @@ class ProcessScreenManager(ScreenManager):
         # TODO: any cleanup to be done?
         self.main_window.start_over()
 
+
 class ProgressDot(Widget):
     status = StringProperty()
 
@@ -99,11 +98,7 @@ class ProgressDot(Widget):
         if status in ["past", "present", "future"]:
             self.status = status
         else:
-            raise TypeError(
-                "Status should be either of: 'past', 'present', 'future'. Got: '{}'".format(
-                    status
-                )
-            )
+            raise TypeError(f"Status should be either of: 'past', 'present', 'future'. Got: '{status}'")
 
 
 class SteppedProgressBar(GridLayout):
@@ -221,7 +216,7 @@ class ProcessWindow(BoxLayout):
         list_of_kivy_screens = KivyScreenFactory(gui_screens).make_kivy_screens()
 
         if self.app.START_STEP not in protocol.keys():
-            raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))
+            raise KeyError(f"{self.app.START_STEP} not a valid step in the protocol.")
 
         # if we're supposed to start at a step other than 'home' remove other steps from the protocol
         protocol_copy = OrderedDict()
@@ -314,9 +309,7 @@ class ProcessWindow(BoxLayout):
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
-        logging.info(
-            "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
-        )
+        logging.info(f"Widgets in process screen manager: {self.process_sm.screen_names}")
 
     def show_abort_popup(self, btn):
         popup_outside_padding = 60
@@ -501,9 +494,8 @@ class ProcessWindow(BoxLayout):
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
-        logging.info(
-            "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
-        )
+        logging.info(f"Widgets in process screen manager: {self.process_sm.screen_names}")
+
         return load_protocol_screenmanager
 
     def screenduplicates(self, screen_names):
@@ -519,8 +511,6 @@ class ProcessWindow(BoxLayout):
 class ChipFlowApp(App):
     def __init__(self, **kwargs):
         kivy.require("2.0.0")
-        
-
         self.device = Device(resource_filename("cd_alpha", "device_config.json"))
         # Change the value in the config file to change which protocol is in use
         self.PROTOCOL_FILE_NAME = self.device.DEFAULT_PROTOCOL

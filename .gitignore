@@ -14,3 +14,4 @@ __pycache__/**
 cd_alpha/tests/__pycache__/**
 cd_alpha/Protocol.py
 .DS_Store
+cd_alpha/protocols/__pycache__/*

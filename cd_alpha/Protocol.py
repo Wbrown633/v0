@@ -1,6 +1,7 @@
 from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step
 import json
-from typing import Dict, List
+from typing import List
+
 
 class Protocol:
     def __init__(self, name: str) -> None:
