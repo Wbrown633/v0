@@ -3,6 +3,7 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
+from ast import Raise
 import contextlib
 from collections import OrderedDict
 import json
@@ -25,10 +26,13 @@ from kivy.core.window import Window
 from pkg_resources import resource_filename
 from pathlib import Path
 from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolChooser, SummaryScreen, UserActionScreen, MachineActionScreen, ActionDoneScreen, ChipFlowScreen
+from cd_alpha.NewEraPumps import PumpNetwork
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolEncoder, JSONProtocolParser
 from cd_alpha.Step import Step
 from cd_alpha.ChipController import ChipController
+from cd_alpha.software_testing.SerialStub import SerialStub
+from kivy.utils import platform
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
@@ -522,8 +526,7 @@ class ChipFlowApp(App):
         self.START_STEP = self.device.START_STEP
         self.POST_RUN_RATE_MM_CALIBRATION = self.device.POST_RUN_RATE_MM
         self.POST_RUN_VOL_ML_CALIBRATION = self.device.POST_RUN_VOL_ML
-        self.protocol = JSONProtocolParser(Path(self.PATH_TO_PROTOCOLS + self.PROTOCOL_FILE_NAME)).make_protocol(self.PROTOCOL_FILE_NAME)
-        self.chip_controller = ChipController(protocol=self.protocol, app=self)
+        
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 
@@ -549,8 +552,6 @@ class ChipFlowApp(App):
         else:
             # Normal production mode
             from NanoController import Nano
-            from NewEraPumps import PumpNetwork
-
             # For R0 debug
             Window.fullscreen = "auto"
             LOCAL_TESTING = False
@@ -563,14 +564,6 @@ class ChipFlowApp(App):
             )
             logging.info("Logging started")
             SPLIT_CHAR = "/"
-
-        # Establish serial connection to the pump controllers
-        # TODO should be handled in an object not in a top level namespace
-        if not LOCAL_TESTING:
-            self.ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
-        else:
-            self.ser = SerialStub()
-        self.pumps = PumpNetwork(self.ser)
 
         if self.DEBUG_MODE:
             logging.warning("CDA: *** DEBUG MODE ***")
@@ -615,15 +608,6 @@ class ChipFlowApp(App):
         else:
             logging.warning("DEBUG MODE: Not rebooting, just closing...")
 
-    def cleanup(self):
-        logging.debug("CDA: Cleaning upp")
-        logging.debug("CDA: Unscheduling events")
-        for se in self.scheduled_events:
-            with contextlib.suppress(AttributeError):
-                se.cancel()
-        self.scheduled_events = []
-        self.pumps.stop_all_pumps(self.list_of_pumps)
-
     def shutdown(self):
         logging.info("Shutting down...")
         self.cleanup()
@@ -650,11 +634,19 @@ class ChipFlowApp(App):
 def main():
     try:
         chip_app = ChipFlowApp()
-        chip_app.run()
+        # Establish serial connection to the pump controllers if on linux
+        if platform == 'linux':
+            ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+        else:
+            ser = SerialStub()
+        pumps = PumpNetwork(ser)
+        default_protocol = JSONProtocolParser(Path(chip_app.PATH_TO_PROTOCOLS + chip_app.PROTOCOL_FILE_NAME)).make_protocol(chip_app.PROTOCOL_FILE_NAME)
+        chip_controller = ChipController(protocol=default_protocol, app=chip_app, pumps=pumps, ser=ser)
+        chip_controller.run()
     except Exception:
-        chip_app.cleanup()
-        if not chip_app.DEBUG_MODE:
-            ChipFlowApp.reboot()
+        chip_controller.cleanup()
+        if not chip_controller.is_debug():
+            chip_controller.reboot()
         else:
             logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
@@ -662,3 +654,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

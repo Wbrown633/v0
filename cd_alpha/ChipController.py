@@ -1,8 +1,11 @@
+import contextlib
 from dataclasses import dataclass
+from typing import Any
 from kivy.app import App
 from kivy.clock import Clock
 import logging
 import time
+from cd_alpha.NewEraPumps import PumpNetwork
 from cd_alpha.Protocol import Protocol
 from functools import partial
 
@@ -11,6 +14,24 @@ from functools import partial
 class ChipController:
     protocol: Protocol
     app: App
+    pumps: PumpNetwork
+    ser: Any
+
+    def run(self):
+        '''Launch Kivy App.'''
+        self.app.run()
+
+    def cleanup(self):
+        logging.debug("CDA: Cleaning upp")
+        logging.debug("CDA: Unscheduling events")
+        for se in self.scheduled_events:
+            with contextlib.suppress(AttributeError):
+                se.cancel()
+        self.app.scheduled_events = []
+        self.pumps.stop_all_pumps(self.list_of_pumps)
+
+    def is_debug(self):
+        return self.app.DEBUG_MODE
 
     def next(self):
         '''Advance iterator to the next step in the protocol.'''
