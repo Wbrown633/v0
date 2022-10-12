@@ -7,6 +7,6 @@ from cd_alpha.Protocol import Protocol
 class ChipController:
     protocol: Protocol
 
-    def next():
+    def next(self):
         '''Advance iterator to the next step in the protocol.'''
         pass

@@ -28,6 +28,7 @@ from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolCh
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolEncoder, JSONProtocolParser
 from cd_alpha.Step import Step
+from cd_alpha.ChipController import ChipController
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
