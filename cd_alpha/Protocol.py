@@ -1,11 +1,11 @@
-from cd_alpha.Step import Grab, Incubate, Pump, Release, Reset, Step
+from cd_alpha.Step import ActionType, Grab, Incubate, Pump, Release, Reset, Step
 import json
 from typing import List
 
 
 class Protocol:
     def __init__(self, name: str) -> None:
-        self.list_of_steps = []
+        self.list_of_steps: list[Step] = []
         self.name = name
         self.POSSIBLE_MATERIALS = ["PBS", "F-127", "Sample", "RIPA", "Qiazol"] # TODO This should probably be an Enum, CASE SENSITIVE in tests
     

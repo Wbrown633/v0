@@ -6,6 +6,7 @@ from enum import Enum
 # TODO importing JSONScreenBuilder makes a circular import 
 # from cd_alpha.ScreenBuilder import JSONScreenBuilder
 
+
 class ActionType(ABC):
     def make_dict(self) -> Dict:
         return {self.__class__.__name__.upper():self.__dict__}
@@ -16,19 +17,20 @@ class ActionType(ABC):
     def make_user_description(self) -> str:
         return "Type description here."
 
-    
 
 @dataclass
 class Grab(ActionType):
     post_run_rate_mm: float
     post_run_vol_ml: float
 
+
 @dataclass
 class Release(ActionType):
-    target:str
+    target: str
     vol_ml: float
     rate_mh: float
     eq_time: int
+
 
 @dataclass
 class Pump(Release):
@@ -36,15 +38,16 @@ class Pump(Release):
 
     def make_dict(self) -> Dict:
         '''Do not include material for json dict, legacy compatability'''
-        dict = super().make_dict()
-        del dict["PUMP"]["material"]
-        return dict
+        pump_dict = super().make_dict()
+        del pump_dict["PUMP"]["material"]
+        return pump_dict
 
     def make_header(self) -> str:
         return f"Add {self.material}"
 
     def make_user_description(self) -> str:
         return f"Add {self.vol_ml} ml of {self.material}"
+
 
 @dataclass
 class Incubate(ActionType):

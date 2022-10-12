@@ -523,7 +523,7 @@ class ChipFlowApp(App):
         self.POST_RUN_RATE_MM_CALIBRATION = self.device.POST_RUN_RATE_MM
         self.POST_RUN_VOL_ML_CALIBRATION = self.device.POST_RUN_VOL_ML
         self.protocol = JSONProtocolParser(Path(self.PATH_TO_PROTOCOLS + self.PROTOCOL_FILE_NAME)).make_protocol(self.PROTOCOL_FILE_NAME)
-        self.chip_controller = ChipController(self.protocol)
+        self.chip_controller = ChipController(protocol=self.protocol, app=self)
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
 
