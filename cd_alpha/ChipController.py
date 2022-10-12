@@ -8,6 +8,7 @@ import time
 from cd_alpha.NewEraPumps import PumpNetwork
 from cd_alpha.Protocol import Protocol
 from functools import partial
+import os
 
 
 @dataclass
@@ -24,18 +25,30 @@ class ChipController:
     def cleanup(self):
         logging.debug("CDA: Cleaning upp")
         logging.debug("CDA: Unscheduling events")
-        for se in self.scheduled_events:
+        for se in self.app.scheduled_events:
             with contextlib.suppress(AttributeError):
                 se.cancel()
         self.app.scheduled_events = []
-        self.pumps.stop_all_pumps(self.list_of_pumps)
+        self.pumps.stop_all_pumps(self.app.list_of_pumps)
 
     def is_debug(self):
         return self.app.DEBUG_MODE
 
+    def reboot(self):
+        self.cleanup()
+        logging.info("CDA: Rebooting...")
+        if self.DEBUG_MODE:
+            logging.warning(
+                "CDA: In DEBUG mode, not rebooting down for real, only ending program."
+            )
+            self.app.stop()
+        else:
+            os.system("sudo reboot --poweroff now")
+
     def next(self):
         '''Advance iterator to the next step in the protocol.'''
         step = self.protocol.list_of_steps.pop(0)
+        logging.info("Made it to controller!")
 
         for action in step.list_of_actions:
             if type(action).__name__ == "Pump":
@@ -43,12 +56,12 @@ class ChipController:
                     addr = self.app.LYSATE_ADDR
                 elif action.target == "waste":
                     addr = self.app.WASTE_ADDR
-                rate_mh = action.target
-                vol_ml = action.vol_ml
-                eq_time = action.eq_time
+                rate_mh = float(action.rate_mh)
+                vol_ml = float(action.vol_ml)
+                eq_time = int(action.eq_time)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
-                run_pumps("Addr = ", addr, rate_mh, vol_ml)
+                self.run_pumps("Addr = ", addr, rate_mh, vol_ml)
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         self.set_progress, self.app.progressbar_update_interval
@@ -56,7 +69,7 @@ class ChipController:
                 )
 
             elif type(action).__name__ == "Incubate":
-                self.time_total = self.time
+                self.time_total = action.time
                 self.time_elapsed = 0
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
@@ -71,16 +84,16 @@ class ChipController:
                     )
                     return
                 for addr in [self.app.WASTE_ADDR, self.app.LYSATE_ADDR]:
-                    self.app.pumps.purge(1, addr)
+                    self.pumps.purge(1, addr)
                 time.sleep(1)
                 for addr in [self.app.WASTE_ADDR, self.app.LYSATE_ADDR]:
-                    self.app.pumps.stop(addr)
-                    self.app.pumps.purge(-1, addr)
+                    self.pumps.stop(addr)
+                    self.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d2", WASTE_ADDR, 2, self.next_step
+                            self.switched_reset, "d2", self.app.WASTE_ADDR, 2, self.next
                         ),
                         self.app.switch_update_interval,
                     )
@@ -89,7 +102,7 @@ class ChipController:
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d3", LYSATE_ADDR, 2, self.next_step
+                            self.switched_reset, "d3", self.app.LYSATE_ADDR, 2, self.next
                         ),
                         self.app.switch_update_interval,
                     )
@@ -101,17 +114,17 @@ class ChipController:
                         "No RESET work to be done on the R0, passing to end of program"
                     )
                     return
-                for addr in [WASTE_ADDR]:
-                    self.app.pumps.purge(1, addr)
+                for addr in [self.app.WASTE_ADDR]:
+                    self.pumps.purge(1, addr)
                 time.sleep(1)
-                for addr in [WASTE_ADDR]:
-                    self.app.pumps.stop(addr)
-                    self.app.pumps.purge(-1, addr)
+                for addr in [self.app.WASTE_ADDR]:
+                    self.pumps.stop(addr)
+                    self.pumps.purge(-1, addr)
                 self.reset_stop_counter = 0
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d2", WASTE_ADDR, 1, self.next_step
+                            self.switched_reset, "d2", self.app.WASTE_ADDR, 1, self.next
                         ),
                         self.app.switch_update_interval,
                     )
@@ -132,15 +145,15 @@ class ChipController:
                     f"Using Post Run Rate MM: {post_run_rate_mm}, ML : {post_run_vol_ml}"
                 )
 
-                for addr in [WASTE_ADDR, LYSATE_ADDR]:
+                for addr in [self.app.WASTE_ADDR, self.app.LYSATE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
-                    self.app.pumps.purge(1, addr)
+                    self.pumps.purge(1, addr)
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
                     partial(
                         self.switched_grab,
                         "d4",
-                        WASTE_ADDR,
+                        self.app.WASTE_ADDR,
                         2,
                         self.next_step,
                         post_run_rate_mm,
@@ -154,7 +167,7 @@ class ChipController:
                     partial(
                         self.switched_grab,
                         "d5",
-                        LYSATE_ADDR,
+                        self.app.LYSATE_ADDR,
                         2,
                         self.next_step,
                         post_run_rate_mm,
@@ -173,7 +186,7 @@ class ChipController:
             if action == "GRAB_WASTE":
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
-                for addr in [WASTE_ADDR]:
+                for addr in [self.app.WASTE_ADDR]:
                     logging.debug(f"CDA: Grabbing pump {addr}")
                     self.app.pumps.purge(1, addr)
                 self.grab_stop_counter = 0
@@ -181,7 +194,7 @@ class ChipController:
                     partial(
                         self.switched_grab,
                         "d4",
-                        WASTE_ADDR,
+                        self.app.WASTE_ADDR,
                         1,
                         self.next_step,
                         post_run_rate_mm,
@@ -200,7 +213,7 @@ class ChipController:
             if action == "CHANGE_SYRINGE":
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
-                self.app.pumps.set_diameter(diameter, pump_addr)
+                self.pumps.set_diameter(diameter, pump_addr)
                 logging.debug(
                     f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}"
                 )
@@ -217,115 +230,115 @@ class ChipController:
                     "SENDING RELEASE COMMAND TO: Addr = ", addr, rate_mh, vol_ml
                 )
 
+        self.app.process.next_step()
 
-def run_pumps(self, arg0, addr, rate_mh, vol_ml):
-    logging.info(f"{arg0}{addr}")
-    self.app.pumps.set_rate(rate_mh, "MH", addr)
-    self.app.pumps.set_volume(vol_ml, "ML", addr)
-    self.app.pumps.run(addr)
+    def run_pumps(self, arg0, addr, rate_mh, vol_ml):
+        logging.info(f"{arg0}{addr}")
+        self.pumps.set_rate(rate_mh, "MH", addr)
+        self.pumps.set_volume(vol_ml, "ML", addr)
+        self.pumps.run(addr)
 
+    def switched_reset(self, switch, addr, max_count, final_action, dt):
+        if self.app.nano is None:
+            raise IOError("No switches on the R0 should not be calling a switch reset!")
+        self.app.nano.update()
+        if not getattr(self.app.nano, switch):
+            logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
+            self.pumps.stop(addr)
+            self.reset_stop_counter += 1
+            if self.reset_stop_counter == max_count:
+                logging.debug(f"CDA: Both pumps homed")
+                final_action()
+            return False
 
-def switched_reset(self, switch, addr, max_count, final_action, dt):
-    if self.app.nano is None:
-        raise IOError("No switches on the R0 should not be calling a switch reset!")
-    self.app.nano.update()
-    if not getattr(self.app.nano, switch):
-        logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
-        self.app.pumps.stop(addr)
-        self.reset_stop_counter += 1
-        if self.reset_stop_counter == max_count:
-            logging.debug(f"CDA: Both pumps homed")
-            final_action()
-        return False
-
-def switched_grab(
-    self,
-    switch,
-    addr,
-    max_count,
-    final_action,
-    post_run_rate_mm,
-    post_run_vol_ml,
-    dt,
-):
-    if self.app.nano is None:
-        raise IOError("No switches on the R0 should not be calling switch grab!")
-    self.app.nano.update()
-    if not getattr(self.app.nano, switch):
-        logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
-        logging.debug(
-            f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly."
-        )
-
-        self.app.pumps.stop(addr)
-        self.app.pumps.set_rate(post_run_rate_mm, "MM", addr)
-        self.app.pumps.set_volume(post_run_vol_ml, "ML", addr)
-        self.app.pumps.run(addr)
-        self.grab_stop_counter += 1
-        if self.grab_stop_counter == max_count:
-            logging.debug("CDA: Both syringes grabbed")
-            self.grab_overrun_check_schedule.cancel()
-            final_action()
-        return False
-
-def grab_overrun_check(self, swgs, dt):
-    if self.app.nano is None:
-        raise IOError(
-            "No switches on the R0, should not be calling grab_overrrun_check!"
-        )
-
-    self.app.nano.update()
-    overruns = []
-    if getattr(self.app.nano, "d4"):
-        overruns.append("1 (waste)")
-        swgs[0].cancel()
-    if getattr(self.app.nano, "d5"):
-        overruns.append("2 (lysate)")
-        swgs[1].cancel()
-    if overruns:
-        self.app.pumps.stop_all_pumps(self.app.list_of_pumps)
-        overruns_str = " and ".join(overruns)
-        plural = "s" if len(overruns) > 1 else ""
-        logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
-        self.show_fatal_error(
-            title=f"Syringe{plural} not detected",
-            description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.",
-            confirm_text="Start over",
-            confirm_action="abort",
-            primary_color=(1, 0.33, 0.33, 1),
-        )
-
-def set_progress(self, dt):
-    self.time_elapsed += dt
-    time_remaining = max(self.time_total - self.time_elapsed, 0)
-    self.time_remaining_min = int(time_remaining / 60)
-    self.time_remaining_sec = int(time_remaining % 60)
-    self.progress = self.time_elapsed / self.time_total * 100
-    if self.progress >= 100:
-        self.progress = 100
-        self.next_step()
-        return False
-
-def on_enter(self):
-    self.start()
-
-def skip(self):
-    # Check that the motor is not moving
-    # TODO make this work for pressure drive by checking if we've finished a step
-    number_of_stopped_pumps = 0
-    for pump in self.app.list_of_pumps:
-        status = self.app.pumps.status(addr=pump)
-        logging.info("Pump number {} status was: {}".format(pump, status))
-        if status == "S":
-            number_of_stopped_pumps += 1
-
-    if number_of_stopped_pumps == len(self.app.list_of_pumps):
-        logging.info("Skip button pressed. Moving to next step. ")
-        Clock.unschedule(self.set_progress)
-        self.next_step()
-    else:
-        logging.warning(
-            "Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(
-                status
+    def switched_grab(
+        self,
+        switch,
+        addr,
+        max_count,
+        final_action,
+        post_run_rate_mm,
+        post_run_vol_ml,
+        dt,
+    ):
+        if self.app.nano is None:
+            raise IOError("No switches on the R0 should not be calling switch grab!")
+        self.app.nano.update()
+        if not getattr(self.app.nano, switch):
+            logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
+            logging.debug(
+                f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly."
             )
-        )
+
+            self.pumps.stop(addr)
+            self.pumps.set_rate(post_run_rate_mm, "MM", addr)
+            self.pumps.set_volume(post_run_vol_ml, "ML", addr)
+            self.pumps.run(addr)
+            self.grab_stop_counter += 1
+            if self.grab_stop_counter == max_count:
+                logging.debug("CDA: Both syringes grabbed")
+                self.grab_overrun_check_schedule.cancel()
+                final_action()
+            return False
+
+    def grab_overrun_check(self, swgs, dt):
+        if self.app.nano is None:
+            raise IOError(
+                "No switches on the R0, should not be calling grab_overrrun_check!"
+            )
+
+        self.app.nano.update()
+        overruns = []
+        if getattr(self.app.nano, "d4"):
+            overruns.append("1 (waste)")
+            swgs[0].cancel()
+        if getattr(self.app.nano, "d5"):
+            overruns.append("2 (lysate)")
+            swgs[1].cancel()
+        if overruns:
+            self.pumps.stop_all_pumps(self.list_of_pumps)
+            overruns_str = " and ".join(overruns)
+            plural = "s" if len(overruns) > 1 else ""
+            logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
+            self.show_fatal_error(
+                title=f"Syringe{plural} not detected",
+                description=f"Syringe{plural} not inserted correctly in positions{plural} {overruns_str}.\nPlease start the test over.",
+                confirm_text="Start over",
+                confirm_action="abort",
+                primary_color=(1, 0.33, 0.33, 1),
+            )
+
+    def set_progress(self, dt):
+        self.time_elapsed += dt
+        time_remaining = max(self.time_total - self.time_elapsed, 0)
+        self.time_remaining_min = int(time_remaining / 60)
+        self.time_remaining_sec = int(time_remaining % 60)
+        self.progress = self.time_elapsed / self.time_total * 100
+        if self.progress >= 100:
+            self.progress = 100
+            self.next_step()
+            return False
+
+    def on_enter(self):
+        self.start()
+
+    def skip(self):
+        # Check that the motor is not moving
+        # TODO make this work for pressure drive by checking if we've finished a step
+        number_of_stopped_pumps = 0
+        for pump in self.app.list_of_pumps:
+            status = self.pumps.status(addr=pump)
+            logging.info("Pump number {} status was: {}".format(pump, status))
+            if status == "S":
+                number_of_stopped_pumps += 1
+
+        if number_of_stopped_pumps == len(self.app.list_of_pumps):
+            logging.info("Skip button pressed. Moving to next step. ")
+            Clock.unschedule(self.set_progress)
+            self.next_step()
+        else:
+            logging.warning(
+                "Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(
+                    status
+                )
+            )

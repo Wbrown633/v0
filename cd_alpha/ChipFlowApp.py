@@ -389,10 +389,11 @@ class ProcessWindow(BoxLayout):
         if self.process_sm.current in self.progress_screen_names:
             pos = self.progress_screen_names.index(self.process_sm.current)
             self.overall_progress_bar.set_position(pos)
+        self.app.controller.next()
 
     def cleanup(self):
         # Global cleanup
-        self.app.cleanup()
+        pass
         # TODO: Any local cleanup?
 
     # TODO for testability instead of mutating the current App, we could return a Protocol object
@@ -526,6 +527,7 @@ class ChipFlowApp(App):
         self.START_STEP = self.device.START_STEP
         self.POST_RUN_RATE_MM_CALIBRATION = self.device.POST_RUN_RATE_MM
         self.POST_RUN_VOL_ML_CALIBRATION = self.device.POST_RUN_VOL_ML
+        self.controller = None
         
 
         # Branch below allows for the GUI App to be tested locally on a Windows machine without needing to connect the syringe pump or arduino
@@ -599,7 +601,8 @@ class ChipFlowApp(App):
 
     def build(self):
         logging.debug("CDA: Creating main window")
-        return ProcessWindow(protocol_file_name=self.PROTOCOL_FILE_NAME)
+        self.process = ProcessWindow(protocol_file_name=self.PROTOCOL_FILE_NAME)
+        return self.process
 
     def on_close(self):
         self.cleanup()
@@ -635,13 +638,17 @@ def main():
     try:
         chip_app = ChipFlowApp()
         # Establish serial connection to the pump controllers if on linux
+        pumps = None
         if platform == 'linux':
             ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
+            pumps = PumpNetwork(ser)
         else:
+            from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
             ser = SerialStub()
-        pumps = PumpNetwork(ser)
+            pumps = PumpNetwork(ser)
         default_protocol = JSONProtocolParser(Path(chip_app.PATH_TO_PROTOCOLS + chip_app.PROTOCOL_FILE_NAME)).make_protocol(chip_app.PROTOCOL_FILE_NAME)
         chip_controller = ChipController(protocol=default_protocol, app=chip_app, pumps=pumps, ser=ser)
+        chip_app.controller = chip_controller
         chip_controller.run()
     except Exception:
         chip_controller.cleanup()
