@@ -88,7 +88,7 @@ class Step:
     name: str
     list_of_actions: List[ActionType]
 
-    # how do we handle description steps ? 
+    # how do we handle description steps ?
     def make_step_name(self) -> str:
         return f"{type(self.list_of_actions[0]).__name__}"
 

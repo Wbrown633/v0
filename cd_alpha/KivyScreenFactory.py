@@ -119,7 +119,7 @@ class MachineActionScreen(ChipFlowScreen):
         # TODO should this be done with a controller?
         # how do we keep all of these classes testable
         # prevent App from leaking into classes where possible
-        self.app.chip_controller.next()
+        self.app.controller.next()
 
 
 class ActionDoneScreen(ChipFlowScreen):
@@ -127,7 +127,7 @@ class ActionDoneScreen(ChipFlowScreen):
         self.app = App.get_running_app()
         super().__init__(*args, **kwargs)
     def on_enter(self):
-        self.app.pumps.buzz(repetitions=3, addr=self.app.WASTE_ADDR)
+        self.app.controller.pumps.buzz(repetitions=3, addr=self.app.WASTE_ADDR)
         self.app.scheduled_events.append(Clock.schedule_once(self.next_step, 1))
 
 @dataclass

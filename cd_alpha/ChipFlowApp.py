@@ -386,10 +386,13 @@ class ProcessWindow(BoxLayout):
 
     def next_step(self):
         self.process_sm.next_screen()
+        # check if this screen has an action
+        if type(self.process_sm.current_screen) == MachineActionScreen:
+            logging.info("Found Machine Action Screen")
+            self.app.controller.next()
         if self.process_sm.current in self.progress_screen_names:
             pos = self.progress_screen_names.index(self.process_sm.current)
             self.overall_progress_bar.set_position(pos)
-        self.app.controller.next()
 
     def cleanup(self):
         # Global cleanup

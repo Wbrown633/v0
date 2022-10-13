@@ -52,6 +52,7 @@ class ChipController:
 
         for action in step.list_of_actions:
             if type(action).__name__ == "Pump":
+                logging.info("PUMP action")
                 if action.target == "lysate":
                     addr = self.app.LYSATE_ADDR
                 elif action.target == "waste":
@@ -69,6 +70,7 @@ class ChipController:
                 )
 
             elif type(action).__name__ == "Incubate":
+                logging.info("INCUBATE action")
                 self.time_total = action.time
                 self.time_elapsed = 0
                 self.app.scheduled_events.append(
@@ -78,6 +80,7 @@ class ChipController:
                 )
 
             elif type(action).__name__ == "Reset":
+                logging.info("RESET action")
                 if self.app.device.DEVICE_TYPE == "R0":
                     logging.info(
                         "No RESET work to be done on the R0, passing to end of program"
@@ -93,7 +96,7 @@ class ChipController:
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d2", self.app.WASTE_ADDR, 2, self.next
+                            self.switched_reset, "d2", self.app.WASTE_ADDR, 2, self.app.process.next_step
                         ),
                         self.app.switch_update_interval,
                     )
@@ -102,13 +105,13 @@ class ChipController:
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d3", self.app.LYSATE_ADDR, 2, self.next
+                            self.switched_reset, "d3", self.app.LYSATE_ADDR, 2, self.app.process.next_step
                         ),
                         self.app.switch_update_interval,
                     )
                 )
 
-            if type(action).__name__ == "RESET_WASTE":
+            elif type(action).__name__ == "RESET_WASTE":
                 if self.app.device.DEVICE_TYPE == "R0":
                     logging.info(
                         "No RESET work to be done on the R0, passing to end of program"
@@ -124,23 +127,24 @@ class ChipController:
                 self.app.scheduled_events.append(
                     Clock.schedule_interval(
                         partial(
-                            self.switched_reset, "d2", self.app.WASTE_ADDR, 1, self.next
+                            self.switched_reset, "d2", self.app.WASTE_ADDR, 1, self.app.process.next_step
                         ),
                         self.app.switch_update_interval,
                     )
                 )
 
-            if action == "GRAB":
+            elif type(action).__name__ == "Grab":
+                logging.info("GRAB action")
                 if self.app.POST_RUN_RATE_MM_CALIBRATION:
                     logging.debug("Using calibration post run rate values")
                     post_run_rate_mm = self.app.POST_RUN_RATE_MM_CALIBRATION
                 else:
-                    post_run_rate_mm = params["post_run_rate_mm"]
+                    post_run_rate_mm = action.post_run_rate_mm
                 if self.app.POST_RUN_VOL_ML_CALIBRATION:
                     logging.debug("Using calibration post run volume values")
                     post_run_vol_ml = self.app.POST_RUN_VOL_ML_CALIBRATION
                 else:
-                    post_run_vol_ml = params["post_run_vol_ml"]
+                    post_run_vol_ml = action.post_run_vol_ml
                 logging.debug(
                     f"Using Post Run Rate MM: {post_run_rate_mm}, ML : {post_run_vol_ml}"
                 )
@@ -155,7 +159,7 @@ class ChipController:
                         "d4",
                         self.app.WASTE_ADDR,
                         2,
-                        self.next_step,
+                        self.app.process.next_step,
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
@@ -169,7 +173,7 @@ class ChipController:
                         "d5",
                         self.app.LYSATE_ADDR,
                         2,
-                        self.next_step,
+                        self.app.process.next_step,
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
@@ -183,7 +187,7 @@ class ChipController:
                 )
 
                 self.app.scheduled_events.append(self.grab_overrun_check_schedule)
-            if action == "GRAB_WASTE":
+            elif type(action).__name__ == "Grab_Waste":
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
                 for addr in [self.app.WASTE_ADDR]:
@@ -196,7 +200,7 @@ class ChipController:
                         "d4",
                         self.app.WASTE_ADDR,
                         1,
-                        self.next_step,
+                        self.app.process.next_step,
                         post_run_rate_mm,
                         post_run_vol_ml,
                     ),
@@ -210,7 +214,7 @@ class ChipController:
                 )
 
                 self.app.scheduled_events.append(self.grab_overrun_check_schedule)
-            if action == "CHANGE_SYRINGE":
+            elif type(action).__name__ == "Change_Syringe":
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
                 self.pumps.set_diameter(diameter, pump_addr)
@@ -218,19 +222,22 @@ class ChipController:
                     f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}"
                 )
 
-            if action == "RELEASE":
-                if params["target"] == "waste":
+            elif type(action).__name__ == "Release":
+                logging.info("RELEASE action")
+                if action.target == "waste":
                     addr = WASTE_ADDR
-                if params["target"] == "lysate":
+                if action.target == "lysate":
                     addr = LYSATE_ADDR
-                rate_mh = params["rate_mh"]
-                vol_ml = params["vol_ml"]
-                eq_time = params.get("eq_time", 0)
+                rate_mh = action.rate_mh
+                vol_ml = action.vol_ml
+                eq_time = action.eq_time
                 self._extracted_from_start_13(
                     "SENDING RELEASE COMMAND TO: Addr = ", addr, rate_mh, vol_ml
                 )
 
-        self.app.process.next_step()
+            else: 
+                raise ValueError(f"Invalid action type {type(action).__name__}")
+
 
     def run_pumps(self, arg0, addr, rate_mh, vol_ml):
         logging.info(f"{arg0}{addr}")
@@ -316,7 +323,7 @@ class ChipController:
         self.progress = self.time_elapsed / self.time_total * 100
         if self.progress >= 100:
             self.progress = 100
-            self.next_step()
+            self.app.process.next_step()
             return False
 
     def on_enter(self):
@@ -335,7 +342,7 @@ class ChipController:
         if number_of_stopped_pumps == len(self.app.list_of_pumps):
             logging.info("Skip button pressed. Moving to next step. ")
             Clock.unschedule(self.set_progress)
-            self.next_step()
+            self.app.process.next_step()
         else:
             logging.warning(
                 "Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(
