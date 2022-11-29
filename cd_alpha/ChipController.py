@@ -316,13 +316,13 @@ class ChipController:
             )
 
     def set_progress(self, dt):
-        self.time_elapsed += dt
+        self.app.process.time_elapsed += dt
         time_remaining = max(self.time_total - self.time_elapsed, 0)
         self.time_remaining_min = int(time_remaining / 60)
         self.time_remaining_sec = int(time_remaining % 60)
-        self.progress = self.time_elapsed / self.time_total * 100
-        if self.progress >= 100:
-            self.progress = 100
+        self.app.process.progress = self.time_elapsed / self.time_total * 100
+        if self.app.process.progress >= 100:
+            self.app.process.progress = 100
             self.app.process.next_step()
             return False
 
