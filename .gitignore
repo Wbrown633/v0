@@ -13,3 +13,4 @@ cd_alpha.egg-info/**
 .vscode/**
 __pycache__/**
 cd_alpha/tests/__pycache__/**
+.DS_Store
