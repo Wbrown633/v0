@@ -107,7 +107,7 @@
                 "rate_mh": 15,
                 "eq_time": 0
             },
-            "PUMP": {
+            "PUMP1": {
                 "target": "lysate",
                 "vol_ml": 0.1,
                 "rate_mh": 15,

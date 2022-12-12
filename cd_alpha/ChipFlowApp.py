@@ -258,7 +258,7 @@ class MachineActionScreen(ChipFlowScreen):
     # desperately needs re-factor
     def start(self):
         for action, params in self.action.items():
-            if action == "PUMP":
+            if "PUMP" in action:
                 if params["target"] == "waste":
                     addr = WASTE_ADDR
                 if params["target"] == "lysate":
@@ -272,8 +272,12 @@ class MachineActionScreen(ChipFlowScreen):
                 logging.info("Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
-                Clock.schedule_once(pumps.run(addr), delay)  # run the pump command after delay, default 0 secs
-                #pumps.run(addr)
+                scheduled_events.append( 
+                    Clock.schedule_once(
+                    partial(self.run_pump, addr),
+                    delay
+                )
+                )
                 scheduled_events.append(
                     Clock.schedule_interval(
                         self.set_progress, progressbar_update_interval
@@ -531,6 +535,10 @@ class MachineActionScreen(ChipFlowScreen):
             self.progress = 100
             self.next_step()
             return False
+
+
+    def run_pump(self, addr, dt):
+        pumps.run(addr)
 
     def on_enter(self):
         self.start()

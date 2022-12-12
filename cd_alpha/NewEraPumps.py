@@ -60,7 +60,7 @@ class PumpNetwork:
                     )
                     raise
 
-    def run(self, addr=""):
+    def run(self, addr="", dt=0):
         return self._send_command("RUN", addr)
 
     def purge(self, direction=1, addr=""):
