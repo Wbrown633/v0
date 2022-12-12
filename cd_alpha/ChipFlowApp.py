@@ -266,12 +266,14 @@ class MachineActionScreen(ChipFlowScreen):
                 rate_mh = params["rate_mh"]
                 vol_ml = params["vol_ml"]
                 eq_time = params.get("eq_time", 0)
+                delay = params.get("delay", 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
                 logging.info("Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
-                pumps.run(addr)
+                Clock.schedule_once(pumps.run(addr), delay)  # run the pump command after delay, default 0 secs
+                #pumps.run(addr)
                 scheduled_events.append(
                     Clock.schedule_interval(
                         self.set_progress, progressbar_update_interval
@@ -444,10 +446,12 @@ class MachineActionScreen(ChipFlowScreen):
                 rate_mh = params["rate_mh"]
                 vol_ml = params["vol_ml"]
                 eq_time = params.get("eq_time", 0)
+                delay = params.get("delay", 0)
                 logging.info("SENDING RELEASE COMMAND TO: Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
-                pumps.run(addr)
+                Clock.schedule_once(pumps.run(addr), delay)
+                #pumps.run(addr)
 
     def switched_reset(self, switch, addr, max_count, final_action, dt):
         if nano is None:
