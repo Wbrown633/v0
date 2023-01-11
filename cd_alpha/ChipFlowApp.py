@@ -256,10 +256,11 @@ class MachineActionScreen(ChipFlowScreen):
                 eq_time = params.get("eq_time", 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
-                Logger.info("Addr = {}".format(addr))
+                Logger.info(f"Addr = {addr}")
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
                 pumps.run(addr)
+                Logger.info(f"Pump step started at: {time.now()}")
                 scheduled_events.append(
                     Clock.schedule_interval(
                         self.set_progress, progressbar_update_interval
@@ -432,7 +433,7 @@ class MachineActionScreen(ChipFlowScreen):
                 rate_mh = params["rate_mh"]
                 vol_ml = params["vol_ml"]
                 eq_time = params.get("eq_time", 0)
-                Logger.info("SENDING RELEASE COMMAND TO: Addr = {}".format(addr))
+                Logger.info(f"SENDING RELEASE COMMAND TO: Addr = {addr}")
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
                 pumps.run(addr)
