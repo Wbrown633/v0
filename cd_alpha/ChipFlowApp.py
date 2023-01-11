@@ -260,7 +260,7 @@ class MachineActionScreen(ChipFlowScreen):
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
                 pumps.run(addr)
-                Logger.info(f"Pump step started at: {time.now()}")
+                Logger.info(f"Pump step started at: {time.time()}")
                 scheduled_events.append(
                     Clock.schedule_interval(
                         self.set_progress, progressbar_update_interval
@@ -275,6 +275,7 @@ class MachineActionScreen(ChipFlowScreen):
                         self.set_progress, progressbar_update_interval
                     )
                 )
+                Logger.info(f"Incubate started at: {time.time()}")
 
             if action == "RESET":
                 # TODO: set progress bar to be invisible
