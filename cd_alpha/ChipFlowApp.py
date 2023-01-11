@@ -137,6 +137,7 @@ def cleanup():
             se.cancel()
     scheduled_events = []
     pumps.stop_all_pumps(list_of_pumps)
+    logging.shutdown()
 
 
 def shutdown():
