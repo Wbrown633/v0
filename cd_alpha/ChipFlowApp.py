@@ -12,7 +12,6 @@ from functools import partial
 import serial
 import time
 from datetime import datetime
-import logging
 from cd_alpha.Device import Device, get_updates
 import kivy
 from kivy.app import App
@@ -27,6 +26,7 @@ from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
+from kivy.logger import Logger
 from pkg_resources import resource_filename
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
 kivy.require("2.0.0")
@@ -67,13 +67,7 @@ POST_RUN_VOL_ML_CALIBRATION = device.POST_RUN_VOL_ML
 if DEV_MACHINE:
     LOCAL_TESTING = True
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":", ";")
-    logging.basicConfig(
-        filename=f"cda_{time_now_str}.log",
-        filemode="w",
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG,
-    )
-    logging.info("Logging started")
+    Logger.info("Logging started")
     from cd_alpha.software_testing.NanoControllerTestStub import Nano
     from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
     from cd_alpha.software_testing.SerialStub import SerialStub
@@ -88,13 +82,7 @@ else:
     Window.fullscreen = "auto"
     LOCAL_TESTING = False
     time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    logging.basicConfig(
-        filename=f"cda_{time_now_str}.log",
-        filemode="w",
-        datefmt="%Y-%m-%d_%H:%M:%S",
-        level=logging.DEBUG,
-    )
-    logging.info("Logging started")
+    Logger.info("Logging started")
     SPLIT_CHAR = "/"
 
 # Establish serial connection to the pump controllers
@@ -107,10 +95,10 @@ pumps = PumpNetwork(ser)
 
 # TODO move out of __main__ namespace
 if DEBUG_MODE:
-    logging.warning("CDA: *** DEBUG MODE ***")
-    logging.warning("CDA: System will not reboot after exiting program.")
+    Logger.warning("CDA: *** DEBUG MODE ***")
+    Logger.warning("CDA: System will not reboot after exiting program.")
 
-logging.info(f"CDA: Using protocol: '{device.DEFAULT_PROTOCOL}''")
+Logger.info(f"CDA: Using protocol: '{device.DEFAULT_PROTOCOL}''")
 
 # Set constants
 if device.DEVICE_TYPE == "R0":
@@ -129,22 +117,21 @@ list_of_pumps = device.PUMP_ADDR
 
 
 def cleanup():
-    logging.debug("CDA: Cleaning upp")
+    Logger.debug("CDA: Cleaning upp")
     global scheduled_events
-    logging.debug("CDA: Unscheduling events")
+    Logger.debug("CDA: Unscheduling events")
     for se in scheduled_events:
         with contextlib.suppress(AttributeError):
             se.cancel()
     scheduled_events = []
     pumps.stop_all_pumps(list_of_pumps)
-    logging.shutdown()
 
 
 def shutdown():
-    logging.info("Shutting down...")
+    Logger.info("Shutting down...")
     cleanup()
     if DEBUG_MODE:
-        logging.warning(
+        Logger.warning(
             "CDA: In DEBUG mode, not shutting down for real, only ending program."
         )
         App.get_running_app().stop()
@@ -154,9 +141,9 @@ def shutdown():
 
 def reboot():
     cleanup()
-    logging.info("CDA: Rebooting...")
+    Logger.info("CDA: Rebooting...")
     if DEBUG_MODE:
-        logging.warning(
+        Logger.warning(
             "CDA: In DEBUG mode, not rebooting down for real, only ending program."
         )
         App.get_running_app().stop()
@@ -166,8 +153,8 @@ def reboot():
 
 
 # ---------------- MAIN ---------------- #
-logging.info(f"Kivy config file: {kivy.Config.filename}")
-logging.info("CDA: Starting main script.")
+Logger.info(f"Kivy config file: {kivy.Config.filename}")
+Logger.info("CDA: Starting main script.")
 
 
 if device.DEVICE_TYPE == "V0":
@@ -194,7 +181,7 @@ class ProcessScreenManager(ScreenManager):
         # Don't go to protocol_chooser as a next step, go home instead
         if self.next() == "protocol_chooser":
             next_screen = "home"
-        logging.debug(f"CDA: Next screen, going from {current} to {next_screen}")
+        Logger.debug(f"CDA: Next screen, going from {current} to {next_screen}")
         self.current = next_screen
 
     def next_step(self):
@@ -219,8 +206,8 @@ class ChipFlowScreen(Screen):
         self.parent.next_step()
 
     def show_fatal_error(self, *args, **kwargs):
-        logging.debug("SCREEN: SFE")
-        logging.debug(self)
+        Logger.debug("SCREEN: SFE")
+        Logger.debug(self)
         self.parent.show_fatal_error(*args, **kwargs)
 
     def start_over(self, dt):
@@ -240,7 +227,7 @@ class HomeScreen(ChipFlowScreen):
         super().__init__(*args, **kwargs)
 
     def load_protocol(self, *args, **kwargs):
-        logging.info("Load button pressed!")
+        Logger.info("Load button pressed!")
         self.manager.current = "protocol_chooser"
 
 
@@ -269,7 +256,7 @@ class MachineActionScreen(ChipFlowScreen):
                 eq_time = params.get("eq_time", 0)
                 self.time_total = abs(vol_ml / rate_mh) * 3600 + eq_time
                 self.time_elapsed = 0
-                logging.info("Addr = {}".format(addr))
+                Logger.info("Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
                 pumps.run(addr)
@@ -292,7 +279,7 @@ class MachineActionScreen(ChipFlowScreen):
                 # TODO: set progress bar to be invisible
                 # Go down for a little while, in case forks are already in position
                 if device.DEVICE_TYPE == "R0":
-                    logging.info(
+                    Logger.info(
                         "No RESET work to be done on the R0, passing to end of program"
                     )
                     return
@@ -325,7 +312,7 @@ class MachineActionScreen(ChipFlowScreen):
                 # TODO: set progress bar to be invisible
                 # Go down for a little while, in case forks are already in position
                 if device.DEVICE_TYPE == "R0":
-                    logging.info(
+                    Logger.info(
                         "No RESET work to be done on the R0, passing to end of program"
                     )
                     return
@@ -348,23 +335,23 @@ class MachineActionScreen(ChipFlowScreen):
             # TODO: make this work on r0
             if action == "GRAB":
                 if POST_RUN_RATE_MM_CALIBRATION:
-                    logging.debug("Using calibration post run rate values")
+                    Logger.debug("Using calibration post run rate values")
                     post_run_rate_mm = POST_RUN_RATE_MM_CALIBRATION
                 else:
                     post_run_rate_mm = params["post_run_rate_mm"]
                 if POST_RUN_VOL_ML_CALIBRATION:
-                    logging.debug("Using calibration post run volume values")
+                    Logger.debug("Using calibration post run volume values")
                     post_run_vol_ml = POST_RUN_VOL_ML_CALIBRATION
                 else:
                     post_run_vol_ml = params["post_run_vol_ml"]
 
-                logging.debug(
+                Logger.debug(
                     "Using Post Run Rate MM: {}, ML : {}".format(
                         post_run_rate_mm, post_run_vol_ml
                     )
                 )
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
-                    logging.debug(f"CDA: Grabbing pump {addr}")
+                    Logger.debug(f"CDA: Grabbing pump {addr}")
                     pumps.purge(1, addr)
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
@@ -403,7 +390,7 @@ class MachineActionScreen(ChipFlowScreen):
                 post_run_rate_mm = params["post_run_rate_mm"]
                 post_run_vol_ml = params["post_run_vol_ml"]
                 for addr in [WASTE_ADDR]:
-                    logging.debug(f"CDA: Grabbing pump {addr}")
+                    Logger.debug(f"CDA: Grabbing pump {addr}")
                     pumps.purge(1, addr)
                 self.grab_stop_counter = 0
                 swg1 = Clock.schedule_interval(
@@ -430,7 +417,7 @@ class MachineActionScreen(ChipFlowScreen):
                 diameter = params["diam"]
                 pump_addr = params["pump_addr"]
                 pumps.set_diameter(diameter, pump_addr)
-                logging.debug(
+                Logger.debug(
                     "Switching current loaded syringe to {} diam on pump {}".format(
                         diameter, pump_addr
                     )
@@ -445,7 +432,7 @@ class MachineActionScreen(ChipFlowScreen):
                 rate_mh = params["rate_mh"]
                 vol_ml = params["vol_ml"]
                 eq_time = params.get("eq_time", 0)
-                logging.info("SENDING RELEASE COMMAND TO: Addr = {}".format(addr))
+                Logger.info("SENDING RELEASE COMMAND TO: Addr = {}".format(addr))
                 pumps.set_rate(rate_mh, "MH", addr)
                 pumps.set_volume(vol_ml, "ML", addr)
                 pumps.run(addr)
@@ -455,11 +442,11 @@ class MachineActionScreen(ChipFlowScreen):
             raise IOError("No switches on the R0 should not be calling a switch reset!")
         nano.update()
         if not getattr(nano, switch):
-            logging.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
+            Logger.info(f"CDA: Switch {switch} actived, stopping pump {addr}")
             pumps.stop(addr)
             self.reset_stop_counter += 1
             if self.reset_stop_counter == max_count:
-                logging.debug("CDA: Both pumps homed")
+                Logger.debug("CDA: Both pumps homed")
                 final_action()
             return False
 
@@ -477,8 +464,8 @@ class MachineActionScreen(ChipFlowScreen):
             raise IOError("No switches on the R0 should not be calling switch grab!")
         nano.update()
         if not getattr(nano, switch):
-            logging.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
-            logging.debug(
+            Logger.info(f"CDA: Pump {addr} has grabbed syringe (switch {switch}).")
+            Logger.debug(
                 f"CDA: Running extra {post_run_vol_ml} ml @ {post_run_rate_mm} ml/min to grasp firmly."
             )
             pumps.stop(addr)
@@ -487,7 +474,7 @@ class MachineActionScreen(ChipFlowScreen):
             pumps.run(addr)
             self.grab_stop_counter += 1
             if self.grab_stop_counter == max_count:
-                logging.debug("CDA: Both syringes grabbed")
+                Logger.debug("CDA: Both syringes grabbed")
                 self.grab_overrun_check_schedule.cancel()
                 final_action()
             return False
@@ -509,7 +496,7 @@ class MachineActionScreen(ChipFlowScreen):
             pumps.stop_all_pumps(list_of_pumps)
             overruns_str = " and ".join(overruns)
             plural = "s" if len(overruns) > 1 else ""
-            logging.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
+            Logger.warning(f"CDA: Grab overrun in position{plural} {overruns_str}.")
             self.show_fatal_error(
                 title=f"Syringe{plural} not detected",
                 description=f"Syringe{plural} not inserted correctly in positions{plural}{overruns_str}.\nPlease start the test over.",
@@ -538,16 +525,16 @@ class MachineActionScreen(ChipFlowScreen):
         number_of_stopped_pumps = 0
         for pump in list_of_pumps:
             status = pumps.status(addr=pump)
-            logging.info(f"Pump number {pump} status was: {status}")
+            Logger.info(f"Pump number {pump} status was: {status}")
             if status == "S":
                 number_of_stopped_pumps += 1
 
         if number_of_stopped_pumps == len(list_of_pumps):
-            logging.info("Skip button pressed. Moving to next step. ")
+            Logger.info("Skip button pressed. Moving to next step. ")
             Clock.unschedule(self.set_progress)
             self.next_step()
         else:
-            logging.warning(
+            Logger.warning(
                 "Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(
                     status
                 )
@@ -628,7 +615,7 @@ class ErrorPopup(Popup):
         super().__init__(*args, **kwargs)
 
     def confirm(self):
-        logging.debug("CDA: Error acknowledged by user")
+        Logger.debug("CDA: Error acknowledged by user")
         self.disabled = True
         self.confirm_action()
         self.dismiss()
@@ -650,7 +637,7 @@ class AbortPopup(Popup):
         super().__init__(*args, **kwargs)
 
     def confirm(self):
-        logging.debug("CDA: Error acknowledged by user")
+        Logger.debug("CDA: Error acknowledged by user")
         self.disabled = True
         self.confirm_action()
         self.dismiss()
@@ -660,24 +647,24 @@ class ProtocolChooser(Screen):
     def load(self, path, filename):
         try:
             filename = filename[0]
-            logging.info(f"Filename List: {filename}")
+            Logger.info(f"Filename List: {filename}")
         except Exception as err:
-            logging.error(f"Unexpected Error: {err}, {type(err)}")
-        logging.info(f"Filename: {filename}  was chosen. Path: {path}")
+            Logger.error(f"Unexpected Error: {err}, {type(err)}")
+        Logger.info(f"Filename: {filename}  was chosen. Path: {path}")
         try:
             App.get_running_app().protocol_name = Path(filename)
             App.get_running_app().protocol_path = Path(path)
             self.manager.main_window.load_protocol(filename)
 
         except BaseException as err:
-            logging.error(f"Invalid Protocol: {filename}")
-            logging.error(f"Unexpected Error: {err}, {type(err)}")
+            Logger.error(f"Invalid Protocol: {filename}")
+            Logger.error(f"Unexpected Error: {err}, {type(err)}")
 
     def get_file_path(self):
         return device.PATH_TO_PROTOCOLS
 
     def cancel(self):
-        logging.info("Cancel")
+        Logger.info("Cancel")
         self.manager.current = "home"
 
 
@@ -686,7 +673,7 @@ class SummaryScreen(Screen):
         # on windows this is the entire path
         self.protocol = App.get_running_app().protocol_name
         self.path = App.get_running_app().protocol_path
-        logging.info(f"Summary screen path {self.path} and protocol {self.protocol}")
+        Logger.info(f"Summary screen path {self.path} and protocol {self.protocol}")
         self.next_text = kwargs.pop("next_text", "Next")
         self.header_text = App.get_running_app().protocol_name.stem
         self.protocol_process = ProcessProtocol(self.path / self.protocol)
@@ -755,12 +742,12 @@ class ProcessWindow(BoxLayout):
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
-        logging.info(
+        Logger.info(
             "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
         )
 
     def get_updates(self, btn):
-        logging.info("Update button pressed")
+        Logger.info("Update button pressed")
         get_updates()
 
     def show_abort_popup(self, btn):
@@ -825,7 +812,7 @@ class ProcessWindow(BoxLayout):
         App.get_running_app().stop()
 
     def show_fatal_error(self, *args, **kwargs):
-        logging.debug("CDA: Showing fatal error popup")
+        Logger.debug("CDA: Showing fatal error popup")
         popup_outside_padding = 60
         confirm_action = kwargs.pop("confirm_action", self.reboot)
         if confirm_action == "shutdown":
@@ -850,7 +837,7 @@ class ProcessWindow(BoxLayout):
         pumps.buzz(addr=WASTE_ADDR, repetitions=5)
 
     def start_over(self):
-        logging.info("Sending Program to home screen")
+        Logger.info("Sending Program to home screen")
         self.process_sm.current = "home"
 
     def next_step(self):
@@ -891,15 +878,15 @@ class ProcessWindow(BoxLayout):
             )  # add screen for protocol chooser
 
         if len(self.process_sm.screens) > 1:
-            logging.warning(
+            Logger.warning(
                 "Screen Removal was not sucessful, remaining screens should be 1"
             )
-        logging.info(
+        Logger.info(
             "Number of screens in screen manager after Removal: {}".format(
                 len(self.process_sm.screens)
             )
         )
-        logging.info(
+        Logger.info(
             "Screens in screen manager after Removal: {}".format(
                 self.process_sm.screen_names
             )
@@ -969,13 +956,13 @@ class ProcessWindow(BoxLayout):
                     )
                 )
 
-        logging.info(
+        Logger.info(
             "Screens in manager after load: {} ".format(self.process_sm.screen_names)
         )
-        logging.info(
+        Logger.info(
             "Number of screens after load: {}".format(len(self.process_sm.screen_names))
         )
-        logging.info(
+        Logger.info(
             "Number of duplicates after load: {}".format(
                 self.screenduplicates(self.process_sm.screen_names)
             )
@@ -999,7 +986,7 @@ class ChipFlowApp(App):
         super().__init__(**kwargs)
 
     def build(self):
-        logging.debug("CDA: Creating main window")
+        Logger.debug("CDA: Creating main window")
         return ProcessWindow(protocol_file_name=self.protocol_name)
 
     def on_close(self):
@@ -1007,7 +994,7 @@ class ChipFlowApp(App):
         if not DEBUG_MODE:
             reboot()
         else:
-            logging.warning("DEBUG MODE: Not rebooting, just closing...")
+            Logger.warning("DEBUG MODE: Not rebooting, just closing...")
 
 
 def main():
@@ -1019,7 +1006,7 @@ def main():
         if not DEBUG_MODE:
             reboot()
         else:
-            logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
+            Logger.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
 
 
