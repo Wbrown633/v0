@@ -965,11 +965,12 @@ class ProcessWindow(BoxLayout):
         Logger.info(
             "Number of screens after load: {}".format(len(self.process_sm.screen_names))
         )
-        Logger.info(
-            "Number of duplicates after load: {}".format(
-                self.screenduplicates(self.process_sm.screen_names)
-            )
-        )
+
+        check_dups = self.screenduplicates(self.process_sm.screen_names)
+        Logger.info(f"Number of duplicates after load: {check_dups}")
+        dups = any(val > 1 for val in check_dups.values())
+        if dups:
+            Logger.error("Found duplicate screens in load!")
         self.process_sm.current = "home"
 
     def screenduplicates(self, screen_names):
