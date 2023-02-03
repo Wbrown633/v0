@@ -46,19 +46,16 @@ class PumpNetwork:
             try:
                 self.ser.write(str.encode(tmp))
                 response = self._get_response()
-                if "?" in response:
-                    msg_str = "Error in response from network. Response: {}".format(
-                        response
-                    )
-                    raise IOError(msg_str)
-                else:
+                if "?" not in response:
                     return response
-            except:
+                msg_str = f"Error in response from network. Response: {response}"
+                raise IOError(msg_str)
+            except Exception:
                 if n >= self.max_noof_retries:
                     logging.error(
                         "NEP: Maximum number of tries reached for sending command."
                     )
-                    raise
+                    raise Exception
 
     def run(self, addr=""):
         return self._send_command("RUN", addr)
