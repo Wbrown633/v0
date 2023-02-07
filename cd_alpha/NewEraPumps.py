@@ -74,7 +74,7 @@ class PumpNetwork:
     def stop(self, addr):
         # make sure the pump isn't already stopped
         status = self.status(addr)
-        if status != "S":
+        if status != f"{addr}S":
             logging.debug(f"Pump not stopped, status : {status}")
             status = self._send_command("STP", addr)
         logging.debug(f"Pump {addr} was already stopped returned status {status}")
