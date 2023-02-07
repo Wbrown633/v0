@@ -46,7 +46,7 @@ class PumpNetwork:
             try:
                 self.ser.write(str.encode(tmp))
                 response = self._get_response()
-                if "?" not in response:
+                if "?" not in response: 
                     return response
                 msg_str = f"Error in response from network. Response: {response}"
                 raise IOError(msg_str)
@@ -83,7 +83,8 @@ class PumpNetwork:
                 if str(err)[-3:] == "?NA":
                     logging.debug(f"CDA: Pump {addr:02} already stopped.")
                 else:
-                    raise
+                    logging.debug(f"Non-expected error encountered")
+                    raise err
 
     def set_diameter(self, diameter_mm, addr=""):
         return self._send_command("DIA{:0.2f}".format(diameter_mm), addr)
