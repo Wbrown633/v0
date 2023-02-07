@@ -71,8 +71,14 @@ class PumpNetwork:
         resp_pur = self._send_command("PUR", addr)
         return resp_dir, resp_pur
 
-    def stop(self, addr=""):
-        return self._send_command("STP", addr)
+    def stop(self, addr):
+        # make sure the pump isn't already stopped
+        status = self.status(addr)
+        if status != "S":
+            logging.debug(f"Pump not stopped, status : {status}")
+            status = self._send_command("STP", addr)
+        logging.debug(f"Pump {addr} was already stopped returned status {status}")
+        return status
 
     def stop_all_pumps(self, list_of_pumps=[1, 2]):
         logging.debug("CDA: Stopping all pumps.")
@@ -132,9 +138,7 @@ class PumpNetwork:
 
     def status(self, addr=""):
         response = self._send_command("", addr)
-        # resp_addr = int(response[0:2])
-        current_status = response[2]
-        return current_status
+        return response[2]
 
     def get_volume_ml(self, addr=""):
         response = self._send_command("VOL", addr)
