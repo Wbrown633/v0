@@ -15,7 +15,8 @@
             id: filechooser
             # fix so this works no matter where the python gets called 
             rootpath: root.get_file_path()
-            filters: ["*.json"]
+            filter_dirs: True
+            filters: ["*.json", "ARCHIVE"]
 
         BoxLayout:
             size_hint_y: None
