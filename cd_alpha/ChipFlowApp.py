@@ -757,7 +757,11 @@ class ProcessWindow(BoxLayout):
         logging.info(
             "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
         )
+        self.bind(on_key_down=self._keydown)
 
+    def _keydown(self, *args):
+        logging.debug("Key pressed: {args}")
+  
     def get_updates(self, btn):
         logging.info("Update button pressed")
         get_updates()
@@ -1000,6 +1004,9 @@ class ChipFlowApp(App):
     def build(self):
         logging.debug("CDA: Creating main window")
         return ProcessWindow(protocol_file_name=self.protocol_name)
+
+    def key_action(self, *args):
+        logging.debug(f"got a key event: {list(args)}")
 
     def on_close(self):
         cleanup()
