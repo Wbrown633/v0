@@ -1019,7 +1019,8 @@ class ChipFlowApp(App):
 def main():
     try:
         ChipFlowApp().run()
-    except Exception:
+    except Exception as e:
+        logging.debug("{e.args}")
         pumps.stop_all_pumps(list_of_pumps)
         ser.close()
         if not DEBUG_MODE:
