@@ -33,7 +33,6 @@ from cd_alpha.ChipController import ChipController
 from cd_alpha.software_testing.SerialStub import SerialStub
 from kivy.utils import platform
 from cd_alpha.protocols.protocol_tools import ProcessProtocol
-kivy.require("2.0.0")
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
@@ -217,100 +216,22 @@ class ProcessWindow(BoxLayout):
 
         # TODO: break protocol loading into its own method
         protocol_location = self.app.PATH_TO_PROTOCOLS + self.protocol_file_name
-        with open(protocol_location, "r") as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         protocol_obj = JSONProtocolParser(Path(protocol_location)).make_protocol()
 
         gui_screens = JSONProtocolParser(Path(protocol_location)).json_to_gui_model()
-        logging.info(protocol_obj)
-        logging.info(gui_screens)
+        Logger.info(protocol_obj)
+        Logger.info(gui_screens)
 
         list_of_kivy_screens = KivyScreenFactory(gui_screens).make_kivy_screens()
 
-        if self.app.START_STEP not in protocol.keys():
-            raise KeyError(f"{self.app.START_STEP} not a valid step in the protocol.")
+        #self.load_protocol(protocol_location)
 
-        # if we're supposed to start at a step other than 'home' remove other steps from the protocol
-        protocol_copy = OrderedDict()
-        keep_steps = False
-        for name, step in protocol.items():
-            if name == self.app.START_STEP:
-                keep_steps = True
-            if keep_steps:
-                protocol_copy[name] = step
+        Logger.info(f"{list_of_kivy_screens}")
 
-        protocol = protocol_copy
+        for screen in list_of_kivy_screens:
+            self.process_sm.add_widget(screen)
 
-        for builder in gui_screens:
-            pass
-
-        for name, step in protocol.items():
-            screen_type = step.get("type", None)
-            if screen_type == "UserActionScreen":
-                if name == "home":
-                    this_screen = HomeScreen(
-                        name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-
-                elif name == "summary":
-                    this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
-                else:
-                    this_screen = UserActionScreen(
-                        name=name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-            elif screen_type == "MachineActionScreen":
-
-                this_screen = MachineActionScreen(
-                    Step(None, None),
-                    name=name,
-                    header=step["header"],
-                    description=step.get("description", ""),
-                )
-
-                # TODO: clean up how this works
-                if step.get("remove_progress_bar", False):
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.progress_bar_layout
-                    )
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-
-                # Don't offer skip button in production
-                if not self.app.DEBUG_MODE:
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-            else:
-                if screen_type is None:
-                    raise TypeError(
-                        "Corrupt protocol. Every protocol step must contain a 'type' key."
-                    )
-                else:
-                    raise TypeError(
-                        "Corrupt protocol. Unrecognized 'type' key: {}".format(
-                            screen_type
-                        )
-                    )
-            self.progress_screen_names.append(this_screen.name)
-            self.process_sm.add_widget(this_screen)
-
-            completion_msg = step.get("completion_msg", None)
-            if completion_msg:
-                self.process_sm.add_widget(
-                    ActionDoneScreen(
-                        name=this_screen.name + "_done", header=completion_msg
-                    )
-                )
-
-        self.load_protocol(file_path)
         self.overall_progress_bar = SteppedProgressBar(
             steps=len(self.progress_screen_names)
         )
@@ -318,15 +239,13 @@ class ProcessWindow(BoxLayout):
         self.abort_btn = AbortButton(
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
-
-        self.refresh_btn = RefreshButton(disabled=False, on_release=self.get_updates)
-
         protocol_chooser = ProtocolChooser(name="protocol_chooser")
         self.process_sm.add_widget(protocol_chooser)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
-        logging.info(f"Widgets in process screen manager: {self.process_sm.screen_names}")
+
+        Logger.info(f"Widgets in process screen manager: {self.process_sm.screen_names}")
 
     def show_abort_popup(self, btn):
         popup_outside_padding = 60
@@ -422,7 +341,7 @@ class ProcessWindow(BoxLayout):
         self.process_sm.next_screen()
         # check if this screen has an action
         if type(self.process_sm.current_screen) == MachineActionScreen:
-            logging.info("Found Machine Action Screen")
+            Logger.info("Found Machine Action Screen")
             self.app.controller.next()
         if self.process_sm.current in self.progress_screen_names:
             pos = self.progress_screen_names.index(self.process_sm.current)
@@ -432,114 +351,6 @@ class ProcessWindow(BoxLayout):
         # Global cleanup
         pass
         # TODO: Any local cleanup?
-
-    # TODO for testability instead of mutating the current App, we could return a Protocol object
-    def load_protocol(self, path_to_protocol) -> ProcessScreenManager:
-        
-        load_protocol_screenmanager = ProcessScreenManager(main_window=self)
-
-        with open(path_to_protocol, "r") as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
-
-        self.progress_screen_names = []
-
-        # TODO: break protocol loading into its own method
-        with open(path_to_protocol, "r") as f:
-            protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
-
-        if self.app.START_STEP not in protocol.keys():
-            raise KeyError(f"{self.app.START_STEP} not a valid step in the protocol.")
-
-        # if we're supposed to start at a step other than 'home' remove other steps from the protocol
-        protocol_copy = OrderedDict()
-        keep_steps = False
-        for name, step in protocol.items():
-            if name == self.app.START_STEP:
-                keep_steps = True
-            if keep_steps:
-                protocol_copy[name] = step
-
-        protocol = protocol_copy
-
-        for name, step in protocol.items():
-            screen_type = step.get("type", None)
-            if screen_type == "UserActionScreen":
-                if name == "home":
-                    this_screen = HomeScreen(
-                        name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-
-                elif name == "summary":
-                    this_screen = SummaryScreen(next_text=step.get("next_text", "Next"))
-                else:
-                    this_screen = UserActionScreen(
-                        name=name,
-                        header=step.get("header", "NO HEADER"),
-                        description=step.get("description", "NO DESCRIPTION"),
-                        next_text=step.get("next_text", "Next"),
-                    )
-            elif screen_type == "MachineActionScreen":
-
-                this_screen = MachineActionScreen(
-                    name=name,
-                    header=step["header"],
-                    description=step.get("description", ""),
-                    action=step["action"],
-                )
-                # TODO: clean up how this works
-                if step.get("remove_progress_bar", False):
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.progress_bar_layout
-                    )
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-
-                # Don't offer skip button in production
-                if not self.app.DEBUG_MODE:
-                    this_screen.children[0].remove_widget(
-                        this_screen.ids.skip_button_layout
-                    )
-            else:
-                if screen_type is None:
-                    raise TypeError(
-                        "Corrupt protocol. Every protocol step must contain a 'type' key."
-                    )
-                else:
-                    raise TypeError(
-                        "Corrupt protocol. Unrecognized 'type' key: {}".format(
-                            screen_type
-                        )
-                    )
-            self.progress_screen_names.append(this_screen.name)
-            self.process_sm.add_widget(this_screen)
-
-            completion_msg = step.get("completion_msg", None)
-            if completion_msg:
-                self.process_sm.add_widget(
-                    ActionDoneScreen(
-                        name=this_screen.name + "_done", header=completion_msg
-                    )
-                )
-
-        self.overall_progress_bar = SteppedProgressBar(
-            steps=len(self.progress_screen_names)
-        )
-
-        self.abort_btn = AbortButton(
-            disabled=False, size_hint_x=None, on_release=self.show_abort_popup
-        )
-        protocol_chooser = ProtocolChooser(name="protocol_chooser")
-        self.process_sm.add_widget(protocol_chooser)
-        self.ids.top_bar.add_widget(self.overall_progress_bar)
-        self.ids.top_bar.add_widget(self.abort_btn)
-        self.ids.main.add_widget(self.process_sm)
-        logging.info(f"Widgets in process screen manager: {self.process_sm.screen_names}")
-
-        return load_protocol_screenmanager
 
     def screenduplicates(self, screen_names):
         list_of_screen_names = {}
@@ -576,13 +387,7 @@ class ChipFlowApp(App):
             time_now_str = (
                 datetime.now().strftime("%Y-%m-%d_%H:%M:%S").replace(":", ";")
             )
-            logging.basicConfig(
-                filename=f"/home/pi/cd_alpha/logs/cda_{time_now_str}.log",
-                filemode="w",
-                datefmt="%Y-%m-%d_%H:%M:%S",
-                level=logging.DEBUG,
-            )
-            logging.info("Logging started")
+            Logger.info("Logger started")
             from cd_alpha.software_testing.NanoControllerTestStub import Nano
             from cd_alpha.software_testing.NewEraPumpsTestStub import PumpNetwork
             from cd_alpha.software_testing.SerialStub import SerialStub
@@ -595,20 +400,14 @@ class ChipFlowApp(App):
             Window.fullscreen = "auto"
             LOCAL_TESTING = False
             time_now_str = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-            logging.basicConfig(
-                filename=f"/home/pi/cd-alpha/logs/cda_{time_now_str}.log",
-                filemode="w",
-                datefmt="%Y-%m-%d_%H:%M:%S",
-                level=logging.DEBUG,
-            )
-            logging.info("Logging started")
+            Logger.info("Logger started")
             SPLIT_CHAR = "/"
 
         if self.DEBUG_MODE:
-            logging.warning("CDA: *** DEBUG MODE ***")
-            logging.warning("CDA: System will not reboot after exiting program.")
+            Logger.warning("CDA: *** DEBUG MODE ***")
+            Logger.warning("CDA: System will not reboot after exiting program.")
 
-        logging.info(f"CDA: Using protocol: '{self.PROTOCOL_FILE_NAME}''")
+        Logger.info(f"CDA: Using protocol: '{self.PROTOCOL_FILE_NAME}''")
 
         # Set constants
         if self.device.DEVICE_TYPE == "R0":
@@ -625,7 +424,7 @@ class ChipFlowApp(App):
 
         # ---------------- MAIN ---------------- #
 
-        logging.info("CDA: Starting main script.")
+        Logger.info("CDA: Starting main script.")
 
         self.nano = Nano(8, 7) if self.device.DEVICE_TYPE == "V0" else None
 
@@ -637,7 +436,7 @@ class ChipFlowApp(App):
         super().__init__(**kwargs)
 
     def build(self):
-        logging.debug("CDA: Creating main window")
+        Logger.debug("CDA: Creating main window")
         self.process = ProcessWindow(protocol_file_name=self.PROTOCOL_FILE_NAME)
         return self.process
 
@@ -649,10 +448,10 @@ class ChipFlowApp(App):
             Logger.warning("DEBUG MODE: Not rebooting, just closing...")
 
     def shutdown(self):
-        logging.info("Shutting down...")
+        Logger.info("Shutting down...")
         self.cleanup()
         if self.DEBUG_MODE:
-            logging.warning(
+            Logger.warning(
                 "CDA: In DEBUG mode, not shutting down for real, only ending program."
             )
             App.get_running_app().stop()
@@ -661,9 +460,9 @@ class ChipFlowApp(App):
 
     def reboot(self):
         self.cleanup()
-        logging.info("CDA: Rebooting...")
+        Logger.info("CDA: Rebooting...")
         if self.DEBUG_MODE:
-            logging.warning(
+            Logger.warning(
                 "CDA: In DEBUG mode, not rebooting down for real, only ending program."
             )
             App.get_running_app().stop()

@@ -98,7 +98,6 @@ class SummaryScreen(Screen):
                 summary_layout.add_widget(Label(text=str(entry)))
 
 
-
 class MachineActionScreen(ChipFlowScreen):
     time_remaining_min = NumericProperty(0)
     time_remaining_sec = NumericProperty(0)
@@ -113,8 +112,6 @@ class MachineActionScreen(ChipFlowScreen):
     # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
     # TODO writing a protocol parser may help both loading and running protocols
     def start(self):
-        WASTE_ADDR = self.app.WASTE_ADDR
-        LYSATE_ADDR = self.app.LYSATE_ADDR
 
         # TODO should this be done with a controller?
         # how do we keep all of these classes testable
