@@ -412,7 +412,7 @@ class ProcessWindow(BoxLayout):
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         if self.app.START_STEP not in protocol.keys():
-            raise KeyError("{} not a valid step in the protocol.".format(self.app.START_STEP))
+            raise KeyError(f"{self.app.START_STEP} not a valid step in the protocol.")
 
         # if we're supposed to start at a step other than 'home' remove other steps from the protocol
         protocol_copy = OrderedDict()

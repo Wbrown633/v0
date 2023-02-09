@@ -121,6 +121,9 @@ class MachineActionScreen(ChipFlowScreen):
         # prevent App from leaking into classes where possible
         self.app.controller.next()
 
+    def skip(self):
+        self.app.controller.skip()
+
 
 class ActionDoneScreen(ChipFlowScreen):
     def __init__(self, *args, **kwargs):

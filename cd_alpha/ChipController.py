@@ -225,13 +225,13 @@ class ChipController:
             elif type(action).__name__ == "Release":
                 logging.info("RELEASE action")
                 if action.target == "waste":
-                    addr = WASTE_ADDR
+                    addr = self.app.WASTE_ADDR
                 if action.target == "lysate":
-                    addr = LYSATE_ADDR
+                    addr = self.app.LYSATE_ADDR
                 rate_mh = action.rate_mh
                 vol_ml = action.vol_ml
                 eq_time = action.eq_time
-                self._extracted_from_start_13(
+                self.run_pumps(
                     "SENDING RELEASE COMMAND TO: Addr = ", addr, rate_mh, vol_ml
                 )
 
@@ -316,13 +316,14 @@ class ChipController:
             )
 
     def set_progress(self, dt):
-        self.app.process.time_elapsed += dt
+        current_screen = self.app.root.process_sm.current_screen
+        self.time_elapsed += dt
         time_remaining = max(self.time_total - self.time_elapsed, 0)
-        self.time_remaining_min = int(time_remaining / 60)
-        self.time_remaining_sec = int(time_remaining % 60)
-        self.app.process.progress = self.time_elapsed / self.time_total * 100
-        if self.app.process.progress >= 100:
-            self.app.process.progress = 100
+        current_screen.time_remaining_min = int(time_remaining / 60)
+        current_screen.time_remaining_sec = int(time_remaining % 60)
+        current_screen.progress = self.time_elapsed / self.time_total * 100
+        if current_screen.progress >= 100:
+            current_screen.progress = 100
             self.app.process.next_step()
             return False
 
@@ -335,7 +336,7 @@ class ChipController:
         number_of_stopped_pumps = 0
         for pump in self.app.list_of_pumps:
             status = self.pumps.status(addr=pump)
-            logging.info("Pump number {} status was: {}".format(pump, status))
+            logging.info(f"Pump number {pump} status was: {status}")
             if status == "S":
                 number_of_stopped_pumps += 1
 
