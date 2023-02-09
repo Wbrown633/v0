@@ -745,7 +745,7 @@ class ProcessWindow(BoxLayout):
         self.bind(on_key_down=self._keydown)
 
     def _keydown(self, *args):
-        logging.debug("Key pressed: {args}")
+        Logger.debug("Key pressed: {args}")
   
     def get_updates(self, btn):
         Logger.info("Update button pressed")
@@ -883,14 +883,10 @@ class ProcessWindow(BoxLayout):
                 "Screen Removal was not sucessful, remaining screens should be 1"
             )
         Logger.info(
-            "Number of screens in screen manager after Removal: {}".format(
-                len(self.process_sm.screens)
-            )
+            f"Number of screens in screen manager after Removal: {len(self.process_sm.screens)}"
         )
         Logger.info(
-            "Screens in screen manager after Removal: {}".format(
-                self.process_sm.screen_names
-            )
+            f"Screens in screen manager after Removal: {self.process_sm.screen_names}"
         )
 
         for name, step in protocol.items():
