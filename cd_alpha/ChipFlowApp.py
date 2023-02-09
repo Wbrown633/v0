@@ -3,7 +3,6 @@
 # To execute remotely use:
 # DISPLAY=:0.0 python3 ChipFlowApp.py
 
-from ast import Raise
 import contextlib
 from collections import OrderedDict
 import json
@@ -26,7 +25,6 @@ from kivy.core.window import Window
 from pkg_resources import resource_filename
 from pathlib import Path
 from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolChooser, SummaryScreen, UserActionScreen, MachineActionScreen, ActionDoneScreen, ChipFlowScreen
-from cd_alpha.NewEraPumps import PumpNetwork
 from cd_alpha.Protocol import Protocol
 from cd_alpha.ProtocolFactory import JSONProtocolEncoder, JSONProtocolParser
 from cd_alpha.Step import Step
@@ -643,6 +641,7 @@ def main():
         # Establish serial connection to the pump controllers if on linux
         pumps = None
         if platform == 'linux':
+            from cd_alpha.NewEraPumps import PumpNetwork
             ser = serial.Serial("/dev/ttyUSB0", 19200, timeout=2)
             pumps = PumpNetwork(ser)
         else:
