@@ -349,9 +349,7 @@ class MachineActionScreen(ChipFlowScreen):
                     post_run_vol_ml = params["post_run_vol_ml"]
 
                 Logger.debug(
-                    "Using Post Run Rate MM: {}, ML : {}".format(
-                        post_run_rate_mm, post_run_vol_ml
-                    )
+                    f"Using Post Run Rate MM: {post_run_rate_mm}, ML : {post_run_vol_ml}"
                 )
                 for addr in [WASTE_ADDR, LYSATE_ADDR]:
                     Logger.debug(f"CDA: Grabbing pump {addr}")
@@ -421,9 +419,7 @@ class MachineActionScreen(ChipFlowScreen):
                 pump_addr = params["pump_addr"]
                 pumps.set_diameter(diameter, pump_addr)
                 Logger.debug(
-                    "Switching current loaded syringe to {} diam on pump {}".format(
-                        diameter, pump_addr
-                    )
+                    f"Switching current loaded syringe to {diameter} diam on pump {pump_addr}"
                 )
 
             if action == "RELEASE":
@@ -538,9 +534,7 @@ class MachineActionScreen(ChipFlowScreen):
             self.next_step()
         else:
             Logger.warning(
-                "Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {}".format(
-                    status
-                )
+                f"Pump not stopped! Step cannot be skipped while motors are moving. Not skipping. Status: {status}"
             )
 
 
@@ -578,7 +572,7 @@ class SteppedProgressBar(GridLayout):
             *args, cols=noof_steps, padding=kwargs.pop("padding", 5), **kwargs
         )
 
-        self.steps = [ProgressDot() for i in range(noof_steps)]
+        self.steps = [ProgressDot() for _ in range(noof_steps)]
         for s in self.steps:
             self.add_widget(s)
         self.position = 0
@@ -745,8 +739,8 @@ class ProcessWindow(BoxLayout):
         self.ids.top_bar.add_widget(self.overall_progress_bar)
         self.ids.top_bar.add_widget(self.abort_btn)
         self.ids.main.add_widget(self.process_sm)
-        Logger.info(
-            "Widgets in process screen manager: {}".format(self.process_sm.screen_names)
+        Logger.debug(
+            f"Widgets in process screen manager: {self.process_sm.screen_names}"
         )
         self.bind(on_key_down=self._keydown)
 
@@ -963,11 +957,9 @@ class ProcessWindow(BoxLayout):
                     )
                 )
 
-        Logger.info(
-            "Screens in manager after load: {} ".format(self.process_sm.screen_names)
-        )
-        Logger.info(
-            "Number of screens after load: {}".format(len(self.process_sm.screen_names))
+        Logger.debug(f"Screens in manager after load: {self.process_sm.screen_names} ")
+        Logger.debug(
+            f"Number of screens after load: {len(self.process_sm.screen_names)}"
         )
 
         check_dups = self.screenduplicates(self.process_sm.screen_names)
@@ -998,7 +990,7 @@ class ChipFlowApp(App):
         return ProcessWindow(protocol_file_name=self.protocol_name)
 
     def key_action(self, *args):
-        logging.debug(f"got a key event: {list(args)}")
+        Logger.debug(f"got a key event: {list(args)}")
 
     def on_close(self):
         cleanup()
@@ -1012,7 +1004,7 @@ def main():
     try:
         ChipFlowApp().run()
     except Exception as e:
-        logging.debug("{e.args}")
+        Logger.debug(f"Caught exception: {e.args}")
         pumps.stop_all_pumps(list_of_pumps)
         ser.close()
         if not DEBUG_MODE:
