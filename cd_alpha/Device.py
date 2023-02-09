@@ -1,6 +1,8 @@
 import json
 import logging
-
+from git import Repo
+import cd_alpha
+import os
 from pkg_resources import resource_filename
 
 
@@ -24,11 +26,13 @@ class Device:
 
     OPTIONAL
 
-    Optional parameters should only be altered if the user is confident they know what they are doing.
-    They should not need to be altered during the course of normal operation.
+    Optional parameters should only be altered if the user is confident they know what
+    they are doing. They should not need to be altered during the course of
+    normal operation.
 
     DEV_MACHINE: bool
-        - Set this flag true to disable all communication over serial to motors. This is usefull when doing graphical/app dev,
+        - Set this flag true to disable all communication over serial to motors.
+        This is usefull when doing graphical/app dev,
         or anytime you wish to run the program not on a properly configured device
 
     PUMP_SERIAL_ADDR: str
@@ -74,7 +78,7 @@ class Device:
                     if req not in config_file_dict.keys():
                         print(config_file_dict.keys())
                         raise KeyError(
-                            "Required value {} was not found in config file".format(req)
+                            f"Required value {req} was not found in config file"
                         )
                 for key in config_file_dict.keys():
                     self.__setattr__(key, config_file_dict[key])
@@ -122,3 +126,21 @@ class Device:
 
         except IOError:
             logging.error("device_config.json was not found or could not be opened.")
+
+
+def get_updates():
+    # Pull in current directory
+    repo = Repo(os.path.dirname(cd_alpha.__file__), search_parent_directories=True)
+
+    try:
+        assert repo.remotes.origin.exists()
+        repo.remotes.origin.fetch()
+        repo.remotes.origin.pull()
+        print(
+            (
+                f"Update was successful, with message:"
+                f"{repo.commit(repo.active_branch.name).message}"
+            )
+        )
+    except Exception:
+        logging.warning("COULDN'T PULL REPO, NO INTERENT CONNECTION!!")

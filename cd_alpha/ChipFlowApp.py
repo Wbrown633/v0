@@ -6,11 +6,11 @@
 import contextlib
 from collections import OrderedDict
 import json
+from pathlib import Path
 import os
 import serial
 from datetime import datetime
-import logging
-from cd_alpha.Device import Device
+from cd_alpha.Device import Device, get_updates
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
@@ -22,6 +22,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.core.window import Window
+from kivy.logger import Logger
 from pkg_resources import resource_filename
 from pathlib import Path
 from cd_alpha.KivyScreenFactory import KivyScreenFactory, HomeScreen, ProtocolChooser, SummaryScreen, UserActionScreen, MachineActionScreen, ActionDoneScreen, ChipFlowScreen
@@ -31,6 +32,8 @@ from cd_alpha.Step import Step
 from cd_alpha.ChipController import ChipController
 from cd_alpha.software_testing.SerialStub import SerialStub
 from kivy.utils import platform
+from cd_alpha.protocols.protocol_tools import ProcessProtocol
+kivy.require("2.0.0")
 
 Builder.load_file(resource_filename("cd_alpha", "gui-elements/widget.kv"))
 Builder.load_file(
@@ -74,7 +77,7 @@ class ProcessScreenManager(ScreenManager):
         # Don't go to protocol_chooser as a next step, go home instead
         if self.next() == "protocol_chooser":
             next_screen = "home"
-        logging.debug(f"CDA: Next screen, going from {current} to {next_screen}")
+        Logger.debug(f"CDA: Next screen, going from {current} to {next_screen}")
         self.current = next_screen
 
     def next_step(self):
@@ -93,7 +96,6 @@ class ProgressDot(Widget):
     status = StringProperty()
 
     def __init__(self, *args, **kwargs):
-        index = kwargs.pop("index", None)
         self.status = "future"
         super().__init__(*args, **kwargs)
 
@@ -151,7 +153,7 @@ class ErrorPopup(Popup):
         super().__init__(*args, **kwargs)
 
     def confirm(self):
-        logging.debug("CDA: Error acknowledged by user")
+        Logger.debug("CDA: Error acknowledged by user")
         self.disabled = True
         self.confirm_action()
         self.dismiss()
@@ -173,7 +175,7 @@ class AbortPopup(Popup):
         super().__init__(*args, **kwargs)
 
     def confirm(self):
-        logging.debug("CDA: Error acknowledged by user")
+        Logger.debug("CDA: Error acknowledged by user")
         self.disabled = True
         self.confirm_action()
         self.dismiss()
@@ -192,6 +194,14 @@ class AbortButton(Button):
 
 
 class LoadButton(Button):
+    pass
+
+
+class RefreshButton(Button):
+    pass
+
+
+class ProcessWindow(BoxLayout):
     pass
 
 
@@ -300,6 +310,7 @@ class ProcessWindow(BoxLayout):
                     )
                 )
 
+        self.load_protocol(file_path)
         self.overall_progress_bar = SteppedProgressBar(
             steps=len(self.progress_screen_names)
         )
@@ -307,6 +318,9 @@ class ProcessWindow(BoxLayout):
         self.abort_btn = AbortButton(
             disabled=False, size_hint_x=None, on_release=self.show_abort_popup
         )
+
+        self.refresh_btn = RefreshButton(disabled=False, on_release=self.get_updates)
+
         protocol_chooser = ProtocolChooser(name="protocol_chooser")
         self.process_sm.add_widget(protocol_chooser)
         self.ids.top_bar.add_widget(self.overall_progress_bar)
@@ -319,7 +333,11 @@ class ProcessWindow(BoxLayout):
         if self.process_sm.current == "home":
             abort_poup = AbortPopup(
                 title="Shut down device?",
-                description="Do you want to shut the device down? Once it has been shut down, you may safely turn it off with the switch located on the back side of the device.",
+                description=(
+                    "Do you want to shut the device down? Once it has been"
+                    "shut down, you may safely turn it off with the switch located on"
+                    " the back side of the device."
+                ),
                 dismiss_text="Cancel",
                 confirm_text="Shut down",
                 confirm_action=self.shutdown,
@@ -327,6 +345,20 @@ class ProcessWindow(BoxLayout):
                 size_hint=(None, None),
                 size=(800 - popup_outside_padding, 480 - popup_outside_padding),
             )
+        elif self.process_sm.current == "protocol_chooser":
+            abort_poup = AbortPopup(
+                title="Exit device?",
+                description=(
+                    "Do you want to exit the device? This should be used for development only."
+                ),
+                dismiss_text="Cancel",
+                confirm_text="Exit",
+                confirm_action=self.exit,
+                primary_color=(1, 0.66, 0, 1),
+                size_hint=(None, None),
+                size=(800 - popup_outside_padding, 480 - popup_outside_padding),
+            )
+
         else:
             abort_poup = AbortPopup(
                 title="Abort entire test?",
@@ -353,8 +385,12 @@ class ProcessWindow(BoxLayout):
         self.cleanup()
         self.app.reboot()
 
+    def exit(self):
+        self.cleanup()
+        App.get_running_app().stop()
+
     def show_fatal_error(self, *args, **kwargs):
-        logging.debug("CDA: Showing fatal error popup")
+        Logger.debug("CDA: Showing fatal error popup")
         popup_outside_padding = 60
         confirm_action = kwargs.pop("confirm_action", self.reboot)
         if confirm_action == "shutdown":
@@ -379,7 +415,7 @@ class ProcessWindow(BoxLayout):
         self.app.pumps.buzz(addr=self.app.WASTE_ADDR, repetitions=5)
 
     def start_over(self):
-        logging.info("Sending Program to home screen")
+        Logger.info("Sending Program to home screen")
         self.process_sm.current = "home"
 
     def next_step(self):
@@ -610,7 +646,7 @@ class ChipFlowApp(App):
         if not self.DEBUG_MODE:
             self.reboot()
         else:
-            logging.warning("DEBUG MODE: Not rebooting, just closing...")
+            Logger.warning("DEBUG MODE: Not rebooting, just closing...")
 
     def shutdown(self):
         logging.info("Shutting down...")
@@ -657,7 +693,7 @@ def main():
         if not chip_controller.is_debug():
             chip_controller.reboot()
         else:
-            logging.warning("DEBUG MODE: Not rebooting, just re-raising error...")
+            Logger.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
 
 
