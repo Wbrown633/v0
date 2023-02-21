@@ -12,3 +12,4 @@ v0venv/*
 cd_alpha.egg-info/*
 cd_alpha/tests/__pycache__/*
 
+.DS_Store
