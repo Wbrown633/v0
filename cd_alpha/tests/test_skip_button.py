@@ -1,8 +1,8 @@
 import unittest
 from cd_alpha.ChipFlowApp import ProcessWindow
 
-class SkipButtonTestCase(unittest.TestCase):
 
+class SkipButtonTestCase(unittest.TestCase):
     def setUp(self):
         # import class and prepare everything here.
         self.test_window = ProcessWindow(protocol_file_name="v0-protocol-16v1.json")
@@ -12,6 +12,5 @@ class SkipButtonTestCase(unittest.TestCase):
         pass
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

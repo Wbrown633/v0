@@ -22,6 +22,8 @@ if __name__ == "__main__":
 
     print("SETTING LYSATE ADR! ", p._set_addr(LYSATE_ADDR))
 
+    input("Setup serial cables as they will be used inproduction then hit ENTER to confirm.")
+
     input("Testing the WASTE pump, after hitting ENTER confirm that the pump moves.")
 
     WASTE_DIAMETER_mm = 12.45

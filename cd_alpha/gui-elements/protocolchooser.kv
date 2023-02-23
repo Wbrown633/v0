@@ -14,8 +14,9 @@
         FileChooserListView:
             id: filechooser
             # fix so this works no matter where the python gets called 
-            path: root.get_file_path()
-            filters: ["*.json"]
+            rootpath: root.get_file_path()
+            filter_dirs: False
+            filters: ['*.json']
 
         BoxLayout:
             size_hint_y: None

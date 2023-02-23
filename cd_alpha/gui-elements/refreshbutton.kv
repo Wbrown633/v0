@@ -1,0 +1,19 @@
+#:kivy 1.11.0
+<RefreshButton@Button>
+    background_color: (0, 0, 0, 0)
+    background_normal: ''
+    button_color: (.33, .33, .33, 1)
+    border_radius: [10]
+    border: [10, 10, 10, 10]
+    width: self.height
+    size_hint_x: .08
+    text: "U"
+    canvas.before:
+        Color:
+            rgba: self.button_color
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10]#self.border_radius
+        Color:
+            rgba: (1, 1, 1, 0)
