@@ -191,7 +191,7 @@
     "protein_lysis": {
         "type": "UserActionScreen",
         "header": "Protein Lysis",
-        "description": "Add 300 µL Protein Lysis to reservoir. Press 'Next' to start."
+        "description": "Add 250 µL Protein Lysis to reservoir. Press 'Next' to start."
     },
 
     "extract_1": {
