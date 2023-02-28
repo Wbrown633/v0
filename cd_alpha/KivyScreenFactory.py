@@ -13,9 +13,10 @@ import time
 
 class ChipFlowScreen(Screen):
     def __init__(self, *args, **kwargs):
+        super().__init__(**kwargs)
         self.header_text = kwargs.pop("header", "Header")
         self.description_text = kwargs.pop("description", "Description.")
-        super().__init__(**kwargs)
+        
 
     def next_step(self, *args, **kwargs):
         self.parent.next_step()
@@ -39,7 +40,7 @@ class UserActionScreen(ChipFlowScreen):
 class HomeScreen(ChipFlowScreen):
     def __init__(self, *args, **kwargs):
         self.next_text = kwargs.pop("next_text", "Next")
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def load_protocol(self, *args, **kwargs):
         logging.info("Load button pressed!")
@@ -105,10 +106,11 @@ class MachineActionScreen(ChipFlowScreen):
     progress = NumericProperty(0.0)
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.time_total = 0
         self.time_elapsed = 0
         self.app = App.get_running_app()
-        super().__init__(*args, **kwargs)
+        
 
     # TODO this code is re-written multiple times and tied directly to GUI logic, desperately needs re-factor
     # TODO writing a protocol parser may help both loading and running protocols

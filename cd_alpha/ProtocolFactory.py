@@ -91,6 +91,7 @@ class JSONProtocolParser:
         return list_of_builders   
             
 
+
 @dataclass
 class GUIModel:
     """Class to contain all GUI specific logic. Including user instruction screens"""
