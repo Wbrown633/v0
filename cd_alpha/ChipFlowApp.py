@@ -64,9 +64,9 @@ Builder.load_file(
 
 
 class ProcessScreenManager(ScreenManager):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         self.main_window = kwargs.pop("main_window")
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def next_screen(self):
         current = self.current
@@ -200,12 +200,8 @@ class RefreshButton(Button):
 
 
 class ProcessWindow(BoxLayout):
-    pass
-
-
-class ProcessWindow(BoxLayout):
-    def __init__(self, *args, **kwargs):
-        super(ProcessWindow, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super().__init__()
         self.protocol_file_name = kwargs.pop("protocol_file_name")
 
         self.process_sm = ProcessScreenManager(main_window=self)
@@ -215,7 +211,7 @@ class ProcessWindow(BoxLayout):
 
         # TODO: break protocol loading into its own method
         # Load protocol and add screens accordingly
-        with open(PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
+        with open(self.app.PATH_TO_PROTOCOLS + self.protocol_file_name, "r") as f:
             protocol = json.loads(f.read(), object_pairs_hook=OrderedDict)
 
         protocol_obj = JSONProtocolParser(Path(protocol_location)).make_protocol()
@@ -328,8 +324,6 @@ class ProcessWindow(BoxLayout):
             f"Widgets in process screen manager: {self.process_sm.screen_names}"
         )
         self.bind(on_key_down=self._keydown)
-
-        super().__init__(*args, **kwargs)
 
     def _keydown(self, *args):
         Logger.debug("Key pressed: {args}")
@@ -636,7 +630,7 @@ class ChipFlowApp(App):
         Logger.debug("CDA: Creating main window")
         self.process = ProcessWindow(protocol_file_name=self.PROTOCOL_FILE_NAME)
         return self.process
-        
+
 
     def on_close(self):
         self.cleanup()
@@ -692,7 +686,6 @@ def main():
         if not chip_controller.is_debug():
             chip_controller.reboot()
         else:
-
             Logger.warning("DEBUG MODE: Not rebooting, just re-raising error...")
             raise
 
