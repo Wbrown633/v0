@@ -132,7 +132,7 @@
     "pbs_2": {
         "type": "UserActionScreen",
         "header": "PBS Wash 1",
-        "description": "Add 250 µL 1xPBS to reservoir. Press 'Next' to start."
+        "description": "Add 300 µL 1xPBS to reservoir. Press 'Next' to start."
     },
     "wash_1": {
         "type": "MachineActionScreen",
