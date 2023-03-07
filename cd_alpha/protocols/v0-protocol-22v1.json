@@ -2,7 +2,7 @@
     "home": {
         "type": "UserActionScreen",
         "header": "Chip Diagnostics",
-        "description": "Ready for a new test with Small TENPO protocol 22v2. Press 'Start' to begin.",
+        "description": "Ready for a new test with Small TENPO protocol 22v1. Press 'Start' to begin.",
         "next_text": "Start"
     },
 
