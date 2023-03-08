@@ -641,6 +641,27 @@ class AbortPopup(Popup):
 
 
 class ProtocolChooser(Screen):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.carousel = self.ids["filechooser"]
+        self.carousel.add_widget(Label(text="Test 1"))
+        self.carousel.add_widget(Label(text="Test 2"))
+        self.carousel.add_widget(Label(text="Test 3"))
+        self.carousel.add_widget(Label(text="Test 4"))
+        self.carousel.add_widget(Label(text="Test 5"))
+
+    def _carousel_files(self):
+        pass
+
+    def next_carousel(self):
+        self.carousel.load_next()
+        Logger.debug("right carousel button pressed")
+
+    def prev_carousel(self):
+        self.carousel.load_previous()
+        Logger.debug("left carousel button pressed")
+
     def load(self, path, filename):
         try:
             filename = filename[0]
