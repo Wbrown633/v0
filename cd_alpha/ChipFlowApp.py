@@ -645,14 +645,14 @@ class ProtocolChooser(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.carousel = self.ids["filechooser"]
-        self.carousel.add_widget(Label(text="Test 1"))
-        self.carousel.add_widget(Label(text="Test 2"))
-        self.carousel.add_widget(Label(text="Test 3"))
-        self.carousel.add_widget(Label(text="Test 4"))
-        self.carousel.add_widget(Label(text="Test 5"))
+        self._carousel_files()
 
     def _carousel_files(self):
-        pass
+        protocol_root_path = Path(device.PATH_TO_PROTOCOLS)
+        file_names = [p.name for p in protocol_root_path.glob('*.json')]
+        Logger.debug(f"Files in the protocol directory: {file_names}")
+        for name in file_names:
+            self.carousel.add_widget(Label(text=name))
 
     def next_carousel(self):
         self.carousel.load_next()
@@ -662,17 +662,17 @@ class ProtocolChooser(Screen):
         self.carousel.load_previous()
         Logger.debug("left carousel button pressed")
 
-    def load(self, path, filename):
+    def load(self):
         try:
-            filename = filename[0]
-            Logger.info(f"Filename List: {filename}")
+            filename = self.carousel.current_slide.text
         except Exception as err:
             Logger.error(f"Unexpected Error: {err}, {type(err)}")
-        Logger.info(f"Filename: {filename}  was chosen. Path: {path}")
+        Logger.info(f"Filename: {filename}  was chosen.")
         try:
             App.get_running_app().protocol_name = Path(filename)
-            App.get_running_app().protocol_path = Path(path)
-            self.manager.main_window.load_protocol(filename)
+            App.get_running_app().protocol_path = Path(device.PATH_TO_PROTOCOLS)
+            file_path = Path(device.PATH_TO_PROTOCOLS) / Path(filename)
+            self.manager.main_window.load_protocol(file_path)
 
         except BaseException as err:
             Logger.error(f"Invalid Protocol: {filename}")
