@@ -7,6 +7,11 @@ if __name__ == "__main__":
     WASTE_ADDR = 1
     LYSATE_ADDR = 2 
 
+    # NOTE this implementation of the serial is assuming you're using a Linux environment.
+    # such as the raspberry pi that is part of the device.
+    # The format for Windows is : serial.Serial("COM#", 19200, timeout=2)
+    # where the # is the com port number that your serial adapter is attached to.
+
     ser =  serial.Serial ("/dev/ttyUSB0", 19200, timeout=2)
     p = PumpNetwork(ser)
 
