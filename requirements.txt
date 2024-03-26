@@ -11,6 +11,6 @@ Kivy-Garden==0.1.5
 Pillow==9.3.0
 Pygments==2.15.0
 pyserial==3.5
-requests==2.26.0
+requests==2.31.0
 smmap==5.0.0
 urllib3==1.26.7
