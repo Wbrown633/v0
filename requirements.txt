@@ -13,4 +13,4 @@ Pygments==2.15.0
 pyserial==3.5
 requests==2.31.0
 smmap==5.0.0
-urllib3==1.26.7
+urllib3==1.26.19
